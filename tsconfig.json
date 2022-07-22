@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "allowJs": true,
+        "module": "none",
+        "declaration": true,
+        "noImplicitAny": true,
+        "lib": [
+            "es2019"
+        ],
+        "outDir": "ui"
+    },
+    "exclude": [
+        "node_modules",
+        "public",
+        ".stylelintrc"
+    ],
+    "include": [
+        "./lib/**/*.js",
+        "index.js"
+    ]
+}
