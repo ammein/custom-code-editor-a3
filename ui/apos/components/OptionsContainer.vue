@@ -18,7 +18,24 @@ export default {
             type: Object
         }
     },
+    data(){
+        return {
+            count: 0,
+            options: {}
+        }
+    },
     methods: {
+        async getOptions(){
+            try {
+                let getOptions = await apos.http.get(apos.customCodeEditor.browser.action + '/options', {});
+                this.count = this.count++;
+                _.assign(this.options, JSON.parse(getOptions.message));
+                console.log("Options Assign", this.options);
+            } catch(e){
+                console.log("Options Not Assign", e);
+                // Do Nothing
+            }
+        },
         getName(name){
             return name.replace(/(_|-)/g, ' ')
                 .trim()
@@ -40,7 +57,7 @@ export default {
                             style: {
                                 textTransform: 'capitalize'
                             },
-                            attrs: {
+                            domProps: {
                                 for: object.name
                             }
                         }, self.getName(object.name) + ' :');
@@ -51,24 +68,27 @@ export default {
                             style: {
                                 display: 'none'
                             }
-                        })
+                        }, '')
 
                         // Create <input> element
                         let input = h('input', {
                             class: 'range-slider__range',
-                            attrs: {
+                            domProps: {
+                                value: editor.getOptions()[object.name],
                                 name: object.name,
                                 type: 'range',
                                 max: object.value.max,
                                 min: object.value.min,
                                 step: object.value.steps
                             },
-                            onInput(e){
+                            onInput: (e) => {
                                 output.data.style.display = 'inline';
-                                output.data.innerHTML = this.value;
+                                output.data.domProps.innerHTML = this.value;
                             },
-                            onChange(e) {
-                                input.data.attrs.value = this.value;
+                            onChange: (e) => {
+                                debugger;
+                                e.target.dispatchEvent(new Event('input', {bubbles:false}));
+                                input.data.domProps.value = this.value;
                                 // e.target.setAttribute('value', this.value);
                                 editor.setOption(object.name, this.value);
                             }
@@ -76,10 +96,10 @@ export default {
 
                         // Set selected & editor options
                         if(object.saveValue !== undefined){
-                            input.data.attrs.value = object.saveValue;
+                            input.data.domProps.value = object.saveValue;
                             editor.setOption(object.name, object.saveValue);
                         } else if(object.saveValue === undefined){
-                            (editor.getOptions()[object.name]) ? input.data.attrs.value = editor.getOptions()[object.name] : input.data.attrs.value = 0;
+                            (editor.getOptions()[object.name]) ? input.data.domProps.value = editor.getOptions()[object.name] : input.data.domProps.value = 0;
                         }
 
                         let cache = {
@@ -116,10 +136,10 @@ export default {
 
                         // Create <select> element
                         let select = h('select', {
-                            attrs: {
+                            domProps: {
                                 name: object.name
                             },
-                            onChange(e) {
+                            onChange: (e) => {
                                 editor.setOption(object.name, e.value);
                             }
                         }, object.value.map((val, i) => {
@@ -135,9 +155,9 @@ export default {
                             }
 
                             return h('option', {
-                                value: val,
-                                attrs: {
-                                    selected
+                                domProps: {
+                                    value: val,
+                                    selected: selected
                                 }
                             }, val);
                         }));
@@ -168,17 +188,17 @@ export default {
                             style: {
                                 textTransform: 'capitalize'
                             },
-                            attrs: {
+                            domProps: {
                                 for: object.name
                             }
                         }, self.getName(object.name) + ' :');
 
                         // Create <select> element
                         let select = h('select', {
-                            attrs: {
+                            domProps: {
                                 name: object.name
                             },
-                            onChange(e) {
+                            onChange: (e) => {
                                 let value = (this.value === 'true' || this.value === 'false') ? JSON.parse(this.value) : this.value;
                                 editor.setOption(object.name, value);
                             }
@@ -195,9 +215,9 @@ export default {
                             }
 
                             return h('option', {
-                                value: val.value,
-                                attrs: {
-                                    selected
+                                domProps: {
+                                    value: val.value,
+                                    selected: selected
                                 }
                             }, val.value);
                         }));
@@ -228,20 +248,20 @@ export default {
                             style: {
                                 textTransform: 'capitalize'
                             },
-                            attrs: {
+                            domProps: {
                                 for: object.name
                             }
                         }, self.getName(object.name) + ' :');
 
                         // Create <select> element
                         let input = h('input', {
-                            checked: object.saveValue !== undefined ? object.saveValue && editor.setOption(object.name, object.saveValue) : editor.getOptions()[object.name] ? editor.getOptions()[object.name] : null,
-                            class: 'error',
-                            attrs: {
+                            domProps: {
+                                checked: object.saveValue !== undefined ? object.saveValue && editor.setOption(object.name, object.saveValue) : editor.getOptions()[object.name] ? editor.getOptions()[object.name] : null,
                                 type: 'checkbox',
                                 name: object.name,
                             },
-                            onChange(e) {
+                            class: 'error',
+                            onChange: (e) => {
                                 if (e.checked) {
                                     editor.setOption(object.name, true);
                                 } else {
@@ -281,7 +301,7 @@ export default {
             // Create default <li> element as starting Header List element
             let listHeader = h('li', {
                 style: {
-                    marginBottom: "24px"
+                    marginBottom: "60px"
                 }
             }, []);
             // Grab props Options Types
@@ -335,7 +355,7 @@ export default {
                     // Create new listHeader
                     listHeader = h('li', {
                         style: {
-                            marginBottom: "24px"
+                            marginBottom: "60px"
                         }
                     }, [])
                     // Assign Attributes to listHeader
@@ -364,9 +384,17 @@ export default {
             return unorderedLists;
         }
     },
+    async mounted(){
+        await this.getOptions();
+    },
+    updated(){
+        console.log("Updated Cache: ", this.$props.cache);
+    },
     render(h){
         if(this.$props.editor && this.$props.optionsTypes) {
-            return this.loopOptions({}, h);   
+            console.log("Count Run Options: ", this.count);
+            console.log("Run Options: ", performance.now());
+            return this.loopOptions(this.options, h);
         }
     }
 }

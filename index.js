@@ -95,7 +95,7 @@ module.exports = {
     // Enable Browser Data
     self.enableBrowserData();
   },
-  apiRoutes(self) {
+  routes(self) {
     return {
       ...require('./lib/routes')(self)
     };
