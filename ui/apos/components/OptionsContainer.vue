@@ -81,16 +81,21 @@ export default {
                                 min: object.value.min,
                                 step: object.value.steps
                             },
-                            onInput: (e) => {
-                                output.data.style.display = 'inline';
-                                output.data.domProps.innerHTML = this.value;
-                            },
-                            onChange: (e) => {
-                                debugger;
-                                e.target.dispatchEvent(new Event('input', {bubbles:false}));
-                                input.data.domProps.value = this.value;
-                                // e.target.setAttribute('value', this.value);
-                                editor.setOption(object.name, this.value);
+                            on: {
+                                input: (e) => {
+                                    let percent = (e.currentTarget.value - object.value.min) / (object.value.max - object.value.min);
+                                    let newPos = (parseInt(getComputedStyle(e.currentTarget).width) - e.currentTarget.style.marginLeft) * percent;
+                                    e.currentTarget.nextElementSibling.style.left = newPos + "px";
+                                    e.currentTarget.nextElementSibling.style.display = null;
+                                    e.currentTarget.nextElementSibling.innerHTML = e.currentTarget.value;
+                                },
+                                change: (e) => {
+                                    e.target.setAttribute('value', e.currentTarget.value);
+                                    editor.setOption(object.name, e.currentTarget.value);
+                                },
+                                mouseup: (e) => {
+                                    e.currentTarget.nextElementSibling.style.display = 'none';
+                                }
                             }
                         }, []);
 
@@ -139,8 +144,10 @@ export default {
                             domProps: {
                                 name: object.name
                             },
-                            onChange: (e) => {
-                                editor.setOption(object.name, e.value);
+                            on: {
+                                change: (e) => {
+                                    editor.setOption(object.name, e.currentTarget.value);
+                                }
                             }
                         }, object.value.map((val, i) => {
                             // Create <option> element
@@ -198,9 +205,11 @@ export default {
                             domProps: {
                                 name: object.name
                             },
-                            onChange: (e) => {
-                                let value = (this.value === 'true' || this.value === 'false') ? JSON.parse(this.value) : this.value;
-                                editor.setOption(object.name, value);
+                            on: {
+                                change: (e) => {
+                                    let value = (e.currentTarget.value === 'true' || e.currentTarget.value === 'false') ? JSON.parse(e.currentTarget.value) : e.currentTarget.value;
+                                    editor.setOption(object.name, value);
+                                }
                             }
                         }, object.value.map((val, i) => {
                             // Create <option> element
@@ -261,11 +270,13 @@ export default {
                                 name: object.name,
                             },
                             class: 'error',
-                            onChange: (e) => {
-                                if (e.checked) {
-                                    editor.setOption(object.name, true);
-                                } else {
-                                    editor.setOption(object.name, false);
+                            on: {
+                                change: (e) => {
+                                    if (e.currentTarget.checked) {
+                                        editor.setOption(object.name, true);
+                                    } else {
+                                        editor.setOption(object.name, false);
+                                    }
                                 }
                             }
                         }, []);
@@ -552,7 +563,7 @@ export default {
     .range-slider__value {
       display: inline-block;
       position: relative;
-      width: 60px;
+      width: fit-content;
       color: #fff;
       line-height: 20px;
       text-align: center;
@@ -563,15 +574,13 @@ export default {
     }
 
     .range-slider__value:after {
-      position: absolute;
-      top: 8px;
-      left: -7px;
-      width: 0;
-      height: 0;
-      border-top: 7px solid transparent;
-      border-right: 7px solid #2c3e50;
-      border-bottom: 7px solid transparent;
-      content: '';
+        position: absolute;
+        inset: -45% auto auto 2px;
+        border-left: 7px solid transparent;
+        border-right: 7px solid transparent;
+        border-bottom: 7px solid #2c3e50;
+        border-top: 7px solid transparent;
+        content: '';
     }
 
     ::-moz-range-track {
