@@ -5,9 +5,6 @@ const path = require('path');
 module.exports = {
   options: {
     alias: 'customCodeEditor',
-    ace: {
-      config: {}
-    }
   },
   beforeSuperClass(self) {
     const aceDirectory = "src-min-noconflict"
@@ -76,7 +73,7 @@ module.exports = {
     self.ace._allModes = allModes;
     self.ace._allThemes = allThemes;
     self.ace._otherFiles = otherFiles;
-    self.ace.optionsTypes = _.merge(require('./aceTypes.js'), _.keyBy(self.ace.optionsTypes, 'name'));
+    self.ace.optionsTypes = _.groupBy(_.merge(require('./aceTypes.js'), _.keyBy(self.ace.optionsTypes, 'name')), 'category');
     self.ace.defaultMode = self.ace.defaultMode || 'javascript';
     self.ace.theme = self.ace.theme || 'chrome';
 

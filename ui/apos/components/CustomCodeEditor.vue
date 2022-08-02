@@ -5,6 +5,20 @@
             <div class="apos-input-wrapper">
                 <div class="input-wrapper">
                     <div class="editor-container">
+                        <div class="dropdown" v-if="checkDropdown">
+                            <button class="button-dropdown result" @click="dropdownClick = !dropdownClick"><component :is="dropdownComponentSwitch"/><span class="dropdown-title">{{ getTitle }}</span></button>
+                            <div class="dropdown-content" v-show="dropdownClick">
+                                <input type="text" placeholder="Search.." class="my-input" @keyup.stop="filterModesList">
+                                <template v-for="(mode, key) in ace.modes">
+                                    <li :key="key + mode.title" v-if="mode.title" :data-title="mode.title" :data-name="mode.name.toLowerCase()" @click="changeMode">
+                                        {{ mode.title }}
+                                    </li>
+                                    <li :key="key + mode.name" v-else :data-name="mode.name.toLowerCase()" @click="changeMode">
+                                        {{ getName(mode.name) }}
+                                    </li>
+                                </template>
+                            </div>
+                        </div>
                         <div class="code-snippet-wrapper" ref="editor" data-editor>
                             <!-- Where the codes begin -->
                         </div>
@@ -17,23 +31,24 @@
                                 <div class="search-buttons">
                                     <div class="first-row">
                                         <input class="search-bar" placeholder="Search" />
-                                        <button class="more-options-button" @click="moreOptionsClick = !moreOptionsClick">
+                                        <button class="more-options-button"
+                                            @click="moreOptionsClick = !moreOptionsClick">
                                             <ChevronDotVerticalIcon :size="16" />
                                         </button>
                                         <div class="more-options" v-show="moreOptionsClick">
-                                            <button class="save-options"> 
-                                                <ChevronSaveIcon :size="16"/>Save
+                                            <button class="save-options" @click="optionsEvents">
+                                                <ChevronSaveIcon :size="16" />Save
                                             </button>
-                                            <button class="delete-options">
+                                            <button class="delete-options" @click="optionsEvents">
                                                 <ChevronDeleteIcon :size="16" /> Reset
                                             </button>
                                         </div>
                                     </div>
                                     <div class="input-wrapper">
-                                        <button class="copy">
+                                        <button class="copy-options" @click="optionsEvents">
                                             <ChevronCopyIcon :size="16" />
                                         </button>
-                                        <button class="undo">
+                                        <button class="undo-options" @click="optionsEvents">
                                             <ChevronUndoIcon :size="16" />
                                         </button>
                                     </div>
@@ -43,8 +58,8 @@
                                         src="https://static.overlay-tech.com/assets/2ea72787-5ae1-42f3-aa97-80b116cc2ab2.svg" />
                                 </div>
                                 <!-- This is where all options begins -->
-                                <OptionsContainerComponent :optionsTypes="ace.optionsTypes" 
-                                :editor="getEditor()" :cache="ace.cache" @updateCache="ace.cache.push($event)" ref="optionsContainer"/>
+                                <OptionsContainerComponent :optionsTypes="ace.optionsTypes" :editor="getEditor()"
+                                    :cache="ace.cache" @pushCache="ace.cache.push($event)" @updateCache="updateCacheValue" ref="optionsContainer" />
                             </div>
                         </div>
                     </div>
@@ -62,8 +77,11 @@
     import ChevronGearIcon from 'vue-material-design-icons/Cog.vue';
     import ChevronSaveIcon from 'vue-material-design-icons/ContentSave.vue';
     import ChevronDeleteIcon from 'vue-material-design-icons/Delete.vue';
+    import ChevronDropdownIcon from 'vue-material-design-icons/ChevronDown.vue';
+    import ChevronDropupIcon from 'vue-material-design-icons/ChevronUp.vue';
     import OptionsContainerComponent from './OptionsContainer.vue';
     import CustomCodeEditorMixinVue from '../mixins/CustomCodeEditorMixin.js';
+    import _ from 'lodash';
 
     // Import Ace NPM
     import * as ace from 'ace-builds';
@@ -72,7 +90,7 @@
     let browserOptions = apos.modules["custom-code-editor"].browser;
 
     // Push All Ace files if true
-    if (browserOptions.ace.pushAllAce){
+    if (browserOptions.ace.pushAllAce) {
         // Import All Modes
         for (let allModes = 0; allModes < browserOptions.ace._allModes.length; allModes++) {
             import(`ace-builds/src-min-noconflict/mode-${browserOptions.ace._allModes[allModes]}.js`);
@@ -91,7 +109,9 @@
         // Dynamic Import Modes, Themes, and Snippets that are defined by your module
         for (let i = 0; i < browserOptions.ace.modes.length; i++) {
             import(`ace-builds/src-min-noconflict/mode-${browserOptions.ace.modes[i].name}`)
-                .catch((e) => console.warn(`Unable to use mode for: '${browserOptions.ace.modes[i].name}''. Please make sure you use the correct mode names defined by 'Ace' Module`));
+                .catch((e) => console.warn(
+                    `Unable to use mode for: '${browserOptions.ace.modes[i].name}''. Please make sure you use the correct mode names defined by 'Ace' Module`
+                ));
 
             import(`ace-builds/src-min-noconflict/snippets/${browserOptions.ace.modes[i].name}`).catch((e) => null);
 
@@ -119,9 +139,11 @@
             ChevronGearIcon,
             ChevronSaveIcon,
             ChevronDeleteIcon,
+            ChevronDropdownIcon,
+            ChevronDropupIcon,
             OptionsContainerComponent
         },
-        data(){
+        data() {
             return {
                 ace: {
                     theme: browserOptions.ace.theme,
@@ -134,13 +156,28 @@
                     cache: [],
                     config: _.has(browserOptions, "ace.config") ? browserOptions.ace.config : null,
                 },
+                originalValue: '',
                 optionsClick: false,
                 moreOptionsClick: false,
+                dropdownClick: false,
                 log: console.log
             }
         },
         mounted() {
             let editor = this.init(this.$refs.editor);
+            this.setEditorValue();
+        },
+        computed: {
+            checkDropdown(){
+                return _.has(this.ace, 'config.dropdown.enable');
+            },
+            dropdownComponentSwitch(){
+                if(this.dropdownClick){
+                    return 'ChevronDropupIcon';
+                } else {
+                    return 'ChevronDropdownIcon';
+                }
+            }
         },
         methods: {
             validate(value) {
@@ -149,191 +186,269 @@
                         return 'required';
                     }
                 }
+
                 return false;
+            },
+            optionsEvents(e){
+                this.$refs.optionsContainer.buttonOptionsClick(e);
+            },
+            updateCacheValue({ property, value }){
+                this.ace.cache[property] = value;
             }
         }
     }
 </script>
 
 <style lang="scss" scoped>
+    @import "../../src/index.scss";
 
-@import "../../src/index.scss";
+    // Code Editor
+    .editor-container {
+        width: 100%;
 
-// Code Editor
-.editor-container {
-    width: 100%;
-}
+        // Dropdown
+        .dropdown {
+            width: auto;
+            height: $dropdownHeight;
+            background-color: white;
+            position: absolute;
+            z-index: 99;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.16);
+            display: inline-block;
+            text-align: center;
+            line-height: $dropdownHeight;
+            border-radius: $dropdownRadius;
+            padding-left: 8px;
+            padding-right: 8px;
+            border-radius: 5px;
 
-.input-wrapper {
-    display: flex;
-    align-items: flex-start;
-}
+            &:hover{
+                background-color: $gainsboro;
+            }
+        }
 
-.code-snippet-wrapper {
-    width: 100%;
-    height: 500px;
-    position: relative;
-}
+        .my-input {
+            margin: 20px;
+            border: 20px;
+            padding: 15px;
+            background-color: #F0F0F0;
+            font-size: 14px;
+            width: 170px;
+            border-radius: 5px;
+            font-family: inherit;
+        }
 
-.options-container {
-    background-color: $white;
-    overflow: auto;
-    padding: 32px 21px 0;
-    width: 250px;
-    flex-direction: column;
-    align-items: center;
-    height: auto;
-    z-index: 999;
-}
+        .dropdown-content {
+            position: absolute;
+            background-color: white;
+            min-width: 230px;
+            overflow: auto;
+            border: 1px solid #ddd;
+            z-index: 1;
+            max-height: 300px;
+            border-radius: 5px;
+            left: 0;
 
-.options-config {
-    display: flex;
-    position: absolute;
-    z-index: 100;
-    right: 0;
-    height: 100%;
-    top: 0;
-    overflow: hidden;
-}
+            li {
+                color: black;
+                padding: 12px 0 12px 22px;
+                text-decoration: none;
+                display: block;
+                text-align: left;
+                cursor: pointer;
+                list-style-type: none;
 
-.search-buttons {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    width: 240px;
+                &:hover{
+                    background-color: #ddd;
+                }
+            }
+        }
 
-    &:not(:last-of-type) {
-        margin-bottom: 18px;
+        .button-dropdown {
+            height: inherit;
+            background-color: transparent;
+            border: none;
+            width: 100%;
+            color: black;
+            padding: inherit;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            align-content: center;
+            cursor: pointer;
+        }
     }
-}
 
-.first-row {
-    margin-bottom: 15px;
-    display: flex;
-    align-items: center;
-}
-
-.search-bar {
-    width: 162px;
-    background-color: $white-smoke-2;
-    margin-right: 14px;
-    border-radius: 5px;
-    padding: 15px;
-    color: $dark-slate-gray-2;
-    border: 0;
-    @include arial-14-regular;
-}
-
-.more-options-button {
-    background-color: $white-smoke-3;
-    border-radius: 50px;
-    padding: 8px 15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    cursor: pointer;
-    border: 0;
-
-    &:hover {
-        background-color: $gainsboro;
+    .input-wrapper {
+        display: flex;
+        align-items: flex-start;
     }
-}
 
-.button-options {
-    border: 0;
-    background-color: $white-smoke-3;
-    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-    width: 35px;
-    height: 50px;
-    border-radius: 0 0 0 15px;
-    cursor: pointer;
-
-    &:hover {
-        background-color: $gainsboro;
+    .code-snippet-wrapper {
+        width: 100%;
+        height: 500px;
+        position: relative;
     }
-}
 
-.copy {
-    background-color: $light-blue;
-    margin-right: 10px;
-    border-radius: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 29.88px;
-    height: 29.88px;
-    cursor: pointer;
-    border: 0;
-
-    &:hover {
-        background-color: $plum;
+    .options-container {
+        background-color: $white;
+        overflow: auto;
+        padding: 32px 21px 0;
+        width: 250px;
+        flex-direction: column;
+        align-items: center;
+        height: auto;
+        z-index: 999;
     }
-}
 
-.undo {
-    background-color: $lavender;
-    border-radius: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 30px;
-    height: 30px;
-    cursor: pointer;
-    border: 0;
-
-    &:hover {
-        background-color: $dim-gray;
+    .options-config {
+        display: flex;
+        position: absolute;
+        z-index: 100;
+        right: 0;
+        height: 100%;
+        top: 0;
+        overflow: hidden;
     }
-}
 
-.divider-title {
-    width: 240px;
-    margin-bottom: 12px;
-}
+    .search-buttons {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        width: 240px;
 
-.more-options {
-    width: 129px;
-    height: auto;
-    position: absolute;
-    top: 57px;
-    right: 38px;
-    background-color: white;
-    z-index: 101;
-    border-radius: 2px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.16);
-}
-
-.save-options {
-    border: none;
-    height: 46px;
-    font-size: 14px;
-    justify-content: space-evenly;
-    align-items: center;
-    display: flex;
-    width: 100%;
-    background-color: white;
-    cursor: pointer;
-
-    &:hover {
-        background-color: $gainsboro;
+        &:not(:last-of-type) {
+            margin-bottom: 18px;
+        }
     }
-}
 
-.delete-options {
-    border: none;
-    height: 46px;
-    font-size: 14px;
-    width: 100%;
-    justify-content: space-evenly;
-    align-items: center;
-    display: flex;
-    background-color: white;
-    cursor: pointer;
-
-    &:hover {
-        background-color: $gainsboro;
+    .first-row {
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
     }
-}
+
+    .search-bar {
+        width: 162px;
+        background-color: $white-smoke-2;
+        margin-right: 14px;
+        border-radius: 5px;
+        padding: 15px;
+        color: $dark-slate-gray-2;
+        border: 0;
+        @include arial-14-regular;
+    }
+
+    .more-options-button {
+        background-color: $white-smoke-3;
+        border-radius: 50px;
+        padding: 8px 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        cursor: pointer;
+        border: 0;
+
+        &:hover {
+            background-color: $gainsboro;
+        }
+    }
+
+    .button-options {
+        border: 0;
+        background-color: $white-smoke-3;
+        box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+        width: 35px;
+        height: 50px;
+        border-radius: 0 0 0 15px;
+        cursor: pointer;
+
+        &:hover {
+            background-color: $gainsboro;
+        }
+    }
+
+    .copy-options {
+        background-color: $light-blue;
+        margin-right: 10px;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 29.88px;
+        height: 29.88px;
+        cursor: pointer;
+        border: 0;
+
+        &:hover {
+            background-color: $plum;
+        }
+    }
+
+    .undo-options {
+        background-color: $lavender;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        cursor: pointer;
+        border: 0;
+
+        &:hover {
+            background-color: $dim-gray;
+        }
+    }
+
+    .divider-title {
+        width: 240px;
+        margin-bottom: 12px;
+    }
+
+    .more-options {
+        width: 129px;
+        height: auto;
+        position: absolute;
+        top: 57px;
+        right: 38px;
+        background-color: white;
+        z-index: 101;
+        border-radius: 2px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.16);
+    }
+
+    .save-options {
+        border: none;
+        height: 46px;
+        font-size: 14px;
+        justify-content: space-evenly;
+        align-items: center;
+        display: flex;
+        width: 100%;
+        background-color: white;
+        cursor: pointer;
+
+        &:hover {
+            background-color: $gainsboro;
+        }
+    }
+
+    .delete-options {
+        border: none;
+        height: 46px;
+        font-size: 14px;
+        width: 100%;
+        justify-content: space-evenly;
+        align-items: center;
+        display: flex;
+        background-color: white;
+        cursor: pointer;
+
+        &:hover {
+            background-color: $gainsboro;
+        }
+    }
 </style>
