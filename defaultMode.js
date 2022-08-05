@@ -1,19 +1,19 @@
 module.exports = [
-            {
-               title : "Bash",
-               name: 'sh',
-               snippet: `#!/bin/bash
+  {
+    title: 'Bash',
+    name: 'sh',
+    snippet: `#!/bin/bash
                      # GNU bash, version 4.3.46
                      @code-here`
-            },
-            {
-               title: 'ActionScript',
-               name: 'actionscript'
-            },
-            {
-               title: 'C++',
-               name: 'c_cpp',
-               snippet: `//Microsoft (R) C/C++ Optimizing Compiler Version 19.00.23506 for x64
+  },
+  {
+    title: 'ActionScript',
+    name: 'actionscript'
+  },
+  {
+    title: 'C++',
+    name: 'c_cpp',
+    snippet: `//Microsoft (R) C/C++ Optimizing Compiler Version 19.00.23506 for x64
 
                         #include <iostream>
 
@@ -21,11 +21,11 @@ module.exports = [
                         {
                            @code-here
                         }`
-            },
-            {
-               title: 'C#',
-               name: 'csharp',
-               snippet: `//Rextester.Program.Main is the entry point for your code. Don't change it.
+  },
+  {
+    title: 'C#',
+    name: 'csharp',
+    snippet: `//Rextester.Program.Main is the entry point for your code. Don't change it.
                      //Compiler version 4.0.30319.17929 for Microsoft (R) .NET Framework 4.5
 
                      using System;
@@ -44,10 +44,10 @@ module.exports = [
                            }
                         }
                      }`
-            },
-            {
-               name: 'php',
-               snippet: `<html>
+  },
+  {
+    name: 'php',
+    snippet: `<html>
                      <head>
                      <title>PHP Test</title>
                      </head>
@@ -57,10 +57,10 @@ module.exports = [
                      ?> 
                      </body>
                      </html>`
-            },
-            {
-               name: 'html',
-               snippet: `<!DOCTYPE html>
+  },
+  {
+    name: 'html',
+    snippet: `<!DOCTYPE html>
             <html>
             <head>
             <title>
@@ -72,11 +72,11 @@ module.exports = [
             @code-here
             </body>
             </html>`
-            },
-            {
-               name: 'javascript',
-               snippet: `document.addEventListener("DOMContentLoaded" , function(){
+  },
+  {
+    name: 'javascript',
+    snippet: `document.addEventListener("DOMContentLoaded" , function(){
                @code-here
             });`
-            }
-         ];
+  }
+];

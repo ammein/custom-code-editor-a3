@@ -12,6 +12,9 @@
             },
             editor: {
                 type: Object
+            },
+            search: {
+                type: String
             }
         },
         data() {
@@ -45,7 +48,7 @@
             },
             async deleteOptions(){
                 try {
-                    let deleteOptions = await apos.http.delete(apos.customCodeEditor.browser.action + '/remove');
+                    let deleteOptions = await apos.http.delete(apos.customCodeEditor.browser.action + '/remove', {});
 
                     return deleteOptions;
                 }catch(e){
@@ -85,17 +88,17 @@
                                     // Revert to default value
                                     input.value = cacheValue[input.name];
 
-                                    // Delete assigned this.options
-                                    delete this.options[key];
+                                    // Delete assigned self.options
+                                    delete self.options[key];
 
                                     // And reset options on editor
-                                    editor.setOption(input.name, cacheValue[input.name]);
+                                    self.editor.setOption(input.name, cacheValue[input.name]);
                                 } else if (button.className === 'delete-options') {
                                     // Revert to default value based on module options
                                     input.value = self.originalOptions[input.name];
 
                                     // And reset options on editor
-                                    editor.setOption(input.name, self.originalOptions[input.name]);
+                                    self.editor.setOption(input.name, self.originalOptions[input.name]);
                                 }
                             }
                             break;
@@ -119,11 +122,11 @@
                                     // Display none on span value
                                     input.nextElementSibling.style.display = 'none';
 
-                                    // Delete assigned this.options
-                                    delete this.options[key];
+                                    // Delete assigned self.options
+                                    delete self.options[key];
 
                                     // And reset options on editor
-                                    editor.setOption(input.name, cacheValue[input.name]);
+                                    self.editor.setOption(input.name, cacheValue[input.name]);
 
                                     // Remove the attribute as default
                                     input.removeAttribute('value');
@@ -135,7 +138,7 @@
                                     input.nextElementSibling.style.display = 'none';
 
                                     // And reset options on editor
-                                    editor.setOption(input.name, self.originalOptions[input.name]);
+                                    self.editor.setOption(input.name, self.originalOptions[input.name]);
 
                                     // Remove the attribute as default
                                     input.removeAttribute('value');
@@ -156,17 +159,17 @@
                                     // Revert to default value
                                     input.checked = cacheValue[input.name];
 
-                                    // Delete assigned this.options
-                                    delete this.options[key];
+                                    // Delete assigned self.options
+                                    delete self.options[key];
 
                                     // And reset options on editor
-                                    editor.setOption(input.name, cacheValue[input.name]);
+                                    self.editor.setOption(input.name, cacheValue[input.name]);
                                 } else if (button.className === 'delete-options') {
                                     // Revert to default value based on module options
                                     input.checked = self.originalOptions[input.name];
 
                                     // And reset options on editor
-                                    editor.setOption(input.name, self.originalOptions[input.name]);
+                                    self.editor.setOption(input.name, self.originalOptions[input.name]);
                                 }
                             }
                             break;
@@ -175,8 +178,8 @@
 
                 if (button.className === 'copy-options') {
                     // Merge allCopy options
-                    if (Object.keys(this.options).length > 0) {
-                        allCopy = Object.assign(this.options, allCopy);
+                    if (Object.keys(self.options).length > 0) {
+                        allCopy = Object.assign(self.options, allCopy);
 
                         // Loop and find if existing default saved options detected matches module options
                         for (let key of Object.keys(self.originalOptions)) {
@@ -199,24 +202,24 @@
                     if (Object.keys(allCopy).length > 0) {
                         self.saveOptions(allCopy).then((data) => {
                             if (data.status === 'success') {
-                                apos.notify(data.message, {
+                                return apos.notify(data.message, {
                                     dismiss: 5,
                                     type: 'success'
                                 });
                             }
 
-                            apos.notify(data.message, {
+                            return apos.notify(data.message, {
                                 dismiss: 5,
                                 type: 'error'
                             })
                         }).catch((e) => {
-                            apos.notify('Unable to save options. Please try again', {
+                            return apos.notify('Unable to save options. Please try again', {
                                 type: 'error',
                                 dismiss: 5
                             })
                         })
                     } else {
-                        apos.notify('ERROR : Save unsuccessful, options empty. Try adjust your desire options than your default settings.', {
+                        return apos.notify('ERROR : Save unsuccessful, options empty. Try adjust your desire options than your default settings.', {
                             type: 'error',
                             dismiss: 10
                         })
@@ -224,8 +227,8 @@
                 } else if (button.className === 'delete-options') {
                     self.deleteOptions().then((result) => {
                         if (result.status === 'success') {
-                                // Set this.options to be empty too
-                                this.options = {}
+                                // Set self.options to be empty too
+                                self.options = {}
 
                                 // Loop the optionsTypes, if there is `saveValue` assigned to it, delete it
                                 for (let key of Object.keys(self.optionsTypes)) {
@@ -236,18 +239,18 @@
                                     }
                                 }
 
-                                apos.notify('Saved options successfully removed', {
+                                return apos.notify('Saved options successfully removed', {
                                     type: 'success',
                                     dismiss: 2
                                 });
                             } else {
-                                apos.notify('ERROR : ' + result.message, {
+                                return apos.notify('ERROR : ' + result.message, {
                                     type: 'error',
                                     dismiss: 10
                                 });
                             }
                     }).catch((e)=> {
-                        apos.notify('ERROR : ' + e.message, {
+                        return apos.notify('ERROR : ' + e.message, {
                             type: 'error',
                             dismiss: 10
                         });
@@ -255,7 +258,28 @@
                 }
             },
             optionsInputs(object, type, editor, h) {
-                let lists = h('li', {}, [])
+                let display = '';
+
+                // Only override display when keyword search happens
+                if (this.search.length > 0) {
+                    let findKeyword = this.$parent.$parent.getName(object.name).indexOf(this.search);
+                    
+                    // Only allow matched input, make display none for the rest of the list
+                    if(findKeyword === -1){
+                        display = 'none';
+                    }
+                }
+
+                let lists = h('li', {
+                    class: 'lists-inputs',
+                    attrs: {
+                        'data-category': this.$parent.$parent.getName(object.category),
+                        id: object.name
+                    },
+                    style: {
+                        display
+                    }
+                }, [])
                 switch (type) {
                     case 'slider':
                         (function (self) {
@@ -282,7 +306,7 @@
                             let input = h('input', {
                                 class: 'range-slider__range',
                                 domProps: {
-                                    value: editor.getOptions()[object.name],
+                                    value: editor.getOptions()[object.name].value,
                                     name: object.name,
                                     type: 'range',
                                     max: object.value.max,
@@ -328,11 +352,6 @@
                                 self.$emit('pushCache', cache);
                             }
 
-                            lists.data.class = 'lists-inputs'
-                            lists.data.attrs = {
-                                'data-category': self.$parent.$parent.getName(object.category),
-                                id: object.name
-                            }
                             lists.children.push(label);
                             lists.children.push(input);
                             lists.children.push(output);
@@ -391,11 +410,6 @@
                                 self.$emit('pushCache', cache);
                             }
 
-                            lists.data.class = 'lists-inputs'
-                            lists.data.attrs = {
-                                'data-category': self.$parent.$parent.getName(object.category),
-                                id: object.name
-                            }
                             lists.children.push(label);
                             lists.children.push(select);
                         })(this);
@@ -457,11 +471,6 @@
                                 self.$emit('pushCache', cache);
                             }
 
-                            lists.data.class = 'lists-inputs'
-                            lists.data.attrs = {
-                                'data-category': self.$parent.$parent.getName(object.category),
-                                id: object.name
-                            }
                             lists.children.push(label);
                             lists.children.push(select);
                         })(this);
@@ -508,11 +517,6 @@
                                 self.$emit('pushCache', cache);
                             }
 
-                            lists.data.class = 'lists-inputs'
-                            lists.data.attrs = {
-                                'data-category': self.$parent.$parent.getName(object.category),
-                                id: object.name
-                            }
                             lists.children.push(label);
                             lists.children.push(input);
                         })(this);
@@ -524,6 +528,7 @@
             },
             loopOptions(myOptions, h) {
                 let editor = this.editor;
+                let self = this;
                 // Create new <ul> element to group all lists in its children
                 let unorderedLists = h('ul', {
                     class: 'editor-options-container'
@@ -540,10 +545,24 @@
 
                 // Loop Group By Options
                 for (let categoryKey in optionsTypes) {
+                    let display = '';
+
+                    // Only override display when keyword search happens
+                    if (this.search.length > 0) {
+                        // Filter keyword that has the value
+                        let filterKeyword = _.filter(optionsTypes[categoryKey], (val) => self.$parent.$parent.getName(val.name).indexOf(self.search) > -1);
+
+                        // Only hide header list if it not match with the filter keyword
+                        if(filterKeyword.length === 0){
+                            display = 'none';
+                        }
+                    }
+
                     // Create new listHeader
                     listHeader = h('li', {
                         style: {
-                            marginBottom: "60px"
+                            marginBottom: "60px",
+                            display
                         }
                     }, [])
                     // Assign Attributes to listHeader
@@ -566,53 +585,52 @@
                     // Finally push the listHeader to <ul> parent element
                     unorderedLists.children.push(listHeader);
 
-                    // Loop inner
-                    optionsTypes[categoryKey].forEach((groupedOptions, i) => {
-                        // Loop existing Editor Options
-                        for (let key of Object.keys(editor.getOptions())) {
+                    // Loop existing Editor Options
+                    // Something is wrong in here. Should do filter instead
+                    for (let key of Object.keys(this.editor.getOptions())) {
+                        let groupedOptions = optionsTypes[categoryKey].find((val) => val.name === key);
 
-                            // Assign child of listHeader
-                            if (groupedOptions && groupedOptions.name === key && categoryKey === groupedOptions.category) {
-                                switch (true) {
-                                    case _.isArray(groupedOptions.value) && !_.every(groupedOptions.value, _.isObject):
-                                        groupedOptions = myOptions[key] !== undefined ? apos.util.assign(
-                                            groupedOptions, {
-                                                saveValue: myOptions[key]
-                                            }) : groupedOptions;
+                        // Assign child of listHeader
+                        if (groupedOptions && groupedOptions.name === key && categoryKey === groupedOptions.category) {
+                            switch (true) {
+                                case _.isArray(groupedOptions.value) && !_.every(groupedOptions.value, _.isObject):
+                                    groupedOptions = myOptions[key] !== undefined ? apos.util.assign(
+                                        groupedOptions, {
+                                            saveValue: myOptions[key]
+                                        }) : groupedOptions;
 
-                                        listHeader.children.push(this.optionsInputs(groupedOptions, 'dropdownArray', editor, h))
-                                        break;
+                                    listHeader.children.push(this.optionsInputs(groupedOptions, 'dropdownArray', editor, h))
+                                    break;
 
-                                    case _.isArray(groupedOptions.value) && _.every(groupedOptions.value, _.isObject):
-                                        groupedOptions = myOptions[key] !== undefined ? apos.util.assign(
-                                            groupedOptions, {
-                                                saveValue: myOptions[key]
-                                            }) : groupedOptions;
+                                case _.isArray(groupedOptions.value) && _.every(groupedOptions.value, _.isObject):
+                                    groupedOptions = myOptions[key] !== undefined ? apos.util.assign(
+                                        groupedOptions, {
+                                            saveValue: myOptions[key]
+                                        }) : groupedOptions;
 
-                                        listHeader.children.push(this.optionsInputs(groupedOptions, 'dropdownObject', editor, h))
-                                        break;
+                                    listHeader.children.push(this.optionsInputs(groupedOptions, 'dropdownObject', editor, h))
+                                    break;
 
-                                    case _.isObject(groupedOptions.value):
-                                        groupedOptions = myOptions[key] !== undefined ? apos.util.assign(
-                                            groupedOptions, {
-                                                saveValue: myOptions[key]
-                                            }) : groupedOptions;
+                                case _.isObject(groupedOptions.value):
+                                    groupedOptions = myOptions[key] !== undefined ? apos.util.assign(
+                                        groupedOptions, {
+                                            saveValue: myOptions[key]
+                                        }) : groupedOptions;
 
-                                        listHeader.children.push(this.optionsInputs(groupedOptions, 'slider', editor, h))
-                                        break;
+                                    listHeader.children.push(this.optionsInputs(groupedOptions, 'slider', editor, h))
+                                    break;
 
-                                    case groupedOptions.type === 'boolean':
-                                        groupedOptions = myOptions[key] !== undefined ? apos.util.assign(
-                                            groupedOptions, {
-                                                saveValue: myOptions[key]
-                                            }) : groupedOptions;
+                                case groupedOptions.type === 'boolean':
+                                    groupedOptions = myOptions[key] !== undefined ? apos.util.assign(
+                                        groupedOptions, {
+                                            saveValue: myOptions[key]
+                                        }) : groupedOptions;
 
-                                        listHeader.children.push(this.optionsInputs(groupedOptions, 'checkbox', editor, h));
-                                        break;
-                                }
+                                    listHeader.children.push(this.optionsInputs(groupedOptions, 'checkbox', editor, h));
+                                    break;
                             }
                         }
-                    })
+                    }
                 }
 
                 // Assign to reference for make it as Original Options
@@ -625,8 +643,12 @@
             const fetchData =  async () => {
                 try {
                     let getOptions = await this.getOptions();
-                    this.options = _.assign(this.options , JSON.parse(getOptions.message));
-                    this.$forceUpdate();
+                    if(getOptions.status !== 'error') {
+                        this.options = _.assign(this.options , JSON.parse(getOptions.message));
+                        this.$forceUpdate();
+                    } else {
+                        throw new Error(getOptions.message);
+                    }
                 } catch(e){
                     apos.notify(e.message, {
                         dismiss: 5,

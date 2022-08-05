@@ -7,11 +7,11 @@ module.exports = {
     alias: 'customCodeEditor',
   },
   beforeSuperClass(self) {
-    const aceDirectory = "src-min-noconflict"
+    const aceDirectory = 'src-noconflict';
     const allModes = [];
     const allThemes = [];
     const otherFiles = [];
-    const files = fs.readdirSync(path.resolve(path.dirname(require.resolve("ace-builds")), `../${aceDirectory}`));
+    const files = fs.readdirSync(path.resolve(path.dirname(require.resolve('ace-builds')), `../${aceDirectory}`));
 
     if (!files) {
       throw self.apos.error('Did you install `ace-builds` npm package yet?');
