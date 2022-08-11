@@ -57,7 +57,6 @@
                     throw new Error(e);
                 }
             },
-            // TODO: Re-adjust the code to be A3 Compatible
             buttonOptionsClick(e) {
                 let button = e.currentTarget;
                 let allCopy = {};
@@ -86,12 +85,21 @@
                                 .selectedIndex].value) : input.options[input.selectedIndex].value;
 
                             if (value !== cacheValue[input.name]) {
+                                let passValue = '';
+
                                 if (button.className === 'copy-options' || button.className ===
                                     'save-options') {
+                                    // Assign to local copy to pass it as local reference
                                     allCopy[input.name] = input.options[input.selectedIndex].value;
+
+                                    // Pass Value to emit
+                                    passValue = input.options[input.selectedIndex].value;
                                 } else if (button.className === 'undo-options') {
                                     // Revert to default value
                                     input.value = cacheValue[input.name];
+
+                                    // Pass Value to emit
+                                    passValue = cacheValue[input.name];
 
                                     // Delete assigned self.options
                                     delete self.options[key];
@@ -102,13 +110,16 @@
                                     // Revert to default value based on module options
                                     input.value = self.originalOptions[input.name];
 
+                                    // Pass Value to emit
+                                    passValue = self.originalOptions[input.name];
+
                                     // And reset options on editor
                                     self.editor.setOption(input.name, self.originalOptions[input.name]);
                                 }
 
                                 inputEmits[input.name] = {
                                     input: input,
-                                    value: input.value,
+                                    value: passValue,
                                     button: button,
                                     allCopy: allCopy
                                 };
@@ -128,12 +139,21 @@
                                 parseFloat(input.value) !== cacheValue[input.name] &&
                                 input.getAttribute('value') !== null
                             ) {
+                                let passValue = '';
+
                                 if (button.className === 'copy-options' || button.className ===
                                     'save-options') {
+                                    // Assign to local copy to pass it as local reference
                                     allCopy[input.name] = parseFloat(input.value);
+
+                                    // Pass Value to emit
+                                    passValue = parseFloat(input.value);
                                 } else if (button.className === 'undo-options') {
                                     // Revert to default value
                                     input.value = cacheValue[input.name];
+
+                                    // Pass value to emit
+                                    passValue = cacheValue[input.name];
 
                                     // Display none on span value
                                     input.nextElementSibling.style.display = 'none';
@@ -150,6 +170,9 @@
                                     // Revert to default value based on module options
                                     input.value = self.originalOptions[input.name];
 
+                                    // Pass value to emit
+                                    passValue = self.originalOptions[input.name];
+
                                     // Display none on span value
                                     input.nextElementSibling.style.display = 'none';
 
@@ -162,7 +185,7 @@
 
                                 inputEmits[input.name] = {
                                     input: input,
-                                    value: input.value,
+                                    value: passValue,
                                     button: button,
                                     allCopy: allCopy
                                 };
@@ -201,7 +224,7 @@
 
                                 inputEmits[input.name] = {
                                     input: input,
-                                    value: input.value,
+                                    value: input.checked,
                                     button: button,
                                     allCopy: allCopy
                                 };
@@ -707,12 +730,13 @@
             },
             emitOptions({input ,value, button, allCopy}){
                 // Emit event to alert other similar components
-                switch(input.type) {
-                    case 'select':
+                switch(true) {
+                    case (/select/g).test(input.type):
                         this.$root.$emit('customCodeEditor:getOptions', {
                             customCodeEditor: {
+                                input: input,
                                 name: input.name,
-                                value: value,
+                                value: value.toString(),
                                 action: button.className.replace('-options', '').trim(),
                                 options: allCopy,
                                 button: button
@@ -720,9 +744,10 @@
                         });
                         break;
 
-                    case "range":
+                    case (/range/g).test(input.type):
                         this.$root.$emit('customCodeEditor:getOptions', {
                             customCodeEditor: {
+                                input: input,
                                 name: input.name,
                                 value: parseFloat(input.value),
                                 action: button.className.replace('-options', '').trim(),
@@ -732,9 +757,10 @@
                         });
                         break;
 
-                    case "checkbox":
+                    case (/checkbox/g).test(input.type):
                         this.$root.$emit('customCodeEditor:getOptions', {
                             customCodeEditor: {
+                                input: input,
                                 name: input.name,
                                 value: input.checked,
                                 action: button.className.replace('-options', '').trim(),
@@ -748,24 +774,24 @@
             },
             updateOptions(e){
                 if(e.customCodeEditor && !_.isUndefined(e.customCodeEditor.value)) {
-                    var input = this.$el.querySelector('input[name="' + e.customCodeEditor.name  +'"]');
+                    // Find input from this current component
+                    let input = this.$el.querySelector(`[name="${e.customCodeEditor.input.name}"]`);
 
-                    switch (input.type){
+                    switch (e.customCodeEditor.input.type){
                         case "checkbox":
                             input.checked = e.customCodeEditor.value;
                             break;
 
                         default:
                             input.value = e.customCodeEditor.value;
-                            break;
+                            input.removeAttribute('value');
                     }
 
                     if(e.customCodeEditor.action) {
+                        let copyButton = this.$parent.$el.querySelector('button.copy-options');
                         switch(e.customCodeEditor.action){
                             case "copy":
-                                    if(!e.customCodeEditor.button.dataset.clipboardText || e.customCodeEditor.button.dataset.clipboardText !== e.customCodeEditor.options) {
-                                        e.customCodeEditor.button.dataset.clipboardText = e.customCodeEditor.options;
-                                    }
+                                    copyButton.dataset.clipboardText = JSON.stringify(e.customCodeEditor.options);
                                 break;
 
                             case "undo":
@@ -773,11 +799,13 @@
                                     if(this.options[e.customCodeEditor.name]) {
                                         delete this.options[e.customCodeEditor.name];
                                     }
+                                    copyButton.dataset.clipboardText = JSON.stringify(this.options);
                                 break;
 
                             case "delete":
                                 if(this.options){
                                     this.options = {};
+                                    delete copyButton.dataset.clipboardText;
                                 }
                                 break;
                         }

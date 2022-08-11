@@ -15,11 +15,8 @@ export default {
       editor.session.setMode(this.ace.aceModePath + this.ace.defaultMode.toLowerCase());
       editor.setTheme(this.ace.aceThemePath + this.ace.theme);
 
-      // Set schema value onBlur event editor
-      editor.on('blur', function () {
-        // eslint-disable-next-line no-useless-call
-        self.setSubmitValue.call(self, editor);
-      });
+      // Register Editor Events
+      this.editorEvents.call(self, editor);
 
       // If got specific height for editor container
       if (_.has(this.ace, 'config.editorHeight')) {
@@ -238,6 +235,22 @@ export default {
       if ((editor.getValue().length > 0 || this.next.type.length > 0) && mode !== this.next.type) {
         this.next.type = mode;
       }
+    },
+    editorEvents(editor) {
+      const self = this;
+      // Set schema value onBlur event editor
+      editor.on('blur', function () {
+        // eslint-disable-next-line no-useless-call
+        self.setSubmitValue.call(self, editor);
+      });
+
+      // When editor is on focus
+      editor.on('focus', function () {
+        // Remove Options Container if options container is on show class
+        if (self.optionsClick) {
+          self.optionsClick = false;
+        }
+      });
     }
   }
 };
