@@ -33,7 +33,7 @@
                     throw new Error(e);
                 }
             },
-            async saveOptions(copyOptions){
+            async saveOptions(copyOptions) {
                 try {
                     let saveOptions = await apos.http.post(apos.customCodeEditor.browser.action + '/submit', {
                         body: {
@@ -41,17 +41,18 @@
                         }
                     });
                     return saveOptions;
-                } catch(e){
+                } catch (e) {
                     console.warn('Save options ERROR', e);
                     throw new Error(e);
                 }
             },
-            async deleteOptions(){
+            async deleteOptions() {
                 try {
-                    let deleteOptions = await apos.http.delete(apos.customCodeEditor.browser.action + '/remove', {});
+                    let deleteOptions = await apos.http.delete(apos.customCodeEditor.browser.action +
+                    '/remove', {});
 
                     return deleteOptions;
-                }catch(e){
+                } catch (e) {
                     console.warn('Delete options ERROR', e);
                     throw new Error(e);
                 }
@@ -60,6 +61,7 @@
             buttonOptionsClick(e) {
                 let button = e.currentTarget;
                 let allCopy = {};
+                let inputEmits = {}
                 var self = this;
                 this.$el.querySelectorAll('li:not([data-header])').forEach(function (value, i) {
                     let key = Object.keys(self.cache[i])[0];
@@ -69,7 +71,7 @@
                     // Detect changes by comparing all cache with incoming list arrays.
                     // This will be useful and only executes if it not matches the cache value
                     switch (true) {
-                        case (/select/g).test(input.type) && cacheValue[input.name] !== undefined:
+                        case (/select/g).test(input.type) && !_.isUndefined(cacheValue[input.name]):
                             if (button.className === 'delete-options') {
                                 // Reset the cache first, then run checking
                                 self.$emit('updateCache', {
@@ -79,10 +81,13 @@
                             }
 
                             // Transform the value
-                            let value = (input.options[input.selectedIndex].value === 'true' || input.options[input.selectedIndex].value === 'false') ? JSON.parse(input.options[input.selectedIndex].value) : input.options[input.selectedIndex].value;
+                            let value = (input.options[input.selectedIndex].value === 'true' || input.options[
+                                input.selectedIndex].value === 'false') ? JSON.parse(input.options[input
+                                .selectedIndex].value) : input.options[input.selectedIndex].value;
 
                             if (value !== cacheValue[input.name]) {
-                                if (button.className === 'copy-options' || button.className === 'save-options') {
+                                if (button.className === 'copy-options' || button.className ===
+                                    'save-options') {
                                     allCopy[input.name] = input.options[input.selectedIndex].value;
                                 } else if (button.className === 'undo-options') {
                                     // Revert to default value
@@ -100,20 +105,31 @@
                                     // And reset options on editor
                                     self.editor.setOption(input.name, self.originalOptions[input.name]);
                                 }
+
+                                inputEmits[input.name] = {
+                                    input: input,
+                                    value: input.value,
+                                    button: button,
+                                    allCopy: allCopy
+                                };
                             }
                             break;
 
                         case (/range/g).test(input.type):
                             if (button.className === 'delete-options') {
                                 // Reset the cache first, then run checking
-                                cacheValue[input.name] = self.originalOptions[input.name];
+                                self.$emit('updateCache', {
+                                    property: input.name,
+                                    value: self.originalOptions[input.name]
+                                })
                             }
 
                             if (
                                 parseFloat(input.value) !== cacheValue[input.name] &&
                                 input.getAttribute('value') !== null
                             ) {
-                                if (button.className === 'copy-options' || button.className === 'save-options') {
+                                if (button.className === 'copy-options' || button.className ===
+                                    'save-options') {
                                     allCopy[input.name] = parseFloat(input.value);
                                 } else if (button.className === 'undo-options') {
                                     // Revert to default value
@@ -143,17 +159,28 @@
                                     // Remove the attribute as default
                                     input.removeAttribute('value');
                                 }
+
+                                inputEmits[input.name] = {
+                                    input: input,
+                                    value: input.value,
+                                    button: button,
+                                    allCopy: allCopy
+                                };
                             }
                             break;
 
                         case (/checkbox/g).test(input.type):
                             if (button.className === 'delete-options') {
                                 // Reset the cache first, then run checking
-                                cacheValue[input.name] = self.originalOptions[input.name] === undefined ? false : self.originalOptions[input.name];
+                                self.$emit('updateCache', {
+                                    property: input.name,
+                                    value: _.isUndefined(self.originalOptions[input.name]) ? false : self.originalOptions[input.name]
+                                })
                             }
 
                             if (input.checked !== cacheValue[input.name]) {
-                                if (button.className === 'copy-options' || button.className === 'save-options') {
+                                if (button.className === 'copy-options' || button.className ===
+                                    'save-options') {
                                     allCopy[input.name] = input.checked
                                 } else if (button.className === 'undo-options') {
                                     // Revert to default value
@@ -171,6 +198,13 @@
                                     // And reset options on editor
                                     self.editor.setOption(input.name, self.originalOptions[input.name]);
                                 }
+
+                                inputEmits[input.name] = {
+                                    input: input,
+                                    value: input.value,
+                                    button: button,
+                                    allCopy: allCopy
+                                };
                             }
                             break;
                     }
@@ -219,42 +253,57 @@
                             })
                         })
                     } else {
-                        return apos.notify('ERROR : Save unsuccessful, options empty. Try adjust your desire options than your default settings.', {
-                            type: 'error',
-                            dismiss: 10
-                        })
+                        return apos.notify(
+                            'ERROR : Save unsuccessful, options empty. Try adjust your desire options than your default settings.', {
+                                type: 'error',
+                                dismiss: 10
+                            })
                     }
                 } else if (button.className === 'delete-options') {
                     self.deleteOptions().then((result) => {
                         if (result.status === 'success') {
-                                // Set self.options to be empty too
-                                self.options = {}
+                            // Set self.options to be empty too
+                            self.options = {}
 
-                                // Loop the optionsTypes, if there is `saveValue` assigned to it, delete it
-                                for (let key of Object.keys(self.optionsTypes)) {
-                                    if (self.optionsTypes.hasOwnProperty(key)) {
-                                        if (self.optionsTypes[key].saveValue !== undefined) {
-                                            delete self.optionsTypes[key].saveValue;
+                            // Loop the optionsTypes, if there is `saveValue` assigned to it, delete it
+                            for (let categoryKey of Object.keys(self.optionsTypes)) {
+                                if (self.optionsTypes.hasOwnProperty(categoryKey)) {
+                                    for(let key of Object.keys(self.optionsTypes[categoryKey])) {
+                                        if (!_.isUndefined(self.optionsTypes[categoryKey][key].saveValue)) {
+                                            self.$emit('updateOptionsTypes', {
+                                                category: categoryKey,
+                                                name: self.optionsTypes[categoryKey][key].name,
+                                                saveValue: undefined
+                                            })
                                         }
                                     }
                                 }
-
-                                return apos.notify('Saved options successfully removed', {
-                                    type: 'success',
-                                    dismiss: 2
-                                });
-                            } else {
-                                return apos.notify('ERROR : ' + result.message, {
-                                    type: 'error',
-                                    dismiss: 10
-                                });
                             }
-                    }).catch((e)=> {
+
+                            return apos.notify('Saved options successfully removed', {
+                                type: 'success',
+                                dismiss: 2
+                            });
+                        } else {
+                            return apos.notify('ERROR : ' + result.message, {
+                                type: 'error',
+                                dismiss: 10
+                            });
+                        }
+                    }).catch((e) => {
                         return apos.notify('ERROR : ' + e.message, {
                             type: 'error',
                             dismiss: 10
                         });
                     })
+                }
+
+                if (Object.keys(inputEmits).length > 0) {
+                    for (let key in inputEmits){
+                        if(inputEmits.hasOwnProperty(key)){
+                            self.emitOptions.call(self, inputEmits[key]);
+                        }
+                    }
                 }
             },
             optionsInputs(object, type, editor, h) {
@@ -263,9 +312,9 @@
                 // Only override display when keyword search happens
                 if (this.search.length > 0) {
                     let findKeyword = this.$parent.$parent.getName(object.name).indexOf(this.search);
-                    
+
                     // Only allow matched input, make display none for the rest of the list
-                    if(findKeyword === -1){
+                    if (findKeyword === -1) {
                         display = 'none';
                     }
                 }
@@ -335,20 +384,20 @@
                             }, []);
 
                             // Set selected & editor options
-                            if (object.saveValue !== undefined) {
+                            if (!_.isUndefined(object.saveValue)) {
                                 input.data.domProps.value = object.saveValue;
                                 editor.setOption(object.name, object.saveValue);
-                            } else if (object.saveValue === undefined) {
+                            } else if (_.isUndefined(object.saveValue)) {
                                 (editor.getOptions()[object.name]) ? input.data.domProps.value = editor
                                     .getOptions()[object.name]: input.data.domProps.value = 0;
                             }
 
                             let cache = {
-                                [object.name]: (object.saveValue !== undefined) ? object.saveValue : editor
+                                [object.name]: (!_.isUndefined(object.saveValue)) ? object.saveValue : editor
                                     .getOptions()[object.name]
                             }
 
-                            if (!_.some(self.$props.cache, cache)) {
+                            if (!self.cache.some(eachCache => eachCache.hasOwnProperty(object.name))) {
                                 self.$emit('pushCache', cache);
                             }
 
@@ -389,7 +438,7 @@
                                 if (object.saveValue === val) {
                                     selected = true;
                                     editor.setOption(object.name, object.saveValue);
-                                } else if (object.saveValue === undefined) {
+                                } else if (_.isUndefined(object.saveValue)) {
                                     (editor.getOptions()[object.name] === val) ? selected = true: null;
                                 }
 
@@ -402,11 +451,11 @@
                             }));
 
                             let cache = {
-                                [object.name]: (object.saveValue !== undefined) ? object.saveValue : editor
+                                [object.name]: (!_.isUndefined(object.saveValue)) ? object.saveValue : editor
                                     .getOptions()[object.name]
                             }
 
-                            if (!_.some(self.$props.cache, cache)) {
+                            if (!self.cache.some(eachCache => eachCache.hasOwnProperty(object.name))) {
                                 self.$emit('pushCache', cache);
                             }
 
@@ -449,7 +498,7 @@
                                 if (object.saveValue === val) {
                                     selected = true;
                                     editor.setOption(object.name, object.saveValue);
-                                } else if (object.saveValue === undefined) {
+                                } else if (_.isUndefined(object.saveValue)) {
                                     (editor.getOptions()[object.name] === val.value) ? selected = true:
                                         null;
                                 }
@@ -463,11 +512,11 @@
                             }));
 
                             let cache = {
-                                [object.name]: (object.saveValue !== undefined) ? object.saveValue : editor
+                                [object.name]: (!_.isUndefined(object.saveValue)) ? object.saveValue : editor
                                     .getOptions()[object.name]
                             }
 
-                            if (!_.some(self.$props.cache, cache)) {
+                            if (!self.cache.some(eachCache => eachCache.hasOwnProperty(object.name))) {
                                 self.$emit('pushCache', cache);
                             }
 
@@ -489,11 +538,18 @@
                                 }
                             }, self.$parent.$parent.getName(object.name) + ' :');
 
+                            let checked = null;
+                            if (!_.isUndefined(object.saveValue)) {
+                                checked = !checked;
+                                editor.setOption(object.name, object.saveValue);
+                            } else if (_.isUndefined(object.saveValue)) {
+                                editor.getOptions()[object.name] ? checked = editor.getOptions()[object.name] : null;
+                            }
+
                             // Create <select> element
                             let input = h('input', {
                                 domProps: {
-                                    checked: object.saveValue !== undefined ? object.saveValue && editor.setOption(object.name, object.saveValue) : 
-                                                editor.getOptions()[object.name] ? editor.getOptions()[object.name] : null,
+                                    checked,
                                     type: 'checkbox',
                                     name: object.name,
                                 },
@@ -510,10 +566,11 @@
                             }, []);
 
                             let cache = {
-                                [object.name]: (object.saveValue !== undefined) ? object.saveValue : !!editor.getOptions()[object.name]
+                                [object.name]: (!_.isUndefined(object.saveValue)) ? object.saveValue : !!editor
+                                    .getOptions()[object.name]
                             }
 
-                            if (!_.some(self.$props.cache, cache)) {
+                            if (!self.cache.some(eachCache => eachCache.hasOwnProperty(object.name))) {
                                 self.$emit('pushCache', cache);
                             }
 
@@ -527,6 +584,10 @@
                 return lists;
             },
             loopOptions(myOptions, h) {
+                if (Object.keys(this.originalOptions).length === 0) {
+                    this.originalOptions = _.cloneDeep(this.editor.getOptions())
+                }
+
                 let editor = this.editor;
                 let self = this;
                 // Create new <ul> element to group all lists in its children
@@ -550,10 +611,11 @@
                     // Only override display when keyword search happens
                     if (this.search.length > 0) {
                         // Filter keyword that has the value
-                        let filterKeyword = _.filter(optionsTypes[categoryKey], (val) => self.$parent.$parent.getName(val.name).indexOf(self.search) > -1);
+                        let filterKeyword = _.filter(optionsTypes[categoryKey], (val) => self.$parent.$parent.getName(
+                            val.name).indexOf(self.search) > -1);
 
                         // Only hide header list if it not match with the filter keyword
-                        if(filterKeyword.length === 0){
+                        if (filterKeyword.length === 0) {
                             display = 'none';
                         }
                     }
@@ -588,76 +650,171 @@
                     // Loop existing Editor Options
                     // Something is wrong in here. Should do filter instead
                     for (let key of Object.keys(this.editor.getOptions())) {
-                        let groupedOptions = optionsTypes[categoryKey].find((val) => val.name === key);
+                        if (editor.getOptions().hasOwnProperty(key)) {
+                            let groupedOptions = optionsTypes[categoryKey].find((val) => val.name === key);
 
-                        // Assign child of listHeader
-                        if (groupedOptions && groupedOptions.name === key && categoryKey === groupedOptions.category) {
-                            switch (true) {
-                                case _.isArray(groupedOptions.value) && !_.every(groupedOptions.value, _.isObject):
-                                    groupedOptions = myOptions[key] !== undefined ? apos.util.assign(
-                                        groupedOptions, {
-                                            saveValue: myOptions[key]
-                                        }) : groupedOptions;
+                            // Assign child of listHeader
+                            if (groupedOptions && groupedOptions.name === key && categoryKey === groupedOptions
+                                .category) {
+                                switch (true) {
+                                    case _.isArray(groupedOptions.value) && !_.every(groupedOptions.value, _.isObject):
+                                        groupedOptions = !_.isUndefined(myOptions[key]) ? apos.util.assign(
+                                            groupedOptions, {
+                                                saveValue: myOptions[key]
+                                            }) : groupedOptions;
 
-                                    listHeader.children.push(this.optionsInputs(groupedOptions, 'dropdownArray', editor, h))
-                                    break;
+                                        listHeader.children.push(this.optionsInputs(groupedOptions, 'dropdownArray',
+                                            editor, h))
+                                        break;
 
-                                case _.isArray(groupedOptions.value) && _.every(groupedOptions.value, _.isObject):
-                                    groupedOptions = myOptions[key] !== undefined ? apos.util.assign(
-                                        groupedOptions, {
-                                            saveValue: myOptions[key]
-                                        }) : groupedOptions;
+                                    case _.isArray(groupedOptions.value) && _.every(groupedOptions.value, _.isObject):
+                                        groupedOptions = !_.isUndefined(myOptions[key]) ? apos.util.assign(
+                                            groupedOptions, {
+                                                saveValue: myOptions[key]
+                                            }) : groupedOptions;
 
-                                    listHeader.children.push(this.optionsInputs(groupedOptions, 'dropdownObject', editor, h))
-                                    break;
+                                        listHeader.children.push(this.optionsInputs(groupedOptions, 'dropdownObject',
+                                            editor, h))
+                                        break;
 
-                                case _.isObject(groupedOptions.value):
-                                    groupedOptions = myOptions[key] !== undefined ? apos.util.assign(
-                                        groupedOptions, {
-                                            saveValue: myOptions[key]
-                                        }) : groupedOptions;
+                                    case _.isObject(groupedOptions.value):
+                                        groupedOptions = !_.isUndefined(myOptions[key]) ? apos.util.assign(
+                                            groupedOptions, {
+                                                saveValue: myOptions[key]
+                                            }) : groupedOptions;
 
-                                    listHeader.children.push(this.optionsInputs(groupedOptions, 'slider', editor, h))
-                                    break;
+                                        listHeader.children.push(this.optionsInputs(groupedOptions, 'slider', editor,
+                                            h))
+                                        break;
 
-                                case groupedOptions.type === 'boolean':
-                                    groupedOptions = myOptions[key] !== undefined ? apos.util.assign(
-                                        groupedOptions, {
-                                            saveValue: myOptions[key]
-                                        }) : groupedOptions;
+                                    case groupedOptions.type === 'boolean':
+                                        groupedOptions = !_.isUndefined(myOptions[key]) ? apos.util.assign(
+                                            groupedOptions, {
+                                                saveValue: myOptions[key]
+                                            }) : groupedOptions;
+                                            
 
-                                    listHeader.children.push(this.optionsInputs(groupedOptions, 'checkbox', editor, h));
-                                    break;
+                                        listHeader.children.push(this.optionsInputs(groupedOptions, 'checkbox', editor,
+                                            h));
+                                        break;
+                                }
                             }
                         }
                     }
                 }
 
-                // Assign to reference for make it as Original Options
-                this.originalOptions = apos.util.assign({}, editor.getOptions());
-
                 return unorderedLists;
-            }
+            },
+            emitOptions({input ,value, button, allCopy}){
+                // Emit event to alert other similar components
+                switch(input.type) {
+                    case 'select':
+                        this.$root.$emit('customCodeEditor:getOptions', {
+                            customCodeEditor: {
+                                name: input.name,
+                                value: value,
+                                action: button.className.replace('-options', '').trim(),
+                                options: allCopy,
+                                button: button
+                            }
+                        });
+                        break;
+
+                    case "range":
+                        this.$root.$emit('customCodeEditor:getOptions', {
+                            customCodeEditor: {
+                                name: input.name,
+                                value: parseFloat(input.value),
+                                action: button.className.replace('-options', '').trim(),
+                                options: allCopy,
+                                button: button
+                            }
+                        });
+                        break;
+
+                    case "checkbox":
+                        this.$root.$emit('customCodeEditor:getOptions', {
+                            customCodeEditor: {
+                                name: input.name,
+                                value: input.checked,
+                                action: button.className.replace('-options', '').trim(),
+                                options: allCopy,
+                                button: button
+                            }
+                        });
+                        break;
+
+                }
+            },
+            updateOptions(e){
+                if(e.customCodeEditor && !_.isUndefined(e.customCodeEditor.value)) {
+                    var input = this.$el.querySelector('input[name="' + e.customCodeEditor.name  +'"]');
+
+                    switch (input.type){
+                        case "checkbox":
+                            input.checked = e.customCodeEditor.value;
+                            break;
+
+                        default:
+                            input.value = e.customCodeEditor.value;
+                            break;
+                    }
+
+                    if(e.customCodeEditor.action) {
+                        switch(e.customCodeEditor.action){
+                            case "copy":
+                                    if(!e.customCodeEditor.button.dataset.clipboardText || e.customCodeEditor.button.dataset.clipboardText !== e.customCodeEditor.options) {
+                                        e.customCodeEditor.button.dataset.clipboardText = e.customCodeEditor.options;
+                                    }
+                                break;
+
+                            case "undo":
+                                    // Remove self.options[key] if available
+                                    if(this.options[e.customCodeEditor.name]) {
+                                        delete this.options[e.customCodeEditor.name];
+                                    }
+                                break;
+
+                            case "delete":
+                                if(this.options){
+                                    this.options = {};
+                                }
+                                break;
+                        }
+                    }
+                }
+            },
         },
         created(){
-            const fetchData =  async () => {
+            const fetchData = async () => {
                 try {
                     let getOptions = await this.getOptions();
-                    if(getOptions.status !== 'error') {
-                        this.options = _.assign(this.options , JSON.parse(getOptions.message));
-                        this.$forceUpdate();
+                    if (getOptions.status !== 'error') {
+                        return JSON.parse(getOptions.message);
                     } else {
                         throw new Error(getOptions.message);
                     }
-                } catch(e){
-                    apos.notify(e.message, {
-                        dismiss: 5,
-                        type: 'error'
-                    })
+                } catch (e) {
+                    throw new Error(e.message)
                 }
             };
 
-            fetchData();
+            fetchData()
+                .then((result) => this.options = _.assign(this.options, result))
+                .then(() => this.$forceUpdate())
+                .catch((message) => {
+                     apos.notify(message, {
+                        dismiss: 5,
+                        type: 'error'
+                    })
+                });
+        },
+        mounted(){
+            this.$root.$on('customCodeEditor:getOptions', this.updateOptions);
+        },
+        beforeDestroy(){
+            this.$root.$off('customCodeEditor:getOptions', this.updateOptions);
+            this.$emit('resetCache');
         },
         render(h) {
             if (this.editor && this.optionsTypes) {

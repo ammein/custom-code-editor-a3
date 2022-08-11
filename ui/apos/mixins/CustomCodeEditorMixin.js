@@ -176,7 +176,7 @@ export default {
             });
 
             // If found
-            if (find && this.originalValue !== undefined) {
+            if (find && !_.isUndefined(this.originalValue)) {
               editor.replace(this.originalValue);
             } else {
               editor.replace('');

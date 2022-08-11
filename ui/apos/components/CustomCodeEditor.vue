@@ -64,7 +64,7 @@
                                 <!-- This is where all options begins -->
                                 <OptionsContainerComponent :optionsTypes="ace.optionsTypes" :editor="getEditor()"
                                     :cache="ace.cache" @pushCache="ace.cache.push($event)" :search="searchOptions"
-                                    @updateCache="updateCacheValue" ref="optionsContainer" @moreOptionsClick="moreOptionsClick = $event" />
+                                    @updateCache="updateCacheValue" ref="optionsContainer" @moreOptionsClick="moreOptionsClick = $event" @updateOptionsTypes="updateOptionsTypesValue" @resetCache="resetCacheValue" />
                             </div>
                         </div>
                     </div>
@@ -122,6 +122,7 @@
                 ace: {
                     theme: browserOptions.ace.theme,
                     modes: browserOptions.ace.modes,
+                    options: browserOptions.ace.options ? browserOptions.ace.options : {},
                     defaultMode: browserOptions.ace.defaultMode,
                     optionsTypes: browserOptions.ace.optionsTypes,
                     aceEditor: null,
@@ -141,9 +142,6 @@
         mounted() {
             let editor = this.init(this.$refs.editor);
             this.setEditorValue();
-        },
-        updated(){
-            console.log(this.searchOptions);
         },
         computed: {
             checkDropdown() {
@@ -198,12 +196,52 @@
             optionsEvents(e) {
                 this.$refs.optionsContainer.buttonOptionsClick(e);
             },
+            resetCacheValue(){
+                this.ace.cache = [];
+            },
             updateCacheValue({ property, value }) {
-                this.ace.cache[property] = value;
+                const getIndex = _.findIndex(this.ace.cache, (val) => {
+                    return val.hasOwnProperty(property);
+                })
+
+                if(getIndex !== -1 && this.ace.cache[getIndex][property] !== value){
+                    this.ace.cache[getIndex] = {
+                        [property]: value
+                    };
+                }
             },
             optionsScroll(e){
                 if(this.moreOptionsClick) {
                     this.moreOptionsClick = false;
+                }
+            },
+            updateOptionsTypesValue({ category, name, value, saveValue }) {
+                if(!name) {
+                    throw new Error('You must include value for `property` object');
+                }
+
+                const getIndex = _.findIndex(this.ace.optionsTypes[category], (val) => {
+                    return val.name === name;
+                });
+
+                if(getIndex !== -1) {
+                    const cloneObject = _.cloneDeep(this.ace.optionsTypes[category][getIndex]);
+
+                    switch (true) {
+                        case _.isUndefined(saveValue) && !_.isUndefined(cloneObject.saveValue):
+                            delete cloneObject.saveValue;
+                            break;
+
+                        case cloneObject.saveValue && !_.isUndefined(saveValue):
+                            cloneObject.saveValue = saveValue; 
+                            break;
+                    
+                        default:
+                            val.value = value;
+                            break;
+                    }
+
+                    this.ace.optionsTypes[category][getIndex] = cloneObject;
                 }
             }
         }
