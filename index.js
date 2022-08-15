@@ -5,16 +5,13 @@ const path = require('path');
 module.exports = {
   options: {
     alias: 'customCodeEditor',
-    ace: {
-      config: {}
-    }
   },
   beforeSuperClass(self) {
-    const aceDirectory = "src-min-noconflict"
+    const aceDirectory = 'src-noconflict';
     const allModes = [];
     const allThemes = [];
     const otherFiles = [];
-    const files = fs.readdirSync(path.resolve(path.dirname(require.resolve("ace-builds")), `../${aceDirectory}`));
+    const files = fs.readdirSync(path.resolve(path.dirname(require.resolve('ace-builds')), `../${aceDirectory}`));
 
     if (!files) {
       throw self.apos.error('Did you install `ace-builds` npm package yet?');
@@ -76,7 +73,7 @@ module.exports = {
     self.ace._allModes = allModes;
     self.ace._allThemes = allThemes;
     self.ace._otherFiles = otherFiles;
-    self.ace.optionsTypes = _.merge(require('./aceTypes.js'), _.keyBy(self.ace.optionsTypes, 'name'));
+    self.ace.optionsTypes = _.groupBy(_.merge(require('./aceTypes.js'), _.keyBy(self.ace.optionsTypes, 'name')), 'category');
     self.ace.defaultMode = self.ace.defaultMode || 'javascript';
     self.ace.theme = self.ace.theme || 'chrome';
 
@@ -95,7 +92,7 @@ module.exports = {
     // Enable Browser Data
     self.enableBrowserData();
   },
-  apiRoutes(self) {
+  routes(self) {
     return {
       ...require('./lib/routes')(self)
     };

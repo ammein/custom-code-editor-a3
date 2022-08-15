@@ -1,0 +1,41 @@
+$black: rgba(4, 3, 3, 1);
+$dark-slate-gray: rgba(36, 41, 46, 1);
+$dark-slate-gray-2: rgba(52, 50, 50, 1);
+$dark-slate-gray-3: rgba(72, 72, 72, 1);
+$dim-gray: rgba(94, 94, 94, 1);
+$gainsboro: rgba(225, 228, 232, 1);
+$lavender: rgba(233, 233, 233, 1);
+$light-blue: rgba(177, 208, 255, 1);
+$light-coral: rgba(249, 117, 131, 1);
+$light-green: rgba(137, 248, 105, 1);
+$light-salmon: rgba(255, 171, 112, 1);
+$light-sky-blue: rgba(121, 184, 255, 1);
+$light-sky-blue-2: rgba(158, 203, 255, 1);
+$orange-red: rgba(255, 76, 31, 1);
+$plum: rgba(179, 146, 240, 1);
+$transparent-gainsboro: rgba(225, 228, 232, 0.3);
+$white: rgba(255, 255, 255, 1);
+$white-smoke: rgba(239, 239, 239, 1);
+$white-smoke-2: rgba(240, 240, 240, 1);
+$white-smoke-3: rgba(248, 248, 248, 1);
+$dropdownHeight: 35px;
+$dropdownRadius: 5px;
+
+// Typographies
+@mixin arial-14-regular {
+    font-family: "Arial";
+    font-size: 14px;
+    font-weight: 400;
+    line-height: normal;
+}
+
+@mixin arial-20-bold {
+    font-family: "Arial";
+    font-size: 20px;
+    font-weight: 700;
+    line-height: normal;
+}
+
+.ace_search {
+    z-index: 101 !important;
+}

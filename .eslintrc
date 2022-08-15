@@ -3,6 +3,7 @@
     "globals": {
         "$": "readonly",
         "_": "readonly",
+        "ace": "readonly",
         "apos": "readonly"
     },
     "env": {

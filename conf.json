@@ -1,0 +1,23 @@
+{
+    "tags": {
+        "allowUnknownTags": true
+    },
+    "source": {
+        "include": ["./ui/apos"],
+        "exclude": ["node_modules"],
+        "includePattern": "\\.(vue|js)$"
+    },
+    "plugins": [
+        "plugins/markdown",
+        "node_modules/jsdoc-vue",
+        "node_modules/vue-x-docs"
+    ],
+    "opts": {
+        "encoding": "utf8",
+        "destination": "docs/",
+        "recurse": true,
+        "verbose": true,
+        "readme": "./README.md",
+        "template": "./node_modules/vue-x-docs"
+    }
+}
