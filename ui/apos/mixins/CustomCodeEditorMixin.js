@@ -1,10 +1,27 @@
 /* eslint-disable no-undef */
 import _ from 'lodash';
+import ClipboardJS from 'clipboard';
+
+/**
+ * @model CustomCodeEditorMixin
+ * @desc Mixin for Custom Code Editor
+ */
 export default {
   methods: {
+    /**
+     * @method beforeInit
+     * @desc Easy extend using this function
+     * @param {HTMLElement} element
+     */
     beforeInit(element) {
       // For extendMethods
     },
+    /**
+     * @method init
+     * @desc Init Custom Code Editor
+     * @param {HTMLElement} element
+     * @return {aceEditor} Return editor intialized from ACE JS
+     */
     init(element) {
       const self = this;
       // Default Empty Value
@@ -46,15 +63,86 @@ export default {
         }
       }
 
+      if (ClipboardJS.isSupported()) {
+        // Init ClipboardJS
+        this.initCopyClipboard(this.$el.querySelector('button.copy-options'));
+      } else {
+        console.warn('ClipboardJS is not supported in this browser');
+      }
+
       // Invoke after init
       this.afterInit(element);
 
       // Always return editor so that superInit can get editor directly from the extend method.
       return editor;
     },
+    /**
+     * @method afterInit
+     * @desc Easy extend after init
+     * @param {HTMLElement} element
+     */
     afterInit(element) {
       this.setDefaultSubmitValue();
     },
+    /**
+     * @method initCopyClipboard
+     * @desc Init ClipboardJS
+     * @param {HTMLElement} copyButton
+     */
+    initCopyClipboard(copyButton) {
+      this.clipboard = new ClipboardJS(copyButton);
+      this.clipboardEvents(this.clipboard);
+    },
+    /**
+     * @method clipboardEvents
+     * @desc Register Clipboard events
+     * @param {ClipboardJS} clipboard
+     */
+    clipboardEvents(clipboard) {
+      clipboard.on('success', this.successClipboard);
+      clipboard.on('error', this.errorClipboard);
+    },
+    /**
+     * @method successClipboard
+     * @desc Success Clipboard Event
+     * @param {ClipboardJS.Event} e
+     */
+    successClipboard(e) {
+      apos.notify('"' + this.field.name + '" field: ' + 'Options Copied!', {
+        type: 'success',
+        dismiss: true
+      });
+
+      e.clearSelection();
+    },
+    /**
+     * @method errorClipboard
+     * @desc Error Clipboard Event
+     * @param {ClipboardJS.Event} e
+     */
+    errorClipboard(e) {
+      console.error('Action: ', e.action);
+      console.error('Trigger: ', e.trigger);
+      apos.notify('Unable to copy options', {
+        type: 'error',
+        dismiss: true
+      });
+    },
+    /**
+     * @method destroyClipboard
+     * @desc Destroy Clipboard event
+     */
+    destroyClipboard() {
+      if (this.clipboard) {
+        this.clipboard.off('success', this.successClipboard);
+        this.clipboard.off('error', this.errorClipboard);
+        this.clipboard.destroy();
+      }
+    },
+    /**
+     * @method setDropdown
+     * @desc To Set Dropdown if dropdown enable
+     */
     setDropdown() {
       const editor = this.getEditor();
       const self = this;
@@ -79,7 +167,6 @@ export default {
               dismiss: 2
             });
           }
-
           self.originalValue = editor.getSelectedText();
         },
         readOnly: false
@@ -116,6 +203,11 @@ export default {
         }
       };
     },
+    /**
+     * @method filterModesList
+     * @desc Filter Modes by Search Input Event
+     * @param {Event} e
+     */
     filterModesList(e) {
       let input, filter, li, i, div, txtValue;
       // eslint-disable-next-line prefer-const
@@ -138,6 +230,12 @@ export default {
         }(i));
       }
     },
+    /**
+     * @method changeMode
+     * @desc Change Mode event when mode dropdown is clicked
+     * @param {Event} e Event Listener
+     * @return {null} Return nothing because it will automatically assign Mode to editor
+     */
     changeMode(e) {
       const getText = e.currentTarget.getAttribute('data-name');
       const getTitle = e.currentTarget.getAttribute('data-title');
@@ -182,12 +280,22 @@ export default {
         }
       }
     },
+    /**
+     * @method setEditor
+     * @desc Set Editor
+     * @param {aceEditor} editor
+     */
     setEditor(editor) {
       this.ace.aceEditor = editor;
       apos.customCodeEditor.browser.editor = apos.util.assign({}, apos.customCodeEditor.browser.editor, {
         [this.field.name]: editor
       });
     },
+    /**
+     * @method getEditor
+     * @desc Get Editor
+     * @return {aceEditor} Get Editor or Null
+     */
     getEditor() {
       if (this.ace.aceEditor) {
         return this.ace.aceEditor;
@@ -195,9 +303,21 @@ export default {
 
       return null;
     },
+    /**
+     * @method editor
+     * @desc Initialize editor
+     * @param {HTMLElement} element
+     * @return {aceEditor} Return initialized AceJS Editor from Element
+     */
     editor(element) {
       return ace.edit(element);
     },
+    /**
+     * @method getName
+     * @desc To convert any 'camelCase' name to 'Camel Case'
+     * @param {String} name
+     * @return {String} String that has been trimmed and modified
+     */
     getName(name) {
       return name.replace(/(_|-)/g, ' ')
         .trim()
@@ -208,6 +328,16 @@ export default {
         .replace(/([A-Z])([A-Z][a-z])/g, '$1 $2')
         .trim();
     },
+    /**
+     * @method setDefaultSubmitValue
+     * @desc To set default Submit value for `this.next` that will contains:
+     * ```js
+     *  this.next = {
+     *    code: '',
+     *    type: ''
+     *  }
+     * ```
+     */
     setDefaultSubmitValue() {
       if (!_.isObject(this.next)) {
         this.next = {
@@ -219,6 +349,10 @@ export default {
         this.originalValue = this.next.code;
       }
     },
+    /**
+     * @method setEditorValue
+     * @desc Set editor value on `mounted` function.
+     */
     setEditorValue() {
       const editor = this.getEditor();
       if (_.isObject(this.next) && (_.has(this.next, 'code') && !_.isEmpty(this.next.code)) && (_.has(this.next, 'type') && !_.isEmpty(this.next.type))) {
@@ -226,6 +360,11 @@ export default {
         editor.session.setMode('ace/mode/' + this.next.type.toLowerCase());
       }
     },
+    /**
+     * @method setSubmitValue
+     * @desc To set submit value whenever editor is blur
+     * @param {aceEditor} editor
+     */
     setSubmitValue(editor) {
       const mode = editor.session.getMode().$id.match(/(?!(\/|\\))(?:\w)*$/g)[0];
       if (editor.getValue() !== this.next.code) {
@@ -236,6 +375,11 @@ export default {
         this.next.type = mode;
       }
     },
+    /**
+     * @method editorEvents
+     * @desc To register any Ace Editor Events
+     * @param {aceEditor} editor
+     */
     editorEvents(editor) {
       const self = this;
       // Set schema value onBlur event editor

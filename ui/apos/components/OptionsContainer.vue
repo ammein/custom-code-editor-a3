@@ -1,29 +1,88 @@
 <script>
     import _ from 'lodash';
+
+    /**
+     * @typedef optionsTypes
+     * @prop {String} name
+     * @prop {String} type
+     * @prop {Object[] | Object | String | Null} value
+     * @prop {String} category
+     */
+
+    /**
+     * @typedef aceEditor
+     * @prop {Ace} Ace - Ace Constructor Object
+     * @prop {Ace.Editor} editor - Ace Editor Initialized
+     * @see {@link https://ace.c9.io/#nav=api} API Reference
+     */
+
+    /** 
+     * @component OptionsContainerComponent
+     * @desc Options Container Component that will generate options and compare from module options
+     * @lifecycle created Get `options` from `this.getOptions` async function that call server GET route to get current user saved options
+     * @lifecycle mounted Attach emit listener **on** for `customCodeEditor:getOptions` to `this.updateOptions`
+     * @lifecycle beforeDestroy Attach emit listener **off** for `customCodeEditor:getOptions` to `this.updateOptions`
+     * @lifecycle render Only render when `this.editor` & `this.optionsTypes` is available
+     */
     export default {
         props: {
+            /** 
+             * @vprop {optionsTypes} optionsTypes - Default Options Types
+             */
             optionsTypes: {
                 type: Object,
                 required: true
             },
+            /**
+             * @vprop {Object[]} cache - Cache Storage
+             */
             cache: {
                 type: Array,
                 required: true
             },
+            /**
+             * @vprop {aceEditor} editor - Ace Editor JS
+             */
             editor: {
                 type: Object
             },
+            /**
+             * @vprop {String} search - Search input
+             */
             search: {
                 type: String
             }
         },
         data() {
             return {
+                /**
+                 * @member {Object} - To store original options
+                 */
                 originalOptions: {},
+                /**
+                 * @member {Object} - To grab modified custom-code-editor module for editor options
+                 */
                 options: {}
             }
         },
         methods: {
+            /**
+             * @method getOptions
+             * @desc ```js
+             * // Example object returns
+             * {
+             *      status: 'success',
+             *      message: '{"cursorStyle": true}'
+             * }
+             * // Example empty object returns
+             * {
+             *      status: 'empty',
+             *      message: '{}'
+             * }
+             * ```
+             * @async
+             * @return {Object} - `options` object to override editor options
+             */
             async getOptions() {
                 try {
                     let getOptions = await apos.http.get(apos.customCodeEditor.browser.action + '/options', {});
@@ -33,6 +92,19 @@
                     throw new Error(e);
                 }
             },
+            /**
+             * @method saveOptions
+             * @desc ```js
+             * // Example object returns
+             * {
+             *      status: 'success',
+             *      message: 'Options saved!'
+             * }
+             * ```
+             * @async
+             * @param {Object} copyOptions - Grab `options` object from modified options container and save it to current user logged in
+             * @return {Object} Returns status from server
+             */
             async saveOptions(copyOptions) {
                 try {
                     let saveOptions = await apos.http.post(apos.customCodeEditor.browser.action + '/submit', {
@@ -46,6 +118,18 @@
                     throw new Error(e);
                 }
             },
+            /**
+             * @method deleteOptions
+             * @desc ```js
+             * // Example object returns
+             * {
+             *      status: 'success',
+             *      message: 'Success delete options!'
+             * }
+             * ```
+             * @async
+             * @return {Object} Returns status delete options
+             */
             async deleteOptions() {
                 try {
                     let deleteOptions = await apos.http.delete(apos.customCodeEditor.browser.action +
@@ -57,6 +141,11 @@
                     throw new Error(e);
                 }
             },
+            /**
+             * @method buttonOptionsClick
+             * @desc Trigger emits
+             * @param {HTMLEvent} e - HTML Event Listener
+             */
             buttonOptionsClick(e) {
                 let button = e.currentTarget;
                 let allCopy = {};
@@ -260,26 +349,26 @@
                         self.saveOptions(allCopy).then((data) => {
                             if (data.status === 'success') {
                                 return apos.notify(data.message, {
-                                    dismiss: 5,
+                                    dismiss: true,
                                     type: 'success'
                                 });
                             }
 
                             return apos.notify(data.message, {
-                                dismiss: 5,
+                                dismiss: true,
                                 type: 'error'
                             })
                         }).catch((e) => {
                             return apos.notify('Unable to save options. Please try again', {
                                 type: 'error',
-                                dismiss: 5
+                                dismiss: true
                             })
                         })
                     } else {
                         return apos.notify(
                             'ERROR : Save unsuccessful, options empty. Try adjust your desire options than your default settings.', {
                                 type: 'error',
-                                dismiss: 10
+                                dismiss: 8
                             })
                     }
                 } else if (button.className === 'delete-options') {
@@ -305,18 +394,18 @@
 
                             return apos.notify('Saved options successfully removed', {
                                 type: 'success',
-                                dismiss: 2
+                                dismiss: true
                             });
                         } else {
                             return apos.notify('ERROR : ' + result.message, {
                                 type: 'error',
-                                dismiss: 10
+                                dismiss: true
                             });
                         }
                     }).catch((e) => {
                         return apos.notify('ERROR : ' + e.message, {
                             type: 'error',
-                            dismiss: 10
+                            dismiss: true
                         });
                     })
                 }
@@ -329,6 +418,15 @@
                     }
                 }
             },
+            /**
+             * @method optionsInputs
+             * @desc Init Options Lists and append to List Header
+             * @param {Object} object - Object of optionsTypes merge with saveValue
+             * @param {String} type - Either `slider`, `dropdownArray`, `dropdownObject` or `checkbox`
+             * @param {aceEditor} editor - Ace JS Editor
+             * @param {Vue.VNode} h - Vue render function
+             * @return {Vue.VNode} Returns Lists of options in a category
+             */
             optionsInputs(object, type, editor, h) {
                 let display = '';
 
@@ -606,6 +704,13 @@
 
                 return lists;
             },
+            /**
+             * @method loopOptions
+             * @desc Loop function to loop with current save options and init with `optionsInput()` function
+             * @param {Object} myOptions - Object of editor options that either saved from user options or default value
+             * @param {Vue.VNode} h - Vue render function
+             * @return {Vue.VNode} Returns <ul> element that are grouped all the lists in the children
+             */
             loopOptions(myOptions, h) {
                 if (Object.keys(this.originalOptions).length === 0) {
                     this.originalOptions = _.cloneDeep(this.editor.getOptions())
@@ -728,10 +833,31 @@
 
                 return unorderedLists;
             },
+            /**
+             * @method emitOptions
+             * @desc Emit Events to `$root` by check the `input.type`
+             * @param {{ input: HTMLElement, value: String | Boolean, button: HTMLElement, allCopy: Object }} value - Grab Options Value
+             */
             emitOptions({input ,value, button, allCopy}){
                 // Emit event to alert other similar components
                 switch(true) {
                     case (/select/g).test(input.type):
+                        /**
+                         * @event component:OptionsContainerComponent~customCodeEditor:getOptions
+                         * @desc ```js
+                         * // This function emits on input type `select`
+                         * this.$root.$emit('customCodeEditor:getOptions', {
+                         * customCodeEditor: {
+                         *          input: input,
+                         *          name: input.name,
+                         *          value: value.toString(),
+                         *          action: button.className.replace('-options', '').trim(),
+                         *          options: allCopy,
+                         *          button: button
+                         *      }
+                         * });
+                         * ```
+                         */
                         this.$root.$emit('customCodeEditor:getOptions', {
                             customCodeEditor: {
                                 input: input,
@@ -745,6 +871,22 @@
                         break;
 
                     case (/range/g).test(input.type):
+                        /**
+                         * @event component:OptionsContainerComponent~customCodeEditor:getOptions
+                         * @desc ```js
+                         * // This function emits on input type `range`
+                         * this.$root.$emit('customCodeEditor:getOptions', {
+                         * customCodeEditor: {
+                         *          input: input,
+                         *          name: input.name,
+                         *          value: parseFloat(input.value),
+                         *          action: button.className.replace('-options', '').trim(),
+                         *          options: allCopy,
+                         *          button: button
+                         *      }
+                         * });
+                         * ```
+                         */
                         this.$root.$emit('customCodeEditor:getOptions', {
                             customCodeEditor: {
                                 input: input,
@@ -758,6 +900,22 @@
                         break;
 
                     case (/checkbox/g).test(input.type):
+                        /**
+                         * @event component:OptionsContainerComponent~customCodeEditor:getOptions
+                         * @desc ```js
+                         * // This function emits on input type `checkbox`
+                         * this.$root.$emit('customCodeEditor:getOptions', {
+                         * customCodeEditor: {
+                         *          input: input,
+                         *          name: input.name,
+                         *          value: input.checked,
+                         *          action: button.className.replace('-options', '').trim(),
+                         *          options: allCopy,
+                         *          button: button
+                         *      }
+                         * });
+                         * ```
+                         */
                         this.$root.$emit('customCodeEditor:getOptions', {
                             customCodeEditor: {
                                 input: input,
@@ -772,6 +930,12 @@
 
                 }
             },
+            /**
+             * @method updateOptions
+             * @desc Update Options whenever other similar OptionsContainer is modified
+             * @param {Event} e - Vue Event Emitter
+             * @fires component:OptionsContainerComponent~customCodeEditor:getOptions
+             */
             updateOptions(e){
                 if(e.customCodeEditor && !_.isUndefined(e.customCodeEditor.value)) {
                     // Find input from this current component
@@ -814,25 +978,23 @@
             },
         },
         created(){
-            const fetchData = async () => {
-                try {
-                    let getOptions = await this.getOptions();
-                    if (getOptions.status !== 'error') {
-                        return JSON.parse(getOptions.message);
-                    } else {
-                        throw new Error(getOptions.message);
+            this.getOptions()
+                .then((options) => {
+                    try {
+                        if (options.status !== 'error') {
+                            return JSON.parse(options.message);
+                        } else {
+                            throw new Error(options.message);
+                        }
+                    } catch (e) {
+                        throw new Error(e.message)
                     }
-                } catch (e) {
-                    throw new Error(e.message)
-                }
-            };
-
-            fetchData()
+                })
                 .then((result) => this.options = _.assign(this.options, result))
                 .then(() => this.$forceUpdate())
                 .catch((message) => {
                      apos.notify(message, {
-                        dismiss: 5,
+                        dismiss: true,
                         type: 'error'
                     })
                 });
