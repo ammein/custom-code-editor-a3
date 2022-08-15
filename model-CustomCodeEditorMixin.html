@@ -1,0 +1,2861 @@
+<!DOCTYPE html>
+
+
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>VueDoc | Model: CustomCodeEditorMixin</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <link
+			id="favicon"
+			rel="shortcut icon"
+			type="image/png"
+			href="img/favicon.png"/>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link id="theme" type="text/css" rel="stylesheet" href="styles/vuex-doc.css">
+    
+    <script>
+      function turnGrey(){
+
+      }
+    </script>
+</head>
+
+<body>
+<header id="header">
+    <div class="logo">
+        
+            <img src="img/vuejs.png" style="width: 40px; height: 40px">
+        
+        <span style="margin-left: 1em"><a href="index.html">Model: CustomCodeEditorMixin</a></span>
+    </div>
+    
+    <span style="flex: 1"></span>
+	<div class="search-container" id="search-container">
+        <input type="text" id="search">
+        <ul class="empty"></ul>
+    </div>
+</header>
+<div id="vue-view">
+  <nav id="nav">
+    <br><h3>Components</h3><ul><li><button type="button" class="toggle-subnav">  <span class="toggler">+</span></button><a href="component-CustomCodeEditor.html">CustomCodeEditor</a><div class="hidden" id="component:CustomCodeEditor_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="component-CustomCodeEditor.html#~ace">ace</a></li><li><a href="component-CustomCodeEditor.html#~aceEditor">aceEditor</a></li><li><a href="component-CustomCodeEditor.html#~aceModePath">aceModePath</a></li><li><a href="component-CustomCodeEditor.html#~aceThemePath">aceThemePath</a></li><li><a href="component-CustomCodeEditor.html#~cache">cache</a></li><li><a href="component-CustomCodeEditor.html#~dropdownClick">dropdownClick</a></li><li><a href="component-CustomCodeEditor.html#~log">log</a></li><li><a href="component-CustomCodeEditor.html#~modes">modes</a></li><li><a href="component-CustomCodeEditor.html#~moreOptionsClick">moreOptionsClick</a></li><li><a href="component-CustomCodeEditor.html#~options">options</a></li><li><a href="component-CustomCodeEditor.html#~optionsClick">optionsClick</a></li><li><a href="component-CustomCodeEditor.html#~originalValue">originalValue</a></li><li><a href="component-CustomCodeEditor.html#~searchOptions">searchOptions</a></li><li><a href="component-CustomCodeEditor.html#~theme">theme</a></li></ul><div class="member-type">Computed members</div><ul class="inner"><li><a href="component-CustomCodeEditor.html#~checkDropdown">checkDropdown</a></li><li><a href="component-CustomCodeEditor.html#~dropdownComponentSwitch">dropdownComponentSwitch</a></li><li><a href="component-CustomCodeEditor.html#~getTitle">getTitle</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="component-CustomCodeEditor.html#~optionsEvents">optionsEvents</a></li><li><a href="component-CustomCodeEditor.html#~optionsScroll">optionsScroll</a></li><li><a href="component-CustomCodeEditor.html#~resetCacheValue">resetCacheValue</a></li><li><a href="component-CustomCodeEditor.html#~updateCacheValue">updateCacheValue</a></li><li><a href="component-CustomCodeEditor.html#~updateOptionsTypesValue">updateOptionsTypesValue</a></li><li><a href="component-CustomCodeEditor.html#~validate">validate</a></li></ul></div></li><li><button type="button" class="toggle-subnav">  <span class="toggler">+</span></button><a href="component-OptionsContainerComponent.html">OptionsContainerComponent</a><div class="hidden" id="component:OptionsContainerComponent_sub"><div class="member-type">Props</div><ul class="inner"><li><a href="component-OptionsContainerComponent.html#~cache">cache</a></li><li><a href="component-OptionsContainerComponent.html#~editor">editor</a></li><li><a href="component-OptionsContainerComponent.html#~optionsTypes">optionsTypes</a></li><li><a href="component-OptionsContainerComponent.html#~search">search</a></li></ul><div class="member-type">Members</div><ul class="inner"><li><a href="component-OptionsContainerComponent.html#~options">options</a></li><li><a href="component-OptionsContainerComponent.html#~originalOptions">originalOptions</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="component-OptionsContainerComponent.html#~buttonOptionsClick">buttonOptionsClick</a></li><li><a href="component-OptionsContainerComponent.html#~deleteOptions">deleteOptions</a></li><li><a href="component-OptionsContainerComponent.html#~emitOptions">emitOptions</a></li><li><a href="component-OptionsContainerComponent.html#~getOptions">getOptions</a></li><li><a href="component-OptionsContainerComponent.html#~loopOptions">loopOptions</a></li><li><a href="component-OptionsContainerComponent.html#~optionsInputs">optionsInputs</a></li><li><a href="component-OptionsContainerComponent.html#~saveOptions">saveOptions</a></li><li><a href="component-OptionsContainerComponent.html#~updateOptions">updateOptions</a></li></ul><div class="member-type">Events</div><ul class="inner"><li><a href="component-OptionsContainerComponent.html#~event:customCodeEditor:getOptions">customCodeEditor:getOptions</a></li><li><a href="component-OptionsContainerComponent.html#~event:customCodeEditor:getOptions">customCodeEditor:getOptions</a></li><li><a href="component-OptionsContainerComponent.html#~event:customCodeEditor:getOptions">customCodeEditor:getOptions</a></li></ul></div></li></ul><h3>Models</h3><ul><li><button type="button" class="toggle-subnav">  <span class="toggler">+</span></button><a href="model-CustomCodeEditorMixin.html">CustomCodeEditorMixin</a><div class="hidden" id="model:CustomCodeEditorMixin_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="model-CustomCodeEditorMixin.html#~afterInit">afterInit</a></li><li><a href="model-CustomCodeEditorMixin.html#~beforeInit">beforeInit</a></li><li><a href="model-CustomCodeEditorMixin.html#~changeMode">changeMode</a></li><li><a href="model-CustomCodeEditorMixin.html#~clipboardEvents">clipboardEvents</a></li><li><a href="model-CustomCodeEditorMixin.html#~destroyClipboard">destroyClipboard</a></li><li><a href="model-CustomCodeEditorMixin.html#~editor">editor</a></li><li><a href="model-CustomCodeEditorMixin.html#~editorEvents">editorEvents</a></li><li><a href="model-CustomCodeEditorMixin.html#~errorClipboard">errorClipboard</a></li><li><a href="model-CustomCodeEditorMixin.html#~filterModesList">filterModesList</a></li><li><a href="model-CustomCodeEditorMixin.html#~getEditor">getEditor</a></li><li><a href="model-CustomCodeEditorMixin.html#~getName">getName</a></li><li><a href="model-CustomCodeEditorMixin.html#~init">init</a></li><li><a href="model-CustomCodeEditorMixin.html#~initCopyClipboard">initCopyClipboard</a></li><li><a href="model-CustomCodeEditorMixin.html#~setDefaultSubmitValue">setDefaultSubmitValue</a></li><li><a href="model-CustomCodeEditorMixin.html#~setDropdown">setDropdown</a></li><li><a href="model-CustomCodeEditorMixin.html#~setEditor">setEditor</a></li><li><a href="model-CustomCodeEditorMixin.html#~setEditorValue">setEditorValue</a></li><li><a href="model-CustomCodeEditorMixin.html#~setSubmitValue">setSubmitValue</a></li><li><a href="model-CustomCodeEditorMixin.html#~successClipboard">successClipboard</a></li></ul></div></li></ul><h3><a href="global.html">Global</a></h3><ul><li><button type="button" class="toggle-subnav">  <span class="toggler">+</span></button><a>Typedef</a><div class="hidden" id="global:typedef_sub"><ul class="inner"><li><a href="global.html#aceEditor">aceEditor</a></li><li><a href="global.html#optionsTypes">optionsTypes</a></li></ul></div></li></ul>
+	<div style="margin-top: 5em"></div>
+  </nav>
+
+  <div id="main">
+
+    <h1 class="page-title">Model: CustomCodeEditorMixin</h1>
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+            <div class="description"><p>Mixin for Custom Code Editor</p></div>
+        
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <!-- 
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="mixins_CustomCodeEditorMixin.js.html">mixins/CustomCodeEditorMixin.js</a>, <a href="mixins_CustomCodeEditorMixin.js.html#line5">line 5</a>
+    </li></ul></dd>
+     -->
+
+    
+
+    
+
+    
+
+	
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~afterInit">
+      <span class="type-tag">inner</span>afterInit<span class="signature">(element)</span><span class="type-signature"></span>
+      <span style="flex: 1"></span>
+      
+        <span class="source">
+          <a href="mixins_CustomCodeEditorMixin.js.html">mixins/CustomCodeEditorMixin.js</a>,&nbsp;<a href="mixins_CustomCodeEditorMixin.js.html#line79">line 79</a>
+        </span>
+        
+      </h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Easy extend after init</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name">element</td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTMLElement</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <!-- 
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="mixins_CustomCodeEditorMixin.js.html">mixins/CustomCodeEditorMixin.js</a>, <a href="mixins_CustomCodeEditorMixin.js.html#line79">line 79</a>
+    </li></ul></dd>
+     -->
+
+    
+
+    
+
+    
+
+	
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~beforeInit">
+      <span class="type-tag">inner</span>beforeInit<span class="signature">(element)</span><span class="type-signature"></span>
+      <span style="flex: 1"></span>
+      
+        <span class="source">
+          <a href="mixins_CustomCodeEditorMixin.js.html">mixins/CustomCodeEditorMixin.js</a>,&nbsp;<a href="mixins_CustomCodeEditorMixin.js.html#line11">line 11</a>
+        </span>
+        
+      </h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Easy extend using this function</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name">element</td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTMLElement</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <!-- 
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="mixins_CustomCodeEditorMixin.js.html">mixins/CustomCodeEditorMixin.js</a>, <a href="mixins_CustomCodeEditorMixin.js.html#line11">line 11</a>
+    </li></ul></dd>
+     -->
+
+    
+
+    
+
+    
+
+	
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~changeMode">
+      <span class="type-tag">inner</span>changeMode<span class="signature">(e)</span><span class="type-signature"> &rarr; {null}</span>
+      <span style="flex: 1"></span>
+      
+        <span class="source">
+          <a href="mixins_CustomCodeEditorMixin.js.html">mixins/CustomCodeEditorMixin.js</a>,&nbsp;<a href="mixins_CustomCodeEditorMixin.js.html#line233">line 233</a>
+        </span>
+        
+      </h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Change Mode event when mode dropdown is clicked</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name">e</td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Event</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Event Listener</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <!-- 
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="mixins_CustomCodeEditorMixin.js.html">mixins/CustomCodeEditorMixin.js</a>, <a href="mixins_CustomCodeEditorMixin.js.html#line233">line 233</a>
+    </li></ul></dd>
+     -->
+
+    
+
+    
+
+    
+
+	
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="returns">
+  <code>
+<span class="param-type">null</span>
+
+</code>
+    <p>Return nothing because it will automatically assign Mode to editor</p>
+</div>
+
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~clipboardEvents">
+      <span class="type-tag">inner</span>clipboardEvents<span class="signature">(clipboard)</span><span class="type-signature"></span>
+      <span style="flex: 1"></span>
+      
+        <span class="source">
+          <a href="mixins_CustomCodeEditorMixin.js.html">mixins/CustomCodeEditorMixin.js</a>,&nbsp;<a href="mixins_CustomCodeEditorMixin.js.html#line96">line 96</a>
+        </span>
+        
+      </h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Register Clipboard events</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name">clipboard</td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ClipboardJS</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <!-- 
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="mixins_CustomCodeEditorMixin.js.html">mixins/CustomCodeEditorMixin.js</a>, <a href="mixins_CustomCodeEditorMixin.js.html#line96">line 96</a>
+    </li></ul></dd>
+     -->
+
+    
+
+    
+
+    
+
+	
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~destroyClipboard">
+      <span class="type-tag">inner</span>destroyClipboard<span class="signature">()</span><span class="type-signature"></span>
+      <span style="flex: 1"></span>
+      
+        <span class="source">
+          <a href="mixins_CustomCodeEditorMixin.js.html">mixins/CustomCodeEditorMixin.js</a>,&nbsp;<a href="mixins_CustomCodeEditorMixin.js.html#line131">line 131</a>
+        </span>
+        
+      </h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Destroy Clipboard event</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <!-- 
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="mixins_CustomCodeEditorMixin.js.html">mixins/CustomCodeEditorMixin.js</a>, <a href="mixins_CustomCodeEditorMixin.js.html#line131">line 131</a>
+    </li></ul></dd>
+     -->
+
+    
+
+    
+
+    
+
+	
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~editor">
+      <span class="type-tag">inner</span>editor<span class="signature">(element)</span><span class="type-signature"> &rarr; {<a href="global.html#aceEditor">aceEditor</a>}</span>
+      <span style="flex: 1"></span>
+      
+        <span class="source">
+          <a href="mixins_CustomCodeEditorMixin.js.html">mixins/CustomCodeEditorMixin.js</a>,&nbsp;<a href="mixins_CustomCodeEditorMixin.js.html#line306">line 306</a>
+        </span>
+        
+      </h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Initialize editor</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name">element</td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTMLElement</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <!-- 
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="mixins_CustomCodeEditorMixin.js.html">mixins/CustomCodeEditorMixin.js</a>, <a href="mixins_CustomCodeEditorMixin.js.html#line306">line 306</a>
+    </li></ul></dd>
+     -->
+
+    
+
+    
+
+    
+
+	
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="returns">
+  <code>
+<span class="param-type"><a href="global.html#aceEditor">aceEditor</a></span>
+
+</code>
+    <p>Return initialized AceJS Editor from Element</p>
+</div>
+
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~editorEvents">
+      <span class="type-tag">inner</span>editorEvents<span class="signature">(editor)</span><span class="type-signature"></span>
+      <span style="flex: 1"></span>
+      
+        <span class="source">
+          <a href="mixins_CustomCodeEditorMixin.js.html">mixins/CustomCodeEditorMixin.js</a>,&nbsp;<a href="mixins_CustomCodeEditorMixin.js.html#line378">line 378</a>
+        </span>
+        
+      </h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>To register any Ace Editor Events</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name">editor</td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#aceEditor">aceEditor</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <!-- 
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="mixins_CustomCodeEditorMixin.js.html">mixins/CustomCodeEditorMixin.js</a>, <a href="mixins_CustomCodeEditorMixin.js.html#line378">line 378</a>
+    </li></ul></dd>
+     -->
+
+    
+
+    
+
+    
+
+	
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~errorClipboard">
+      <span class="type-tag">inner</span>errorClipboard<span class="signature">(e)</span><span class="type-signature"></span>
+      <span style="flex: 1"></span>
+      
+        <span class="source">
+          <a href="mixins_CustomCodeEditorMixin.js.html">mixins/CustomCodeEditorMixin.js</a>,&nbsp;<a href="mixins_CustomCodeEditorMixin.js.html#line118">line 118</a>
+        </span>
+        
+      </h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Error Clipboard Event</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name">e</td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ClipboardJS.Event</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <!-- 
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="mixins_CustomCodeEditorMixin.js.html">mixins/CustomCodeEditorMixin.js</a>, <a href="mixins_CustomCodeEditorMixin.js.html#line118">line 118</a>
+    </li></ul></dd>
+     -->
+
+    
+
+    
+
+    
+
+	
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~filterModesList">
+      <span class="type-tag">inner</span>filterModesList<span class="signature">(e)</span><span class="type-signature"></span>
+      <span style="flex: 1"></span>
+      
+        <span class="source">
+          <a href="mixins_CustomCodeEditorMixin.js.html">mixins/CustomCodeEditorMixin.js</a>,&nbsp;<a href="mixins_CustomCodeEditorMixin.js.html#line206">line 206</a>
+        </span>
+        
+      </h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Filter Modes by Search Input Event</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name">e</td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Event</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <!-- 
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="mixins_CustomCodeEditorMixin.js.html">mixins/CustomCodeEditorMixin.js</a>, <a href="mixins_CustomCodeEditorMixin.js.html#line206">line 206</a>
+    </li></ul></dd>
+     -->
+
+    
+
+    
+
+    
+
+	
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~getEditor">
+      <span class="type-tag">inner</span>getEditor<span class="signature">()</span><span class="type-signature"> &rarr; {<a href="global.html#aceEditor">aceEditor</a>}</span>
+      <span style="flex: 1"></span>
+      
+        <span class="source">
+          <a href="mixins_CustomCodeEditorMixin.js.html">mixins/CustomCodeEditorMixin.js</a>,&nbsp;<a href="mixins_CustomCodeEditorMixin.js.html#line294">line 294</a>
+        </span>
+        
+      </h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Get Editor</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <!-- 
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="mixins_CustomCodeEditorMixin.js.html">mixins/CustomCodeEditorMixin.js</a>, <a href="mixins_CustomCodeEditorMixin.js.html#line294">line 294</a>
+    </li></ul></dd>
+     -->
+
+    
+
+    
+
+    
+
+	
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="returns">
+  <code>
+<span class="param-type"><a href="global.html#aceEditor">aceEditor</a></span>
+
+</code>
+    <p>Get Editor or Null</p>
+</div>
+
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~getName">
+      <span class="type-tag">inner</span>getName<span class="signature">(name)</span><span class="type-signature"> &rarr; {String}</span>
+      <span style="flex: 1"></span>
+      
+        <span class="source">
+          <a href="mixins_CustomCodeEditorMixin.js.html">mixins/CustomCodeEditorMixin.js</a>,&nbsp;<a href="mixins_CustomCodeEditorMixin.js.html#line315">line 315</a>
+        </span>
+        
+      </h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>To convert any 'camelCase' name to 'Camel Case'</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name">name</td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <!-- 
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="mixins_CustomCodeEditorMixin.js.html">mixins/CustomCodeEditorMixin.js</a>, <a href="mixins_CustomCodeEditorMixin.js.html#line315">line 315</a>
+    </li></ul></dd>
+     -->
+
+    
+
+    
+
+    
+
+	
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="returns">
+  <code>
+<span class="param-type">String</span>
+
+</code>
+    <p>String that has been trimmed and modified</p>
+</div>
+
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~init">
+      <span class="type-tag">inner</span>init<span class="signature">(element)</span><span class="type-signature"> &rarr; {<a href="global.html#aceEditor">aceEditor</a>}</span>
+      <span style="flex: 1"></span>
+      
+        <span class="source">
+          <a href="mixins_CustomCodeEditorMixin.js.html">mixins/CustomCodeEditorMixin.js</a>,&nbsp;<a href="mixins_CustomCodeEditorMixin.js.html#line19">line 19</a>
+        </span>
+        
+      </h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Init Custom Code Editor</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name">element</td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTMLElement</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <!-- 
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="mixins_CustomCodeEditorMixin.js.html">mixins/CustomCodeEditorMixin.js</a>, <a href="mixins_CustomCodeEditorMixin.js.html#line19">line 19</a>
+    </li></ul></dd>
+     -->
+
+    
+
+    
+
+    
+
+	
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="returns">
+  <code>
+<span class="param-type"><a href="global.html#aceEditor">aceEditor</a></span>
+
+</code>
+    <p>Return editor intialized from ACE JS</p>
+</div>
+
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~initCopyClipboard">
+      <span class="type-tag">inner</span>initCopyClipboard<span class="signature">(copyButton)</span><span class="type-signature"></span>
+      <span style="flex: 1"></span>
+      
+        <span class="source">
+          <a href="mixins_CustomCodeEditorMixin.js.html">mixins/CustomCodeEditorMixin.js</a>,&nbsp;<a href="mixins_CustomCodeEditorMixin.js.html#line87">line 87</a>
+        </span>
+        
+      </h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Init ClipboardJS</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name">copyButton</td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTMLElement</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <!-- 
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="mixins_CustomCodeEditorMixin.js.html">mixins/CustomCodeEditorMixin.js</a>, <a href="mixins_CustomCodeEditorMixin.js.html#line87">line 87</a>
+    </li></ul></dd>
+     -->
+
+    
+
+    
+
+    
+
+	
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~setDefaultSubmitValue">
+      <span class="type-tag">inner</span>setDefaultSubmitValue<span class="signature">()</span><span class="type-signature"></span>
+      <span style="flex: 1"></span>
+      
+        <span class="source">
+          <a href="mixins_CustomCodeEditorMixin.js.html">mixins/CustomCodeEditorMixin.js</a>,&nbsp;<a href="mixins_CustomCodeEditorMixin.js.html#line331">line 331</a>
+        </span>
+        
+      </h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>To set default Submit value for <code>this.next</code> that will contains:</p>
+<pre class="prettyprint source lang-js"><code> this.next = {
+   code: '',
+   type: ''
+ }
+</code></pre>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <!-- 
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="mixins_CustomCodeEditorMixin.js.html">mixins/CustomCodeEditorMixin.js</a>, <a href="mixins_CustomCodeEditorMixin.js.html#line331">line 331</a>
+    </li></ul></dd>
+     -->
+
+    
+
+    
+
+    
+
+	
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~setDropdown">
+      <span class="type-tag">inner</span>setDropdown<span class="signature">()</span><span class="type-signature"></span>
+      <span style="flex: 1"></span>
+      
+        <span class="source">
+          <a href="mixins_CustomCodeEditorMixin.js.html">mixins/CustomCodeEditorMixin.js</a>,&nbsp;<a href="mixins_CustomCodeEditorMixin.js.html#line142">line 142</a>
+        </span>
+        
+      </h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>To Set Dropdown if dropdown enable</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <!-- 
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="mixins_CustomCodeEditorMixin.js.html">mixins/CustomCodeEditorMixin.js</a>, <a href="mixins_CustomCodeEditorMixin.js.html#line142">line 142</a>
+    </li></ul></dd>
+     -->
+
+    
+
+    
+
+    
+
+	
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~setEditor">
+      <span class="type-tag">inner</span>setEditor<span class="signature">(editor)</span><span class="type-signature"></span>
+      <span style="flex: 1"></span>
+      
+        <span class="source">
+          <a href="mixins_CustomCodeEditorMixin.js.html">mixins/CustomCodeEditorMixin.js</a>,&nbsp;<a href="mixins_CustomCodeEditorMixin.js.html#line283">line 283</a>
+        </span>
+        
+      </h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Set Editor</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name">editor</td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#aceEditor">aceEditor</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <!-- 
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="mixins_CustomCodeEditorMixin.js.html">mixins/CustomCodeEditorMixin.js</a>, <a href="mixins_CustomCodeEditorMixin.js.html#line283">line 283</a>
+    </li></ul></dd>
+     -->
+
+    
+
+    
+
+    
+
+	
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~setEditorValue">
+      <span class="type-tag">inner</span>setEditorValue<span class="signature">()</span><span class="type-signature"></span>
+      <span style="flex: 1"></span>
+      
+        <span class="source">
+          <a href="mixins_CustomCodeEditorMixin.js.html">mixins/CustomCodeEditorMixin.js</a>,&nbsp;<a href="mixins_CustomCodeEditorMixin.js.html#line352">line 352</a>
+        </span>
+        
+      </h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Set editor value on <code>mounted</code> function.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <!-- 
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="mixins_CustomCodeEditorMixin.js.html">mixins/CustomCodeEditorMixin.js</a>, <a href="mixins_CustomCodeEditorMixin.js.html#line352">line 352</a>
+    </li></ul></dd>
+     -->
+
+    
+
+    
+
+    
+
+	
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~setSubmitValue">
+      <span class="type-tag">inner</span>setSubmitValue<span class="signature">(editor)</span><span class="type-signature"></span>
+      <span style="flex: 1"></span>
+      
+        <span class="source">
+          <a href="mixins_CustomCodeEditorMixin.js.html">mixins/CustomCodeEditorMixin.js</a>,&nbsp;<a href="mixins_CustomCodeEditorMixin.js.html#line363">line 363</a>
+        </span>
+        
+      </h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>To set submit value whenever editor is blur</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name">editor</td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#aceEditor">aceEditor</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <!-- 
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="mixins_CustomCodeEditorMixin.js.html">mixins/CustomCodeEditorMixin.js</a>, <a href="mixins_CustomCodeEditorMixin.js.html#line363">line 363</a>
+    </li></ul></dd>
+     -->
+
+    
+
+    
+
+    
+
+	
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~successClipboard">
+      <span class="type-tag">inner</span>successClipboard<span class="signature">(e)</span><span class="type-signature"></span>
+      <span style="flex: 1"></span>
+      
+        <span class="source">
+          <a href="mixins_CustomCodeEditorMixin.js.html">mixins/CustomCodeEditorMixin.js</a>,&nbsp;<a href="mixins_CustomCodeEditorMixin.js.html#line105">line 105</a>
+        </span>
+        
+      </h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Success Clipboard Event</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name">e</td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">ClipboardJS.Event</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <!-- 
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="mixins_CustomCodeEditorMixin.js.html">mixins/CustomCodeEditorMixin.js</a>, <a href="mixins_CustomCodeEditorMixin.js.html#line105">line 105</a>
+    </li></ul></dd>
+     -->
+
+    
+
+    
+
+    
+
+	
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+    <footer>
+      Documentation generated by <a href="https://github.com/Delni/vue-x-docs">Vue(x)Docs</a>.
+    </footer>
+  </div>
+</div>
+
+
+
+<script> prettyPrint(); </script>
+<script src="scripts/jquery.min.js"></script>
+<script src="scripts/vuexdocs.js"></script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

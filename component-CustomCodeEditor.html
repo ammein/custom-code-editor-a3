@@ -1,0 +1,2352 @@
+<!DOCTYPE html>
+
+
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>VueDoc | Component: CustomCodeEditor</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <link
+			id="favicon"
+			rel="shortcut icon"
+			type="image/png"
+			href="img/favicon.png"/>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link id="theme" type="text/css" rel="stylesheet" href="styles/vuex-doc.css">
+    
+    <script>
+      function turnGrey(){
+
+      }
+    </script>
+</head>
+
+<body>
+<header id="header">
+    <div class="logo">
+        
+            <img src="img/vuejs.png" style="width: 40px; height: 40px">
+        
+        <span style="margin-left: 1em"><a href="index.html">Component: CustomCodeEditor</a></span>
+    </div>
+    
+    <span style="flex: 1"></span>
+	<div class="search-container" id="search-container">
+        <input type="text" id="search">
+        <ul class="empty"></ul>
+    </div>
+</header>
+<div id="vue-view">
+  <nav id="nav">
+    <br><h3>Components</h3><ul><li><button type="button" class="toggle-subnav">  <span class="toggler">+</span></button><a href="component-CustomCodeEditor.html">CustomCodeEditor</a><div class="hidden" id="component:CustomCodeEditor_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="component-CustomCodeEditor.html#~ace">ace</a></li><li><a href="component-CustomCodeEditor.html#~aceEditor">aceEditor</a></li><li><a href="component-CustomCodeEditor.html#~aceModePath">aceModePath</a></li><li><a href="component-CustomCodeEditor.html#~aceThemePath">aceThemePath</a></li><li><a href="component-CustomCodeEditor.html#~cache">cache</a></li><li><a href="component-CustomCodeEditor.html#~dropdownClick">dropdownClick</a></li><li><a href="component-CustomCodeEditor.html#~log">log</a></li><li><a href="component-CustomCodeEditor.html#~modes">modes</a></li><li><a href="component-CustomCodeEditor.html#~moreOptionsClick">moreOptionsClick</a></li><li><a href="component-CustomCodeEditor.html#~options">options</a></li><li><a href="component-CustomCodeEditor.html#~optionsClick">optionsClick</a></li><li><a href="component-CustomCodeEditor.html#~originalValue">originalValue</a></li><li><a href="component-CustomCodeEditor.html#~searchOptions">searchOptions</a></li><li><a href="component-CustomCodeEditor.html#~theme">theme</a></li></ul><div class="member-type">Computed members</div><ul class="inner"><li><a href="component-CustomCodeEditor.html#~checkDropdown">checkDropdown</a></li><li><a href="component-CustomCodeEditor.html#~dropdownComponentSwitch">dropdownComponentSwitch</a></li><li><a href="component-CustomCodeEditor.html#~getTitle">getTitle</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="component-CustomCodeEditor.html#~optionsEvents">optionsEvents</a></li><li><a href="component-CustomCodeEditor.html#~optionsScroll">optionsScroll</a></li><li><a href="component-CustomCodeEditor.html#~resetCacheValue">resetCacheValue</a></li><li><a href="component-CustomCodeEditor.html#~updateCacheValue">updateCacheValue</a></li><li><a href="component-CustomCodeEditor.html#~updateOptionsTypesValue">updateOptionsTypesValue</a></li><li><a href="component-CustomCodeEditor.html#~validate">validate</a></li></ul></div></li><li><button type="button" class="toggle-subnav">  <span class="toggler">+</span></button><a href="component-OptionsContainerComponent.html">OptionsContainerComponent</a><div class="hidden" id="component:OptionsContainerComponent_sub"><div class="member-type">Props</div><ul class="inner"><li><a href="component-OptionsContainerComponent.html#~cache">cache</a></li><li><a href="component-OptionsContainerComponent.html#~editor">editor</a></li><li><a href="component-OptionsContainerComponent.html#~optionsTypes">optionsTypes</a></li><li><a href="component-OptionsContainerComponent.html#~search">search</a></li></ul><div class="member-type">Members</div><ul class="inner"><li><a href="component-OptionsContainerComponent.html#~options">options</a></li><li><a href="component-OptionsContainerComponent.html#~originalOptions">originalOptions</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="component-OptionsContainerComponent.html#~buttonOptionsClick">buttonOptionsClick</a></li><li><a href="component-OptionsContainerComponent.html#~deleteOptions">deleteOptions</a></li><li><a href="component-OptionsContainerComponent.html#~emitOptions">emitOptions</a></li><li><a href="component-OptionsContainerComponent.html#~getOptions">getOptions</a></li><li><a href="component-OptionsContainerComponent.html#~loopOptions">loopOptions</a></li><li><a href="component-OptionsContainerComponent.html#~optionsInputs">optionsInputs</a></li><li><a href="component-OptionsContainerComponent.html#~saveOptions">saveOptions</a></li><li><a href="component-OptionsContainerComponent.html#~updateOptions">updateOptions</a></li></ul><div class="member-type">Events</div><ul class="inner"><li><a href="component-OptionsContainerComponent.html#~event:customCodeEditor:getOptions">customCodeEditor:getOptions</a></li><li><a href="component-OptionsContainerComponent.html#~event:customCodeEditor:getOptions">customCodeEditor:getOptions</a></li><li><a href="component-OptionsContainerComponent.html#~event:customCodeEditor:getOptions">customCodeEditor:getOptions</a></li></ul></div></li></ul><h3>Models</h3><ul><li><button type="button" class="toggle-subnav">  <span class="toggler">+</span></button><a href="model-CustomCodeEditorMixin.html">CustomCodeEditorMixin</a><div class="hidden" id="model:CustomCodeEditorMixin_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="model-CustomCodeEditorMixin.html#~afterInit">afterInit</a></li><li><a href="model-CustomCodeEditorMixin.html#~beforeInit">beforeInit</a></li><li><a href="model-CustomCodeEditorMixin.html#~changeMode">changeMode</a></li><li><a href="model-CustomCodeEditorMixin.html#~clipboardEvents">clipboardEvents</a></li><li><a href="model-CustomCodeEditorMixin.html#~destroyClipboard">destroyClipboard</a></li><li><a href="model-CustomCodeEditorMixin.html#~editor">editor</a></li><li><a href="model-CustomCodeEditorMixin.html#~editorEvents">editorEvents</a></li><li><a href="model-CustomCodeEditorMixin.html#~errorClipboard">errorClipboard</a></li><li><a href="model-CustomCodeEditorMixin.html#~filterModesList">filterModesList</a></li><li><a href="model-CustomCodeEditorMixin.html#~getEditor">getEditor</a></li><li><a href="model-CustomCodeEditorMixin.html#~getName">getName</a></li><li><a href="model-CustomCodeEditorMixin.html#~init">init</a></li><li><a href="model-CustomCodeEditorMixin.html#~initCopyClipboard">initCopyClipboard</a></li><li><a href="model-CustomCodeEditorMixin.html#~setDefaultSubmitValue">setDefaultSubmitValue</a></li><li><a href="model-CustomCodeEditorMixin.html#~setDropdown">setDropdown</a></li><li><a href="model-CustomCodeEditorMixin.html#~setEditor">setEditor</a></li><li><a href="model-CustomCodeEditorMixin.html#~setEditorValue">setEditorValue</a></li><li><a href="model-CustomCodeEditorMixin.html#~setSubmitValue">setSubmitValue</a></li><li><a href="model-CustomCodeEditorMixin.html#~successClipboard">successClipboard</a></li></ul></div></li></ul><h3><a href="global.html">Global</a></h3><ul><li><button type="button" class="toggle-subnav">  <span class="toggler">+</span></button><a>Typedef</a><div class="hidden" id="global:typedef_sub"><ul class="inner"><li><a href="global.html#aceEditor">aceEditor</a></li><li><a href="global.html#optionsTypes">optionsTypes</a></li></ul></div></li></ul>
+	<div style="margin-top: 5em"></div>
+  </nav>
+
+  <div id="main">
+
+    <h1 class="page-title">Component: CustomCodeEditor</h1>
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+            <div class="description"><p>Custom Code Editor component for ApostropheCMS version 3 module</p></div>
+        
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <!-- 
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_CustomCodeEditor.vue.html">components/CustomCodeEditor.vue</a>, <a href="components_CustomCodeEditor.vue.html#line29">line 29</a>
+    </li></ul></dd>
+     -->
+
+    
+
+    
+
+    
+
+	
+		
+			<dt class="tag-life">mounted :</dt>
+		    <dd class="tag-life">
+				<ul>
+					<li>Intialized Ace Editor JS</li>
+				</ul>
+		    </dd>
+		
+			<dt class="tag-life">mounted :</dt>
+		    <dd class="tag-life">
+				<ul>
+					<li>Set Default `this.next` value</li>
+				</ul>
+		    </dd>
+		
+			<dt class="tag-life">beforeDestroy :</dt>
+		    <dd class="tag-life">
+				<ul>
+					<li>Destroy clipboardJS Initialized</li>
+				</ul>
+		    </dd>
+		
+	
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+		
+
+			
+			
+				<h4 class="data-title">Data</h4>
+				
+					
+<h4 class="name" id="~ace">
+  <span class="type-tag">inner</span>ace<span class="type-signature"> Object</span>
+  <span style="flex: 1"></span>
+  
+  <span class="source">
+      <a href="components_CustomCodeEditor.vue.html">components/CustomCodeEditor.vue</a>,&nbsp;<a href="components_CustomCodeEditor.vue.html#line58">line 58</a>
+  </span>
+  
+</h4>
+
+
+
+
+<div class="description">
+    <p>Ace Objects</p>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <!-- 
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_CustomCodeEditor.vue.html">components/CustomCodeEditor.vue</a>, <a href="components_CustomCodeEditor.vue.html#line58">line 58</a>
+    </li></ul></dd>
+     -->
+
+    
+
+    
+
+    
+
+	
+
+    
+</dl>
+
+
+
+
+
+
+				
+					
+<h4 class="name" id="~aceEditor">
+  <span class="type-tag">inner</span>aceEditor<span class="type-signature"> <a href="global.html#aceEditor">aceEditor</a></span>
+  <span style="flex: 1"></span>
+  
+  <span class="source">
+      <a href="components_CustomCodeEditor.vue.html">components/CustomCodeEditor.vue</a>,&nbsp;<a href="components_CustomCodeEditor.vue.html#line93">line 93</a>
+  </span>
+  
+</h4>
+
+
+
+
+<div class="description">
+    <p>Ace Editor JS store</p>
+<pre class="prettyprint source lang-js"><code>ace.aceEditor: ace.edit(element) || null
+</code></pre>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <!-- 
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_CustomCodeEditor.vue.html">components/CustomCodeEditor.vue</a>, <a href="components_CustomCodeEditor.vue.html#line93">line 93</a>
+    </li></ul></dd>
+     -->
+
+    
+
+    
+
+    
+
+	
+
+    
+</dl>
+
+
+
+
+
+
+				
+					
+<h4 class="name" id="~aceModePath">
+  <span class="type-tag">inner</span>aceModePath<span class="type-signature"> String</span>
+  <span style="flex: 1"></span>
+  
+  <span class="source">
+      <a href="components_CustomCodeEditor.vue.html">components/CustomCodeEditor.vue</a>,&nbsp;<a href="components_CustomCodeEditor.vue.html#line100">line 100</a>
+  </span>
+  
+</h4>
+
+
+
+
+<div class="description">
+    <p>Default Mode path for AceJS</p>
+<pre class="prettyprint source lang-js"><code>ace.aceModePath: &lt;String>
+</code></pre>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy">
+            <li>'ace/mode/'</li>
+        </ul></dd>
+    
+
+    <!-- 
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_CustomCodeEditor.vue.html">components/CustomCodeEditor.vue</a>, <a href="components_CustomCodeEditor.vue.html#line100">line 100</a>
+    </li></ul></dd>
+     -->
+
+    
+
+    
+
+    
+
+	
+
+    
+</dl>
+
+
+
+
+
+
+				
+					
+<h4 class="name" id="~aceThemePath">
+  <span class="type-tag">inner</span>aceThemePath<span class="type-signature"> String</span>
+  <span style="flex: 1"></span>
+  
+  <span class="source">
+      <a href="components_CustomCodeEditor.vue.html">components/CustomCodeEditor.vue</a>,&nbsp;<a href="components_CustomCodeEditor.vue.html#line107">line 107</a>
+  </span>
+  
+</h4>
+
+
+
+
+<div class="description">
+    <p>Default Theme path for AceJS</p>
+<pre class="prettyprint source lang-js"><code>ace.aceThemePath: &lt;String>
+</code></pre>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy">
+            <li>'ace/theme/'</li>
+        </ul></dd>
+    
+
+    <!-- 
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_CustomCodeEditor.vue.html">components/CustomCodeEditor.vue</a>, <a href="components_CustomCodeEditor.vue.html#line107">line 107</a>
+    </li></ul></dd>
+     -->
+
+    
+
+    
+
+    
+
+	
+
+    
+</dl>
+
+
+
+
+
+
+				
+					
+<h4 class="name" id="~cache">
+  <span class="type-tag">inner</span>cache<span class="type-signature"> Array.&lt;Object></span>
+  <span style="flex: 1"></span>
+  
+  <span class="source">
+      <a href="components_CustomCodeEditor.vue.html">components/CustomCodeEditor.vue</a>,&nbsp;<a href="components_CustomCodeEditor.vue.html#line114">line 114</a>
+  </span>
+  
+</h4>
+
+
+
+
+<div class="description">
+    <p>Store Cache when initialize Ace Editor Options</p>
+<pre class="prettyprint source lang-js"><code>ace.cache: &lt;Object[]>
+</code></pre>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy">
+            <li>[]</li>
+        </ul></dd>
+    
+
+    <!-- 
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_CustomCodeEditor.vue.html">components/CustomCodeEditor.vue</a>, <a href="components_CustomCodeEditor.vue.html#line114">line 114</a>
+    </li></ul></dd>
+     -->
+
+    
+
+    
+
+    
+
+	
+
+    
+</dl>
+
+
+
+
+
+
+				
+					
+<h4 class="name" id="~dropdownClick">
+  <span class="type-tag">inner</span>dropdownClick<span class="type-signature"> Boolean</span>
+  <span style="flex: 1"></span>
+  
+  <span class="source">
+      <a href="components_CustomCodeEditor.vue.html">components/CustomCodeEditor.vue</a>,&nbsp;<a href="components_CustomCodeEditor.vue.html#line141">line 141</a>
+  </span>
+  
+</h4>
+
+
+
+
+<div class="description">
+    <p>For Dropdown click trigger</p>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <!-- 
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_CustomCodeEditor.vue.html">components/CustomCodeEditor.vue</a>, <a href="components_CustomCodeEditor.vue.html#line141">line 141</a>
+    </li></ul></dd>
+     -->
+
+    
+
+    
+
+    
+
+	
+
+    
+</dl>
+
+
+
+
+
+
+				
+					
+<h4 class="name" id="~log">
+  <span class="type-tag">inner</span>log<span class="type-signature"> console.log</span>
+  <span style="flex: 1"></span>
+  
+  <span class="source">
+      <a href="components_CustomCodeEditor.vue.html">components/CustomCodeEditor.vue</a>,&nbsp;<a href="components_CustomCodeEditor.vue.html#line149">line 149</a>
+  </span>
+  
+</h4>
+
+
+
+
+<div class="description">
+    <p>For logging template value</p>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <!-- 
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_CustomCodeEditor.vue.html">components/CustomCodeEditor.vue</a>, <a href="components_CustomCodeEditor.vue.html#line149">line 149</a>
+    </li></ul></dd>
+     -->
+
+    
+
+    
+
+    
+
+	
+
+    
+</dl>
+
+
+
+
+
+
+				
+					
+<h4 class="name" id="~modes">
+  <span class="type-tag">inner</span>modes<span class="type-signature"> Array.&lt;Object></span>
+  <span style="flex: 1"></span>
+  
+  <span class="source">
+      <a href="components_CustomCodeEditor.vue.html">components/CustomCodeEditor.vue</a>,&nbsp;<a href="components_CustomCodeEditor.vue.html#line66">line 66</a>
+  </span>
+  
+</h4>
+
+
+
+
+<div class="description">
+    <p>Ace JS Modes</p>
+<pre class="prettyprint source lang-js"><code>ace.modes: &lt;Object[]>
+</code></pre>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <!-- 
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_CustomCodeEditor.vue.html">components/CustomCodeEditor.vue</a>, <a href="components_CustomCodeEditor.vue.html#line66">line 66</a>
+    </li></ul></dd>
+     -->
+
+    
+
+    
+
+    
+
+	
+
+    
+</dl>
+
+
+
+
+
+
+				
+					
+<h4 class="name" id="~moreOptionsClick">
+  <span class="type-tag">inner</span>moreOptionsClick<span class="type-signature"> Boolean</span>
+  <span style="flex: 1"></span>
+  
+  <span class="source">
+      <a href="components_CustomCodeEditor.vue.html">components/CustomCodeEditor.vue</a>,&nbsp;<a href="components_CustomCodeEditor.vue.html#line137">line 137</a>
+  </span>
+  
+</h4>
+
+
+
+
+<div class="description">
+    <p>For 'three dots' button trigger</p>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <!-- 
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_CustomCodeEditor.vue.html">components/CustomCodeEditor.vue</a>, <a href="components_CustomCodeEditor.vue.html#line137">line 137</a>
+    </li></ul></dd>
+     -->
+
+    
+
+    
+
+    
+
+	
+
+    
+</dl>
+
+
+
+
+
+
+				
+					
+<h4 class="name" id="~options">
+  <span class="type-tag">inner</span>options<span class="type-signature"> Array.&lt;Object></span>
+  <span style="flex: 1"></span>
+  
+  <span class="source">
+      <a href="components_CustomCodeEditor.vue.html">components/CustomCodeEditor.vue</a>,&nbsp;<a href="components_CustomCodeEditor.vue.html#line73">line 73</a>
+  </span>
+  
+</h4>
+
+
+
+
+<div class="description">
+    <p>Ace Options</p>
+<pre class="prettyprint source lang-js"><code>ace.options : &lt;Object[]></code></pre>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy">
+            <li>{}</li>
+        </ul></dd>
+    
+
+    <!-- 
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_CustomCodeEditor.vue.html">components/CustomCodeEditor.vue</a>, <a href="components_CustomCodeEditor.vue.html#line73">line 73</a>
+    </li></ul></dd>
+     -->
+
+    
+
+    
+
+    
+
+	
+
+    
+</dl>
+
+
+
+
+
+
+				
+					
+<h4 class="name" id="~optionsClick">
+  <span class="type-tag">inner</span>optionsClick<span class="type-signature"> Boolean</span>
+  <span style="flex: 1"></span>
+  
+  <span class="source">
+      <a href="components_CustomCodeEditor.vue.html">components/CustomCodeEditor.vue</a>,&nbsp;<a href="components_CustomCodeEditor.vue.html#line133">line 133</a>
+  </span>
+  
+</h4>
+
+
+
+
+<div class="description">
+    <p>For options clicked trigger</p>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <!-- 
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_CustomCodeEditor.vue.html">components/CustomCodeEditor.vue</a>, <a href="components_CustomCodeEditor.vue.html#line133">line 133</a>
+    </li></ul></dd>
+     -->
+
+    
+
+    
+
+    
+
+	
+
+    
+</dl>
+
+
+
+
+
+
+				
+					
+<h4 class="name" id="~originalValue">
+  <span class="type-tag">inner</span>originalValue<span class="type-signature"> String</span>
+  <span style="flex: 1"></span>
+  
+  <span class="source">
+      <a href="components_CustomCodeEditor.vue.html">components/CustomCodeEditor.vue</a>,&nbsp;<a href="components_CustomCodeEditor.vue.html#line129">line 129</a>
+  </span>
+  
+</h4>
+
+
+
+
+<div class="description">
+    <p>Original value storage for editor.getValue()</p>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy">
+            <li>''</li>
+        </ul></dd>
+    
+
+    <!-- 
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_CustomCodeEditor.vue.html">components/CustomCodeEditor.vue</a>, <a href="components_CustomCodeEditor.vue.html#line129">line 129</a>
+    </li></ul></dd>
+     -->
+
+    
+
+    
+
+    
+
+	
+
+    
+</dl>
+
+
+
+
+
+
+				
+					
+<h4 class="name" id="~searchOptions">
+  <span class="type-tag">inner</span>searchOptions<span class="type-signature"> String</span>
+  <span style="flex: 1"></span>
+  
+  <span class="source">
+      <a href="components_CustomCodeEditor.vue.html">components/CustomCodeEditor.vue</a>,&nbsp;<a href="components_CustomCodeEditor.vue.html#line145">line 145</a>
+  </span>
+  
+</h4>
+
+
+
+
+<div class="description">
+    <p>For input search value</p>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy">
+            <li>''</li>
+        </ul></dd>
+    
+
+    <!-- 
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_CustomCodeEditor.vue.html">components/CustomCodeEditor.vue</a>, <a href="components_CustomCodeEditor.vue.html#line145">line 145</a>
+    </li></ul></dd>
+     -->
+
+    
+
+    
+
+    
+
+	
+
+    
+</dl>
+
+
+
+
+
+
+				
+					
+<h4 class="name" id="~theme">
+  <span class="type-tag">inner</span>theme<span class="type-signature"> String</span>
+  <span style="flex: 1"></span>
+  
+  <span class="source">
+      <a href="components_CustomCodeEditor.vue.html">components/CustomCodeEditor.vue</a>,&nbsp;<a href="components_CustomCodeEditor.vue.html#line59">line 59</a>
+  </span>
+  
+</h4>
+
+
+
+
+<div class="description">
+    <p>Theme String</p>
+<pre class="prettyprint source lang-js"><code>ace.theme: &lt;String>
+</code></pre>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <!-- 
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_CustomCodeEditor.vue.html">components/CustomCodeEditor.vue</a>, <a href="components_CustomCodeEditor.vue.html#line59">line 59</a>
+    </li></ul></dd>
+     -->
+
+    
+
+    
+
+    
+
+	
+
+    
+</dl>
+
+
+
+
+
+
+				
+			
+			
+				<h4 class="data-title">Computed</h4>
+				
+					
+<h4 class="name" id="~checkDropdown">
+  <span class="type-tag">inner</span><span class="type-tag">computed</span>checkDropdown<span class="type-signature"> Boolean</span>
+  <span style="flex: 1"></span>
+  
+  <span class="source">
+      <a href="components_CustomCodeEditor.vue.html">components/CustomCodeEditor.vue</a>,&nbsp;<a href="components_CustomCodeEditor.vue.html#line156">line 156</a>
+  </span>
+  
+</h4>
+
+
+
+
+<div class="description">
+    <p>Check whether module options for dropdown is configured or not</p>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <!-- 
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_CustomCodeEditor.vue.html">components/CustomCodeEditor.vue</a>, <a href="components_CustomCodeEditor.vue.html#line156">line 156</a>
+    </li></ul></dd>
+     -->
+
+    
+
+    
+
+    
+
+	
+
+    
+</dl>
+
+
+
+
+
+
+				
+					
+<h4 class="name" id="~dropdownComponentSwitch">
+  <span class="type-tag">inner</span><span class="type-tag">computed</span>dropdownComponentSwitch<span class="type-signature"> String</span>
+  <span style="flex: 1"></span>
+  
+  <span class="source">
+      <a href="components_CustomCodeEditor.vue.html">components/CustomCodeEditor.vue</a>,&nbsp;<a href="components_CustomCodeEditor.vue.html#line163">line 163</a>
+  </span>
+  
+</h4>
+
+
+
+
+<div class="description">
+    <p>Switch dropdown icon component</p>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <!-- 
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_CustomCodeEditor.vue.html">components/CustomCodeEditor.vue</a>, <a href="components_CustomCodeEditor.vue.html#line163">line 163</a>
+    </li></ul></dd>
+     -->
+
+    
+
+    
+
+    
+
+	
+
+    
+</dl>
+
+
+
+
+
+
+				
+					
+<h4 class="name" id="~getTitle">
+  <span class="type-tag">inner</span><span class="type-tag">computed</span>getTitle<span class="type-signature"> String</span>
+  <span style="flex: 1"></span>
+  
+  <span class="source">
+      <a href="components_CustomCodeEditor.vue.html">components/CustomCodeEditor.vue</a>,&nbsp;<a href="components_CustomCodeEditor.vue.html#line173">line 173</a>
+  </span>
+  
+</h4>
+
+
+
+
+<div class="description">
+    <p>Get title from modes</p>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <!-- 
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_CustomCodeEditor.vue.html">components/CustomCodeEditor.vue</a>, <a href="components_CustomCodeEditor.vue.html#line173">line 173</a>
+    </li></ul></dd>
+     -->
+
+    
+
+    
+
+    
+
+	
+
+    
+</dl>
+
+
+
+
+
+
+				
+			
+
+		
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~optionsEvents">
+      <span class="type-tag">inner</span>optionsEvents<span class="signature">(e)</span><span class="type-signature"></span>
+      <span style="flex: 1"></span>
+      
+        <span class="source">
+          <a href="components_CustomCodeEditor.vue.html">components/CustomCodeEditor.vue</a>,&nbsp;<a href="components_CustomCodeEditor.vue.html#line232">line 232</a>
+        </span>
+        
+      </h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Trigger reference to optionsContainerComponent to trigger buttonOptionsClick method</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name">e</td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Event</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <!-- 
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_CustomCodeEditor.vue.html">components/CustomCodeEditor.vue</a>, <a href="components_CustomCodeEditor.vue.html#line232">line 232</a>
+    </li></ul></dd>
+     -->
+
+    
+
+    
+
+    
+
+	
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~optionsScroll">
+      <span class="type-tag">inner</span>optionsScroll<span class="signature">(e)</span><span class="type-signature"></span>
+      <span style="flex: 1"></span>
+      
+        <span class="source">
+          <a href="components_CustomCodeEditor.vue.html">components/CustomCodeEditor.vue</a>,&nbsp;<a href="components_CustomCodeEditor.vue.html#line269">line 269</a>
+        </span>
+        
+      </h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Deactivate <code>moreOptionsClick</code> whenever the options container is scrolled</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name">e</td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Event</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>HTML Event</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <!-- 
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_CustomCodeEditor.vue.html">components/CustomCodeEditor.vue</a>, <a href="components_CustomCodeEditor.vue.html#line269">line 269</a>
+    </li></ul></dd>
+     -->
+
+    
+
+    
+
+    
+
+	
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~resetCacheValue">
+      <span class="type-tag">inner</span>resetCacheValue<span class="signature">()</span><span class="type-signature"></span>
+      <span style="flex: 1"></span>
+      
+        <span class="source">
+          <a href="components_CustomCodeEditor.vue.html">components/CustomCodeEditor.vue</a>,&nbsp;<a href="components_CustomCodeEditor.vue.html#line241">line 241</a>
+        </span>
+        
+      </h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Reset data for <code>ace.cache</code> value</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <!-- 
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_CustomCodeEditor.vue.html">components/CustomCodeEditor.vue</a>, <a href="components_CustomCodeEditor.vue.html#line241">line 241</a>
+    </li></ul></dd>
+     -->
+
+    
+
+    
+
+    
+
+	
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~updateCacheValue">
+      <span class="type-tag">inner</span>updateCacheValue<span class="signature">(ObjectValue)</span><span class="type-signature"></span>
+      <span style="flex: 1"></span>
+      
+        <span class="source">
+          <a href="components_CustomCodeEditor.vue.html">components/CustomCodeEditor.vue</a>,&nbsp;<a href="components_CustomCodeEditor.vue.html#line249">line 249</a>
+        </span>
+        
+      </h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Update cache value event</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name">ObjectValue</td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><pre class="prettyprint source lang-js"><code>updateCacheValue({property, value})
+</code></pre></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <!-- 
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_CustomCodeEditor.vue.html">components/CustomCodeEditor.vue</a>, <a href="components_CustomCodeEditor.vue.html#line249">line 249</a>
+    </li></ul></dd>
+     -->
+
+    
+
+    
+
+    
+
+	
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~updateOptionsTypesValue">
+      <span class="type-tag">inner</span>updateOptionsTypesValue<span class="signature">()</span><span class="type-signature"></span>
+      <span style="flex: 1"></span>
+      
+        <span class="source">
+          <a href="components_CustomCodeEditor.vue.html">components/CustomCodeEditor.vue</a>,&nbsp;<a href="components_CustomCodeEditor.vue.html#line280">line 280</a>
+        </span>
+        
+      </h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Update options Types module value</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <!-- 
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_CustomCodeEditor.vue.html">components/CustomCodeEditor.vue</a>, <a href="components_CustomCodeEditor.vue.html#line280">line 280</a>
+    </li></ul></dd>
+     -->
+
+    
+
+    
+
+    
+
+	
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~validate">
+      <span class="type-tag">inner</span>validate<span class="signature">(value)</span><span class="type-signature"> &rarr; {String | Boolean}</span>
+      <span style="flex: 1"></span>
+      
+        <span class="source">
+          <a href="components_CustomCodeEditor.vue.html">components/CustomCodeEditor.vue</a>,&nbsp;<a href="components_CustomCodeEditor.vue.html#line215">line 215</a>
+        </span>
+        
+      </h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Method provide by ApostropheCMS3 to validate value from server</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name">value</td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Value return from ApostropheCMS self.validate</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <!-- 
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_CustomCodeEditor.vue.html">components/CustomCodeEditor.vue</a>, <a href="components_CustomCodeEditor.vue.html#line215">line 215</a>
+    </li></ul></dd>
+     -->
+
+    
+
+    
+
+    
+
+	
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+    <footer>
+      Documentation generated by <a href="https://github.com/Delni/vue-x-docs">Vue(x)Docs</a>.
+    </footer>
+  </div>
+</div>
+
+
+
+<script> prettyPrint(); </script>
+<script src="scripts/jquery.min.js"></script>
+<script src="scripts/vuexdocs.js"></script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
