@@ -4,10 +4,16 @@
         "$": "readonly",
         "_": "readonly",
         "ace": "readonly",
-        "apos": "readonly"
+        "apos": "writable",
+        "after": "readonly"
     },
+    "plugins": [
+        "jest"
+    ],
     "env": {
-        "es6": true
+        "es6": true,
+        "jest": true,
+        "jest/globals": true
     },
     "rules": {
         "indent": "off",

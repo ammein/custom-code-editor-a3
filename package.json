@@ -4,7 +4,7 @@
   "description": "ApostropheCMS version 3 Code Schema Field",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "eslint . && node ./tests/build-test-package-json.js && mocha ./tests/**/*.test.js",
     "jsdoc": "jsdoc -c 'conf.json'",
     "deploy-page": "npm run jsdoc && gh-pages -d docs"
   },
@@ -29,11 +29,12 @@
   "author": "Amin Shazrin",
   "license": "ISC",
   "devDependencies": {
-    "apostrophe": "^2.221.2",
-    "eslint": "^8.20.0",
+    "apostrophe": "^3.26.1",
+    "eslint": "^8.22.0",
     "eslint-config-punkave": "^2.1.0",
     "eslint-config-standard": "^17.0.0",
     "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jest": "^26.8.3",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^6.0.0",
     "eslint-plugin-react": "^7.30.1",

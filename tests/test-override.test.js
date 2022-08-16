@@ -1,17 +1,17 @@
-var assert = require("assert");
-var async = require("async");
-var fs = require("fs");
+const assert = require('assert');
+const async = require('async');
+const fs = require('fs');
 const expect = require('expect');
 const request = require('supertest');
-const _ = require("lodash");
-const path = require("path")
+const _ = require('lodash');
+const path = require('path')
 
-describe("Custom Code Editor : Override Options and Push Asset Test", function () {
-    var originalOptionsTypes = require("../aceTypes");
-    var apos;
+describe('Custom Code Editor : Override Options and Push Asset Test', function () {
+    let originalOptionsTypes = require('../aceTypes');
+    let apos;
 
-    var snippetCSS = "/* This is CSS3 */ \n { box-sizing : border-box; \n font : inherit; } \n \n @code-here";
-    var snippetBatch = "# Welcome to Command Prompt \n # Enter Any Command Here \n @code-here";
+    let snippetCSS = '/* This is CSS3 */ \n { box-sizing : border-box; \n font : inherit; } \n \n @code-here';
+    let snippetBatch = '# Welcome to Command Prompt \n # Enter Any Command Here \n @code-here';
 
     // Apostrophe took some time to load
     // Ends everything at 50 seconds
@@ -19,7 +19,7 @@ describe("Custom Code Editor : Override Options and Push Asset Test", function (
 
     after(function (done) {
         try {
-            require("apostrophe/test-lib/util").destroy(apos, done);
+            require('apostrophe/test-lib/util').destroy(apos, done);
         } catch (e) {
             console.warn('Old version of apostrophe does not export test-lib/util library, just dropping old test db');
             apos.db.dropDatabase();
@@ -38,41 +38,41 @@ describe("Custom Code Editor : Override Options and Push Asset Test", function (
                     port: 7790
                 },
                 'custom-code-editor': {
-                    ace : {
-                        theme : "monokai",
-                        defaultMode : "html",
-                        options : {
-                            "enableBasicAutocompletion" : true
+                    ace: {
+                        theme: 'monokai',
+                        defaultMode: 'html',
+                        options: {
+                            'enableBasicAutocompletion': true
                         },
-                        modes : [
+                        modes: [
                             {
-                                title : "CSS",
-                                name : "css",
-                                snippet : snippetCSS
+                                title: 'CSS',
+                                name: 'css',
+                                snippet: snippetCSS
                             },
                             {
-                                title : 'html',
-                                name : 'html'
+                                title: 'html',
+                                name: 'html'
                             },
                             {
-                                title : "Command Prompt",
-                                name : "batchfile",
-                                snippet : snippetBatch
+                                title: 'Command Prompt',
+                                name: 'batchfile',
+                                snippet: snippetBatch
                             }
                         ]
                     },
-                    config : {
-                        dropdown : {
-                            enable : true,
-                            height : 30,
-                            borderRadius : 5,
-                            fontFamily : "Mont-Regular",
-                            fontSize : 16,
-                            position : {
-                                bottom : 20,
-                                right : 20
+                    config: {
+                        dropdown: {
+                            enable: true,
+                            height: 30,
+                            borderRadius: 5,
+                            fontFamily: 'Mont-Regular',
+                            fontSize: 16,
+                            position: {
+                                bottom: 20,
+                                right: 20
                             },
-                            arrowColor : "yellow"
+                            arrowColor: 'yellow'
                         }
                     }
                 }
@@ -90,8 +90,8 @@ describe("Custom Code Editor : Override Options and Push Asset Test", function (
     });
 
     it('should get all the ace options to be the same', function() {
-        var originalModes = [{
-                title: "Bash",
+        let originalModes = [{
+                title: 'Bash',
                 name: 'sh',
                 snippet: `#!/bin/bash
                      # GNU bash, version 4.3.46
@@ -173,14 +173,14 @@ describe("Custom Code Editor : Override Options and Push Asset Test", function (
         ];
 
         expect(apos.customCodeEditor.ace).toMatchObject({
-            theme: "monokai",
-            defaultMode: "html",
+            theme: 'monokai',
+            defaultMode: 'html',
             options: {
-                "enableBasicAutocompletion": true
+                'enableBasicAutocompletion': true
             },
             modes: _.values(_.merge(_.keyBy(originalModes, 'name'), _.keyBy([{
-                    title: "CSS",
-                    name: "css",
+                    title: 'CSS',
+                    name: 'css',
                     snippet: snippetCSS
                 },
                 {
@@ -188,8 +188,8 @@ describe("Custom Code Editor : Override Options and Push Asset Test", function (
                     name: 'html'
                 },
                 {
-                    title: "Command Prompt",
-                    name: "batchfile",
+                    title: 'Command Prompt',
+                    name: 'batchfile',
                     snippet: snippetBatch
                 }
             ], 'name'))),
@@ -197,26 +197,26 @@ describe("Custom Code Editor : Override Options and Push Asset Test", function (
         })
     });
 
-    it('should get all the files according to the defined modes' , function() {
+    it('should get all the files according to the defined modes', function() {
         // Push to all modes name to be expect
         const expected = []
         _.forEach(apos.customCodeEditor.ace.modes, function (value, i, arr) {
-            expected.push(new RegExp("mode-"+value.name, 'g'))
+            expected.push(new RegExp('mode-' + value.name, 'g'))
         })
 
-        for(var i = apos.assets.pushed.scripts.length - 1 ; i >=0 ; i--){
-            var web = apos.assets.pushed.scripts[i].web
-            var file = apos.assets.pushed.scripts[i].file
+        for (let i = apos.assets.pushed.scripts.length - 1; i >= 0; i--) {
+            let web = apos.assets.pushed.scripts[i].web
+            let file = apos.assets.pushed.scripts[i].file
 
-            if(web.match(/custom-code-editor/g)){
-                _.forEach(expected, function(value , i ,arr) {
-                    if(file.match(/mode-/g)){
-                        if(file.match(value)){
+            if (web.match(/custom-code-editor/g)) {
+                _.forEach(expected, function(value, i, arr) {
+                    if (file.match(/mode-/g)) {
+                        if (file.match(value)) {
                             // If file match with the defined modes
                             expect(file).toEqual(
                                 expect.stringMatching(value)
                             )
-                        }else if(!file.match(value)){
+                        } else if (!file.match(value)) {
                             // If file not match with the defined modes
                             expect(file).not.toEqual(
                                 expect.stringMatching(value)
@@ -229,10 +229,10 @@ describe("Custom Code Editor : Override Options and Push Asset Test", function (
     });
 
     it('should get the file that according to the defined theme', function () {
-        var theme = new RegExp("theme-" + apos.customCodeEditor.ace.theme,"g")
-        for (var i = apos.assets.pushed.scripts.length - 1; i >= 0; i--) {
-            var web = apos.assets.pushed.scripts[i].web
-            var file = apos.assets.pushed.scripts[i].file
+        let theme = new RegExp('theme-' + apos.customCodeEditor.ace.theme, 'g')
+        for (let i = apos.assets.pushed.scripts.length - 1; i >= 0; i--) {
+            let web = apos.assets.pushed.scripts[i].web
+            let file = apos.assets.pushed.scripts[i].file
 
             if (web.match(/custom-code-editor/g)) {
                 if (file.match(/theme-/g)) {
@@ -256,15 +256,15 @@ describe("Custom Code Editor : Override Options and Push Asset Test", function (
         // Push to all modes name to be expect
         const expected = []
         _.forEach(apos.customCodeEditor.ace.modes, function (value, i, arr) {
-            expected.push(new RegExp("mode-" + value.name, 'g'))
+            expected.push(new RegExp('mode-' + value.name, 'g'))
         })
 
         // Pass Custom Mode Hardcoded
         expected.push(/mode-python/g)
 
-        for (var i = apos.assets.pushed.scripts.length - 1; i >= 0; i--) {
-            var web = apos.assets.pushed.scripts[i].web
-            var file = apos.assets.pushed.scripts[i].file
+        for (let i = apos.assets.pushed.scripts.length - 1; i >= 0; i--) {
+            let web = apos.assets.pushed.scripts[i].web
+            let file = apos.assets.pushed.scripts[i].file
 
             if (web.match(/custom-code-editor/g)) {
                 _.forEach(expected, function (value, i, arr) {
@@ -288,15 +288,15 @@ describe("Custom Code Editor : Override Options and Push Asset Test", function (
 
     it('should not push custom theme via browser options or any illegal options passing from project level module', function () {
         // Pass Custom Theme Hardcoded
-        apos.customCodeEditor.ace.theme = "solarized_dark"
-        var theme = new RegExp("theme-" + apos.customCodeEditor.ace.theme, "g")
-        for (var i = apos.assets.pushed.scripts.length - 1; i >= 0; i--) {
-            var web = apos.assets.pushed.scripts[i].web
-            var file = apos.assets.pushed.scripts[i].file
+        apos.customCodeEditor.ace.theme = 'solarized_dark'
+        let theme = new RegExp('theme-' + apos.customCodeEditor.ace.theme, 'g')
+        for (let i = apos.assets.pushed.scripts.length - 1; i >= 0; i--) {
+            let web = apos.assets.pushed.scripts[i].web
+            let file = apos.assets.pushed.scripts[i].file
 
             if (web.match(/custom-code-editor/g)) {
                 if (file.match(/theme-/g)) {
-                    // Must not matched with defined theme push, since 
+                    // Must not matched with defined theme push, since
                     // theme asset is always pushing one JS file
                     expect(file).not.toEqual(
                         expect.stringMatching(theme)
