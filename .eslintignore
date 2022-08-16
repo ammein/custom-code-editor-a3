@@ -1,9 +1,3 @@
 # In Lib Modules
-/collections/modules/**/*.js
-monitor-config.js
 index.js
-gulpfile.babel.js
-tests/**
-
-# In public folders
-public/js/**/*.js
+docs/**

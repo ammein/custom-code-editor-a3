@@ -1,5 +1,7 @@
 <script>
     import _ from 'lodash';
+    import CollapseDown from 'vue-material-design-icons/MenuDown.vue';
+    import CollapseUp from 'vue-material-design-icons/MenuUp.vue';
 
     /**
      * @typedef optionsTypes
@@ -25,6 +27,10 @@
      * @lifecycle render Only render when `this.editor` & `this.optionsTypes` is available
      */
     export default {
+        components:{
+            CollapseDown,
+            CollapseUp
+        },
         props: {
             /** 
              * @vprop {optionsTypes} optionsTypes - Default Options Types
@@ -62,7 +68,11 @@
                 /**
                  * @member {Object} - To grab modified custom-code-editor module for editor options
                  */
-                options: {}
+                options: {},
+                /**
+                 * @member {Object.<Boolean>} - Title Click Check
+                 */
+                titleClick: {},
             }
         },
         methods: {
@@ -440,6 +450,11 @@
                     }
                 }
 
+                // Hide when titleClick for the category is true
+                if (this.titleClick[_.camelCase(object.category)]) {
+                    display = 'none';
+                }
+
                 let lists = h('li', {
                     class: 'lists-inputs',
                     attrs: {
@@ -727,7 +742,7 @@
                     style: {
                         marginBottom: "60px"
                     }
-                }, []);
+                }, [ ]);
                 // Grab props Options Types
                 let optionsTypes = this.optionsTypes;
                 let categoryTitle = '';
@@ -761,13 +776,30 @@
                         'data-header': this.$parent.$parent.getName(categoryKey),
                         id: categoryKey
                     }
+
+                    // Assign Data Title Click for checking
+                    if (_.isUndefined(this.titleClick[_.camelCase(categoryKey)])) {
+                        this.titleClick[_.camelCase(categoryKey)] = false;
+                    }
+
                     // Create new <h1> title
                     let h1 = h('h1', {
                         class: 'editor-options-title',
                         style: {
                             cursor: 'pointer'
+                        },
+                        on: {
+                            click: this.listHeaderClick.bind(self)
                         }
-                    }, ' ' + this.$parent.$parent.getName(categoryKey) + ' Options');
+                    }, [
+                        ' ' + this.$parent.$parent.getName(categoryKey) + ' Options' + ' ',
+                        h(this.titleClick[_.camelCase(categoryKey)] ? CollapseUp : CollapseDown, {
+                            attrs: {
+                                'data-category': this.$parent.$parent.getName(categoryKey),
+                                'data-icon': this.titleClick[_.camelCase(categoryKey)] ? 'up' : 'down'
+                            }
+                        }, [])
+                        ]);
                     // Push <h1> to new listHeader created
                     listHeader.children.push(h1);
                     // Assign new categoryTitle for this particular loop conditional
@@ -832,6 +864,17 @@
                 }
 
                 return unorderedLists;
+            },
+            /**
+             * @method
+             * @desc When list header is clicked. `this.$forceUpdate()` triggers when done update titleClick[category]
+             * @param {HTMLEvent} e - HTML Event Click
+             */
+            listHeaderClick(e){
+                let category = _.camelCase(e.currentTarget.parentElement.dataset.category);
+                let condition = this.titleClick[category];
+                this.titleClick[category] = !condition;
+                this.$forceUpdate();
             },
             /**
              * @method emitOptions

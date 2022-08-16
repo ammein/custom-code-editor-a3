@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "allowJs": true,
-        "module": "none",
+        "module": "ES6",
         "declaration": true,
         "noImplicitAny": true,
         "lib": [
@@ -15,6 +15,8 @@
         ".stylelintrc"
     ],
     "include": [
+        "./tests/**/*.js",
+        "ui/apos/**/*.js",
         "./lib/**/*.js",
         "index.js"
     ]

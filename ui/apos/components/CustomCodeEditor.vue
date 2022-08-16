@@ -26,7 +26,7 @@
                         <div class="code-snippet-wrapper" ref="editor" data-editor>
                             <!-- Where the codes begin -->
                         </div>
-                        <div v-if="ace.config && (!ace.config.optionsCustomizer || ace.config.optionsCustomizer.enable)"
+                        <div v-if="checkOptionsCustomizer"
                             class="options-config">
                             <button class="button-options" title="Adjust Options" @click="optionsClick = !optionsClick">
                                 <ChevronGearIcon :size="16" />
@@ -57,7 +57,7 @@
                                         </button>
                                     </div>
                                 </div>
-                                <div class="search-buttons">
+                                <div class="divider-buttons">
                                     <img alt="" class="divider-title"
                                         src="https://static.overlay-tech.com/assets/2ea72787-5ae1-42f3-aa97-80b116cc2ab2.svg" />
                                 </div>
@@ -130,6 +130,20 @@
             return {
                 /**
                  * @member {Object} - Ace Objects
+                 * ```js
+                 * ace: {
+                 *      theme: <String>,
+                 *      modes: <Object[]>,
+                 *      options : <Object[]>,
+                 *      defaultMode: <String>,
+                 *      optionsTypes: <Object[]>,
+                 *      aceEditor: ace.edit(element) || null,
+                 *      aceModePath: <String>,
+                 *      aceThemePath: <String>,
+                 *      cache: <Object[]>,
+                 *      config: <Object[]>
+                 * }
+                 * ```
                  */
                 ace: {
                     /**
@@ -155,7 +169,7 @@
                     /**
                      * @member {String} - Default Mode of Ace JS configured by module
                      * ```js
-                     * ace.defaultMode
+                     * ace.defaultMode: <String>
                      * ```
                      */
                     defaultMode: browserOptions.ace.defaultMode,
@@ -230,6 +244,19 @@
         },
         computed: {
             /**
+             * @computed {String} Check config optionsCustomizer object is enable or not
+             * @return {Boolean}
+             */
+            checkOptionsCustomizer() {
+                let condition = true;
+
+                if (_.has(this.ace, 'config.optionsCustomizer.enable')) {
+                    condition = this.ace.config.optionsCustomizer.enable;
+                }
+
+                return condition;
+            },
+            /**
              * @computed {Boolean} checkDropdown Check whether module options for dropdown is configured or not
              * @return {Boolean}
              */
@@ -284,7 +311,9 @@
             this.setEditorValue();
         },
         beforeDestroy() {
-            this.destroyClipboard();
+            if (_.has(this.ace, 'config.optionsCustomizer.enable')) {
+                this.destroyClipboard();
+            }
         },
         methods: {
 

@@ -58,15 +58,13 @@ export default {
 
       // Enable dropdown
       if (_.has(this.ace, 'config.dropdown') && _.has(this.ace, 'config.dropdown.enable')) {
-        if (this.ace.config.dropdown.enable) {
-          this.setDropdown();
-        }
+        this.setDropdown();
       }
 
-      if (ClipboardJS.isSupported()) {
+      if (ClipboardJS.isSupported() && !_.has(this.ace, 'config.optionsCustomizer.enable')) {
         // Init ClipboardJS
         this.initCopyClipboard(this.$el.querySelector('button.copy-options'));
-      } else {
+      } else if (!ClipboardJS.isSupported()) {
         console.warn('ClipboardJS is not supported in this browser');
       }
 
