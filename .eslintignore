@@ -1,3 +1,10 @@
-# In Lib Modules
+# Index JS and docs
 index.js
 docs/**
+
+# Tests build folder
+tests/apos-build/**
+tests/data/**
+tests/node_modules/**
+tests/public/**
+tests/package.json
