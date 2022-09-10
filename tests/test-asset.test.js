@@ -11,6 +11,8 @@ describe('Custom Code Editor : Clear Modes and Push All Assets', function () {
     let originalOptionsTypes = require('../aceTypes.js');
     let apos;
     let namespace;
+    let buildDir = `${apos.rootDir}/apos-build/${namespace}`;
+    let bundleDir = `${apos.rootDir}/public/apos-frontend/${namespace}`;
 
     const {
       deleteBuiltFolders,
@@ -53,7 +55,9 @@ describe('Custom Code Editor : Clear Modes and Push All Assets', function () {
                     return {
                       'apostrophe:afterInit': {
                         checkCustomCodeEditor() {
-                          namespace = self.apos.asset.getNamespace()
+                          namespace = self.apos.asset.getNamespace();
+                          buildDir = `${self.apos.rootDir}/apos-build/${namespace}`;
+                          bundleDir = `${self.apos.rootDir}/public/apos-frontend/${namespace}`;
                           assert(self.apos.schema);
                           assert(self.apos.modules['custom-code-editor-a3']);
                         }
@@ -71,18 +75,13 @@ describe('Custom Code Editor : Clear Modes and Push All Assets', function () {
     })
 
     it('build assets folder', async function() {
-
-        process.env.NODE_ENV = 'development';
-        await apos.asset.tasks.build.task();
+      process.env.NODE_ENV = 'development';
+      await apos.asset.tasks.build.task();
     });
 
     it('should generates all assets from custom-code-editor module', async function () {
-
-        const buildDir = `${apos.rootDir}/apos-build/${namespace}`;
-        const bundleDir = `${apos.rootDir}/public/apos-frontend/${namespace}`;
-        // Read All the Files that shows available mode
-        let aceBuildsExists = await checkFileExists(namespace + '/ace-builds');
-
-        expect(aceBuildsExists).toBe(true);
+      // Read All the Files that shows available mode
+      let aceBuildsExists = await checkFileExists(namespace + '/ace-builds');
+      expect(aceBuildsExists).toBe(true);
     });
 });
