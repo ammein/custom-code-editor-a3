@@ -35,9 +35,13 @@ module.exports = {
         return {
           output: {
             chunkFilename: (pathData) => {
-              const getGroupType = /(?:.*src-noconflict_)(?:(?<type>ext|mode|theme|worker|snippets|keybinding|.*)(?:_|-)(?<filename>.*.js))*$/i;
+              const getGroupType = /(?:.*src-noconflict_)(?:(?<type>ext|mode|theme|worker|snippets|keybinding|.*)(?:_|-)(?<filename>.*(?<extension>.js|)))*$/i;
 
               const checkPathType = pathData.chunk.id.match(getGroupType);
+
+              if (checkPathType === null) {
+                return;
+              };
 
               switch (true) {
                 case checkPathType.groups.type === 'mode' && aceFiles.allModes.includes(checkPathType.groups.filename.replace('_js', '')):
