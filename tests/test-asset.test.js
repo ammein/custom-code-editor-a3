@@ -82,6 +82,8 @@ describe('Custom Code Editor : Clear Modes and Push All Assets', function () {
     });
 
     it('build assets folder', async function() {
+      // process.env.NODE_ENV = 'development';
+      // await apos.asset.tasks.build.task();
       // Read All the Files that shows available mode
       let aceBuildsExists = await checkFileExists(namespace + path.posix.sep + 'ace-builds');
       expect(aceBuildsExists).toBe(true);
