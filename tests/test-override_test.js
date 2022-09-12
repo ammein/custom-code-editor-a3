@@ -4,7 +4,7 @@ const fs = require('fs');
 const expect = require('expect');
 const request = require('supertest');
 const _ = require('lodash');
-const path = require('path')
+const path = require('path');
 
 describe('Custom Code Editor : Override Options and Push Asset Test', function () {
     let originalOptionsTypes = require('../aceTypes');
@@ -194,19 +194,19 @@ describe('Custom Code Editor : Override Options and Push Asset Test', function (
                 }
             ], 'name'))),
             optionsTypes: originalOptionsTypes
-        })
+        });
     });
 
     it('should get all the files according to the defined modes', function() {
         // Push to all modes name to be expect
-        const expected = []
+        const expected = [];
         _.forEach(apos.customCodeEditor.ace.modes, function (value, i, arr) {
-            expected.push(new RegExp('mode-' + value.name, 'g'))
-        })
+            expected.push(new RegExp('mode-' + value.name, 'g'));
+        });
 
         for (let i = apos.assets.pushed.scripts.length - 1; i >= 0; i--) {
-            let web = apos.assets.pushed.scripts[i].web
-            let file = apos.assets.pushed.scripts[i].file
+            let web = apos.assets.pushed.scripts[i].web;
+            let file = apos.assets.pushed.scripts[i].file;
 
             if (web.match(/custom-code-editor/g)) {
                 _.forEach(expected, function(value, i, arr) {
@@ -215,24 +215,24 @@ describe('Custom Code Editor : Override Options and Push Asset Test', function (
                             // If file match with the defined modes
                             expect(file).toEqual(
                                 expect.stringMatching(value)
-                            )
+                            );
                         } else if (!file.match(value)) {
                             // If file not match with the defined modes
                             expect(file).not.toEqual(
                                 expect.stringMatching(value)
-                            )
+                            );
                         }
                     }
-                })
+                });
             }
         }
     });
 
     it('should get the file that according to the defined theme', function () {
-        let theme = new RegExp('theme-' + apos.customCodeEditor.ace.theme, 'g')
+        let theme = new RegExp('theme-' + apos.customCodeEditor.ace.theme, 'g');
         for (let i = apos.assets.pushed.scripts.length - 1; i >= 0; i--) {
-            let web = apos.assets.pushed.scripts[i].web
-            let file = apos.assets.pushed.scripts[i].file
+            let web = apos.assets.pushed.scripts[i].web;
+            let file = apos.assets.pushed.scripts[i].file;
 
             if (web.match(/custom-code-editor/g)) {
                 if (file.match(/theme-/g)) {
@@ -240,12 +240,12 @@ describe('Custom Code Editor : Override Options and Push Asset Test', function (
                         // If file match with the defined modes
                         expect(file).toEqual(
                             expect.stringMatching(theme)
-                        )
+                        );
                     } else if (!file.match(theme)) {
                         // If file not match with the defined modes
                         expect(file).not.toEqual(
                             expect.stringMatching(theme)
-                        )
+                        );
                     }
                 }
             }
@@ -254,17 +254,17 @@ describe('Custom Code Editor : Override Options and Push Asset Test', function (
 
     it('should not push custom mode via browser options or any illegal options passing from project level module', function () {
         // Push to all modes name to be expect
-        const expected = []
+        const expected = [];
         _.forEach(apos.customCodeEditor.ace.modes, function (value, i, arr) {
-            expected.push(new RegExp('mode-' + value.name, 'g'))
-        })
+            expected.push(new RegExp('mode-' + value.name, 'g'));
+        });
 
         // Pass Custom Mode Hardcoded
-        expected.push(/mode-python/g)
+        expected.push(/mode-python/g);
 
         for (let i = apos.assets.pushed.scripts.length - 1; i >= 0; i--) {
-            let web = apos.assets.pushed.scripts[i].web
-            let file = apos.assets.pushed.scripts[i].file
+            let web = apos.assets.pushed.scripts[i].web;
+            let file = apos.assets.pushed.scripts[i].file;
 
             if (web.match(/custom-code-editor/g)) {
                 _.forEach(expected, function (value, i, arr) {
@@ -273,26 +273,26 @@ describe('Custom Code Editor : Override Options and Push Asset Test', function (
                             // If file match with the defined modes
                             expect(file).toEqual(
                                 expect.stringMatching(value)
-                            )
+                            );
                         } else if (!file.match(value)) {
                             // If file not match with the defined modes
                             expect(file).not.toEqual(
                                 expect.stringMatching(value)
-                            )
+                            );
                         }
                     }
-                })
+                });
             }
         }
     });
 
     it('should not push custom theme via browser options or any illegal options passing from project level module', function () {
         // Pass Custom Theme Hardcoded
-        apos.customCodeEditor.ace.theme = 'solarized_dark'
-        let theme = new RegExp('theme-' + apos.customCodeEditor.ace.theme, 'g')
+        apos.customCodeEditor.ace.theme = 'solarized_dark';
+        let theme = new RegExp('theme-' + apos.customCodeEditor.ace.theme, 'g');
         for (let i = apos.assets.pushed.scripts.length - 1; i >= 0; i--) {
-            let web = apos.assets.pushed.scripts[i].web
-            let file = apos.assets.pushed.scripts[i].file
+            let web = apos.assets.pushed.scripts[i].web;
+            let file = apos.assets.pushed.scripts[i].file;
 
             if (web.match(/custom-code-editor/g)) {
                 if (file.match(/theme-/g)) {
@@ -300,7 +300,7 @@ describe('Custom Code Editor : Override Options and Push Asset Test', function (
                     // theme asset is always pushing one JS file
                     expect(file).not.toEqual(
                         expect.stringMatching(theme)
-                    )
+                    );
                 }
             }
         }

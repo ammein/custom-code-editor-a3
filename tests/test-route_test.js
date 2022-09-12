@@ -4,7 +4,7 @@ const fs = require('fs');
 const expect = require('expect');
 const request = require('supertest');
 const _ = require('lodash');
-const path = require('path')
+const path = require('path');
 
 describe('Custom Code Editor : Routes Saving Options', function () {
 
@@ -17,7 +17,7 @@ describe('Custom Code Editor : Routes Saving Options', function () {
         'customCodeEditor': {
             'enableEmmet': true
         }
-    }
+    };
 
     after(function (done) {
         try {
@@ -89,13 +89,13 @@ describe('Custom Code Editor : Routes Saving Options', function () {
         req.user = _.assign(existingUser, myUser);
         apos.customCodeEditor.getOptions(req, function(err, result) {
             if (err) {
-                console.log('ERROR (GET) : ', err)
+                console.log('ERROR (GET) : ', err);
             }
-            assert(!err)
+            assert(!err);
             expect(result).toMatchObject({});
             expect(Object.keys(result).length).toBe(0);
             done();
-        })
+        });
     });
 
     it('should save user options successfully', function(done) {
@@ -103,23 +103,23 @@ describe('Custom Code Editor : Routes Saving Options', function () {
         let existingUser = _.cloneDeep(req.user);
         let myUser = _.cloneDeep(dummyUser);
         req.user = _.assign(existingUser, myUser);
-        req.body = _.cloneDeep(body)
+        req.body = _.cloneDeep(body);
         apos.customCodeEditor.submit(req, function(err) {
             if (err) {
-                console.log('ERROR (POST) : ', err)
+                console.log('ERROR (POST) : ', err);
             }
             assert(!err);
             // Check User Database to be match with customCodeEditor saving options
             apos.users.find(req, { username: 'abuBakar' }).toObject(function(err, user) {
                 if (err) {
-                    console.log('ERROR (USER POST) : ', err)
+                    console.log('ERROR (USER POST) : ', err);
                 }
                 assert(!err);
                 expect(user.customCodeEditor).toMatchObject(body.customCodeEditor);
                 assert(user.username === 'abuBakar');
-                done()
-            })
-        })
+                done();
+            });
+        });
     });
 
     it('should get previous saves options', function(done) {
@@ -129,23 +129,23 @@ describe('Custom Code Editor : Routes Saving Options', function () {
         req.user = _.assign(existingUser, myUser);
         apos.customCodeEditor.getOptions(req, function (err, result) {
             if (err) {
-                console.log('ERROR (GET) : ', err)
+                console.log('ERROR (GET) : ', err);
             }
-            assert(!err)
+            assert(!err);
             expect(result).toMatchObject(body.customCodeEditor);
             expect(Object.keys(result).length).toBe(1);
             // Check User Database to be match with customCodeEditor saving options
             apos.users.find(req, { username: 'abuBakar' }).toObject(function (err, user) {
                 if (err) {
-                    console.log('ERROR (USER GET) : ', err)
+                    console.log('ERROR (USER GET) : ', err);
                 }
                 assert(!err);
                 // Must match with the result
                 expect(user.customCodeEditor).toMatchObject(result);
                 assert(user.username === 'abuBakar');
                 done();
-            })
-        })
+            });
+        });
     });
 
     it('should reset options successfully using DELETE route', function(done) {
@@ -168,7 +168,7 @@ describe('Custom Code Editor : Routes Saving Options', function () {
                 assert(user.username === 'abuBakar');
                 expect(user['customCodeEditor']).toBe(undefined);
                 done();
-            })
+            });
         });
     });
 
@@ -179,13 +179,13 @@ describe('Custom Code Editor : Routes Saving Options', function () {
         req.user = _.assign(existingUser, myUser);
         apos.customCodeEditor.getOptions(req, function (err, result) {
             if (err) {
-                console.log('ERROR (GET) : ', err)
+                console.log('ERROR (GET) : ', err);
             }
-            assert(!err)
+            assert(!err);
             expect(result).toMatchObject({});
             expect(Object.keys(result).length).toBe(0);
             done();
-        })
+        });
     });
 
     it('should save user options successfully - second time', function (done) {
@@ -193,10 +193,10 @@ describe('Custom Code Editor : Routes Saving Options', function () {
         let existingUser = _.cloneDeep(req.user);
         let myUser = _.cloneDeep(dummyUser);
         req.user = _.assign(existingUser, myUser);
-        req.body = _.cloneDeep(body)
+        req.body = _.cloneDeep(body);
         apos.customCodeEditor.submit(req, function (err) {
             if (err) {
-                console.log('ERROR (POST) : ', err)
+                console.log('ERROR (POST) : ', err);
             }
             assert(!err);
             // Check User Database to be match with customCodeEditor saving options
@@ -204,14 +204,14 @@ describe('Custom Code Editor : Routes Saving Options', function () {
                 username: 'abuBakar'
             }).toObject(function (err, user) {
                 if (err) {
-                    console.log('ERROR (USER POST) : ', err)
+                    console.log('ERROR (USER POST) : ', err);
                 }
                 assert(!err);
                 expect(user.customCodeEditor).toMatchObject(body.customCodeEditor);
                 assert(user.username === 'abuBakar');
-                done()
-            })
-        })
+                done();
+            });
+        });
     });
 
     it('should not submit wrong key value to save and must maintain the saves value', function(done) {
@@ -222,7 +222,7 @@ describe('Custom Code Editor : Routes Saving Options', function () {
         req.user = _.assign(existingUser, myUser);
         req.body = {
             'NotCustomCodeEditor': cloneBody.customCodeEditor
-        }
+        };
         apos.customCodeEditor.submit(req, function(err) {
             assert(!err);
 
@@ -240,9 +240,9 @@ describe('Custom Code Editor : Routes Saving Options', function () {
                     assert(!err);
                     expect(result).toMatchObject(body.customCodeEditor);
                     done();
-                })
-            })
-        })
+                });
+            });
+        });
     });
 
     it('should reset options successfully using DELETE route - second time', function (done) {
@@ -267,7 +267,7 @@ describe('Custom Code Editor : Routes Saving Options', function () {
                 assert(user.username === 'abuBakar');
                 expect(user['customCodeEditor']).toBe(undefined);
                 done();
-            })
+            });
         });
     });
 
@@ -279,7 +279,7 @@ describe('Custom Code Editor : Routes Saving Options', function () {
         req.user = _.assign(existingUser, myUser);
         req.body = {
             'NotCustomCodeEditor': cloneBody.customCodeEditor
-        }
+        };
         apos.customCodeEditor.submit(req, function (err) {
             assert(!err);
 
@@ -289,7 +289,7 @@ describe('Custom Code Editor : Routes Saving Options', function () {
             }).toObject(function (err, user) {
                 assert(!err);
                 expect(user.username).toBe('abuBakar');
-                expect(user.customCodeEditor).toBe(null)
+                expect(user.customCodeEditor).toBe(null);
                 expect(user['NotCustomCodeEditor']).not.toBeTruthy();
                 expect(user['NotCustomCodeEditor']).toBeFalsy();
 
@@ -297,9 +297,9 @@ describe('Custom Code Editor : Routes Saving Options', function () {
                     assert(!err);
                     expect(result).toMatchObject({});
                     done();
-                })
-            })
-        })
+                });
+            });
+        });
     });
 
     it('should save user options successfully - last time', function (done) {
@@ -307,10 +307,10 @@ describe('Custom Code Editor : Routes Saving Options', function () {
         let existingUser = _.cloneDeep(req.user);
         let myUser = _.cloneDeep(dummyUser);
         req.user = _.assign(existingUser, myUser);
-        req.body = _.cloneDeep(body)
+        req.body = _.cloneDeep(body);
         apos.customCodeEditor.submit(req, function (err) {
             if (err) {
-                console.log('ERROR (POST) : ', err)
+                console.log('ERROR (POST) : ', err);
             }
             assert(!err);
             // Check User Database to be match with customCodeEditor saving options
@@ -318,14 +318,14 @@ describe('Custom Code Editor : Routes Saving Options', function () {
                 username: 'abuBakar'
             }).toObject(function (err, user) {
                 if (err) {
-                    console.log('ERROR (USER POST) : ', err)
+                    console.log('ERROR (USER POST) : ', err);
                 }
                 assert(!err);
                 expect(user.customCodeEditor).toMatchObject(body.customCodeEditor);
                 assert(user.username === 'abuBakar');
-                done()
-            })
-        })
+                done();
+            });
+        });
     });
 
     it('should not saves wrong key value and must maintain the saves value', function (done) {
@@ -338,7 +338,7 @@ describe('Custom Code Editor : Routes Saving Options', function () {
             'NotCustomCodeEditor': {
                 'highlightActiveLine': false
             }
-        }
+        };
         apos.customCodeEditor.submit(req, function (err) {
             assert(!err);
 
@@ -356,8 +356,8 @@ describe('Custom Code Editor : Routes Saving Options', function () {
                     assert(!err);
                     expect(result).toMatchObject(body.customCodeEditor);
                     done();
-                })
-            })
-        })
+                });
+            });
+        });
     });
 });

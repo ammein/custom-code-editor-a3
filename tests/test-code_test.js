@@ -55,7 +55,7 @@ describe('Custom Code Editor : Basic Schema Test', function() {
         apos.schemas.convert(req, schema, 'form', {}, output, function(err) {
             assert(!err);
             done();
-        })
+        });
     });
 
     it('should always return string value even the submitted value is undefined', function(done) {
@@ -76,8 +76,8 @@ describe('Custom Code Editor : Basic Schema Test', function() {
         }, output, function (err) {
             assert(!err);
             done();
-        })
-    })
+        });
+    });
 
     it('should trigger an error if the field is required with empty value', function(done) {
         let req = apos.tasks.getReq();
@@ -95,7 +95,7 @@ describe('Custom Code Editor : Basic Schema Test', function() {
         apos.schemas.convert(req, schema, 'form', {}, output, function(err) {
             assert(err);
             done();
-        })
+        });
     });
 
     it('should not trigger any error if value present on required field', function(done) {
@@ -119,7 +119,7 @@ describe('Custom Code Editor : Basic Schema Test', function() {
         }, output, function (err) {
             assert(!err);
             done();
-        })
+        });
     });
 
     it('should not panicked even the value is absent for code', function(done) {
@@ -143,6 +143,6 @@ describe('Custom Code Editor : Basic Schema Test', function() {
         }, output, function (err) {
             assert(!err);
             done();
-        })
-    })
-})
+        });
+    });
+});
