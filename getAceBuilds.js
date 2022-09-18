@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs');
+const _ = require('lodash');
 
 module.exports = (aceDirectory) => {
   const allModes = [];
@@ -29,9 +30,9 @@ module.exports = (aceDirectory) => {
       .push(...files
         .filter((file) => file.match(new RegExp(`(?!.*${path.sep})(?!.*${path.sep})(.*)`, 'i')))
         .map((filteredFile) => {
-          const found = filteredFile.match(/(?!.*\/)(?:(?!mode-|theme-|ace.js|worker-|snippets)(.*))*/i);
+          const found = filteredFile.match(/(?!.*\/)(?:(?!mode-|theme-|ace.js|snippets)(.*))*/i);
 
-          if (found) {
+          if (!_.isUndefined(found[0]) && found[0].length > 0) {
             return found[0];
           }
 

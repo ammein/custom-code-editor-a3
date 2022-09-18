@@ -35,7 +35,6 @@ const loadUtils = function() {
   };
 
   const checkFilesExists = async (p, arr, callback) => {
-    const getGroupType = /(?:.*src-noconflict_)(?:(?<type>ext|mode|theme|worker|snippets|keybinding|.*)(?:_|-)(?<filename>.*(?<extension>.js|)))*$/i;
     let fileExists = {};
 
     for (let i = 0; i < arr.length; i++) {
@@ -68,6 +67,9 @@ const loadUtils = function() {
     return callback(fileExists);
   };
 
+  const getReleaseId = async () => fs.readdir(getPublicPath('releases'));
+  const releasePath = async () => `releases/${await getReleaseId()}/default/`;
+
   return {
     publicFolderPath,
     deleteBuiltFolders,
@@ -76,7 +78,8 @@ const loadUtils = function() {
     checkFilesExists,
     removeCache,
     cacheFolderPath,
-    checkOtherFilesExists
+    checkOtherFilesExists,
+    releasePath
   };
 };
 
