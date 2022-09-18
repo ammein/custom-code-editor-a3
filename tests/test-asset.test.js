@@ -6,7 +6,6 @@ const _ = require('lodash');
 const path = require('path');
 const testUtil = require('apostrophe/test-lib/test');
 const loadUtils = require('./utils.js');
-const glob = require('glob');
 
 describe('Custom Code Editor : Clear Modes and Push All Assets', function () {
     let originalOptionsTypes = require('../aceTypes.js');
