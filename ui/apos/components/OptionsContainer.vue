@@ -1269,7 +1269,7 @@
         // Slider
         /* Range Slider */
         .range-slider__range {
-            -webkit-appearance: none;
+            appearance: none;
             width: calc(100% - (73px));
             height: 19px;
             border-radius: 5px;

@@ -6,17 +6,7 @@ const path = require('path');
 
 module.exports = {
   options: {
-    alias: 'customCodeEditor',
-    ace: {
-      config: {
-        dropdown: {
-          enable: true
-        }
-      },
-      scripts: {
-        pushAllAce: true
-      }
-    }
+    alias: 'customCodeEditor'
   },
   webpack: {
     extensions: {
