@@ -129,7 +129,7 @@
                     return saveOptions;
                 } catch (e) {
                     console.warn('Save options ERROR', JSON.parse(e));
-                    throw new Error(JSON.parse(e).message);
+                    throw new Error(JSON.parse(e));
                 }
             },
 
@@ -153,7 +153,7 @@
                     return deleteOptions;
                 } catch (e) {
                     console.warn('Delete options ERROR', JSON.parse(e));
-                    throw new Error(JSON.parse(e).message);
+                    throw new Error(JSON.parse(e));
                 }
             },
 
