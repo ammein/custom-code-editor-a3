@@ -57,8 +57,5 @@ jobs:
         with:
           mongodb-version: ${{ matrix.mongodb-version }}
 
-      - name: Start MongoDB
-        run: sudo brew services start mongodb-community@6.0
-
       - name: Start Test
         run: npm test
