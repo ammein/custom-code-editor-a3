@@ -52,9 +52,6 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run XCode Install Command Line Tools
-        run: xcode-select --install
-
       - name: Install Brew
         run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
