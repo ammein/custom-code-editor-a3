@@ -52,14 +52,10 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Install Brew
-        run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-
-      - name: Install MongoDB
-        run: |
-          sudo brew tap mongodb/brew
-          sudo brew update
-          sudo brew install mongodb-community@6.0
+      - name: Install Mongodb
+        uses: ankane/setup-mongodb@v1
+        with:
+          mongodb-version: ${{ matrix.mongodb-version }}
 
       - name: Start MongoDB
         run: sudo brew services start mongodb-community@6.0
