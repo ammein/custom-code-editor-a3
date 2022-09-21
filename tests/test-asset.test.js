@@ -54,8 +54,8 @@ describe('Custom Code Editor : Clear Modes and Push All Assets', function () {
               'apostrophe:afterInit': {
                 checkCustomCodeEditor() {
                   namespace = self.apos.asset.getNamespace();
-                  buildDir = `${self.apos.rootDir}/apos-build/${namespace}`;
-                  bundleDir = `${self.apos.rootDir}/public/apos-frontend/${namespace}`;
+                  buildDir = path.join(self.apos.rootDir, 'apos-build', namespace);
+                  bundleDir = path.join(self.apos.rootDir, 'public', 'apos-frontend', namespace);
                   assert(self.apos.schema);
                   assert(self.apos.modules['custom-code-editor-a3']);
                 }
@@ -76,7 +76,7 @@ describe('Custom Code Editor : Clear Modes and Push All Assets', function () {
       // due to unable to call certain webpack based on browser request
     }
     // Read All the Files that shows available mode
-    let aceBuildsExists = await checkFileExists(namespace + path.posix.sep + 'ace-builds');
+    let aceBuildsExists = await checkFileExists(path.join(namespace, 'ace-builds'));
     expect(aceBuildsExists).toBe(true);
   });
 
@@ -85,11 +85,11 @@ describe('Custom Code Editor : Clear Modes and Push All Assets', function () {
     let themesList = apos.customCodeEditor.ace._allThemes;
     let othersList = apos.customCodeEditor.ace._otherFiles;
 
-    let directories = await fs.readdir(bundleDir + '/ace-builds');
+    let directories = await fs.readdir(path.join(bundleDir, 'ace-builds'));
 
-    for (let i = 0; i <= directories.length; i++) {
-      let dirPath = namespace + path.posix.sep + 'ace-builds' + path.posix.sep + directories[i] + path.posix.sep;
-      let buildPath = namespace + path.posix.sep + 'ace-builds' + path.posix.sep + 'builds' + path.posix.sep;
+    for (let i = 0; i < directories.length; i++) {
+      let dirPath = path.join(namespace, 'ace-builds', directories[i], path.posix.sep);
+      let buildPath = path.join(namespace, 'ace-builds', 'builds', path.posix.sep);
       // directories = builds,modes,theme,others
       switch (directories[i]) {
         case 'modes':
@@ -97,7 +97,7 @@ describe('Custom Code Editor : Clear Modes and Push All Assets', function () {
             for (const filename in exists) {
               console.log('Check Mode Asset: ', filename);
               if (!exists[filename]) {
-                let checkBuildFolder = checkOtherFilesExists(buildPath + '/dev/' + 'mode-' + filename + '.*.js', filename);
+                let checkBuildFolder = checkOtherFilesExists(path.join(buildPath, 'dev', 'mode-' + filename + '.*.js'), filename);
 
                 assert(checkBuildFolder === true, `${filename}.js is still not available in builds folder.`);
               } else {
@@ -112,7 +112,7 @@ describe('Custom Code Editor : Clear Modes and Push All Assets', function () {
             for (const filename in exists) {
               console.log('Check Theme Asset: ', filename);
               if (!exists[filename]) {
-                let checkBuildFolder = checkOtherFilesExists(buildPath + '/dev/' + 'theme-' + filename + '.*.js', filename);
+                let checkBuildFolder = checkOtherFilesExists(path.join(buildPath, 'dev', 'theme-' + filename + '.*.js'), filename);
 
                 assert(checkBuildFolder === true, `${filename}.js is still not available in builds folder.`);
               } else {
@@ -127,7 +127,7 @@ describe('Custom Code Editor : Clear Modes and Push All Assets', function () {
             for (const filename in exists) {
               console.log('Check Others Asset: ', filename);
               if (!exists[filename]) {
-                let checkBuildFolder = checkOtherFilesExists(buildPath + '/dev/' + filename + '.*.js', filename);
+                let checkBuildFolder = checkOtherFilesExists(path.join(buildPath, 'dev', filename + '.*.js'), filename);
 
                 assert(checkBuildFolder === true, `${filename}.js is still not available in builds folder.`);
               } else {
@@ -164,8 +164,8 @@ describe('Custom Code Editor : Clear Modes and Push All Assets', function () {
               'apostrophe:afterInit': {
                 checkCustomCodeEditor() {
                   namespace = self.apos.asset.getNamespace();
-                  buildDir = `${self.apos.rootDir}/apos-build/${namespace}`;
-                  bundleDir = `${self.apos.rootDir}/public/apos-frontend/${namespace}`;
+                  buildDir = path.join(self.apos.rootDir, 'apos-build', namespace);
+                  bundleDir = path.join(self.apos.rootDir, 'public', 'apos-frontend', namespace);
                   assert(self.apos.schema);
                   assert(self.apos.modules['custom-code-editor-a3']);
                 }

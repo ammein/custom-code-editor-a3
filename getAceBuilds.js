@@ -6,7 +6,7 @@ module.exports = (aceDirectory) => {
   const allModes = [];
   const allThemes = [];
   const otherFiles = [];
-  const files = fs.readdirSync(path.resolve(path.dirname(require.resolve('ace-builds')), `../${aceDirectory}`));
+  const files = fs.readdirSync(path.join(path.dirname(require.resolve('ace-builds')), '..', aceDirectory));
 
   if (!files) {
     throw new Error('Did you install `ace-builds` npm package yet?');
@@ -28,7 +28,7 @@ module.exports = (aceDirectory) => {
 
     otherFiles
       .push(...files
-        .filter((file) => file.match(new RegExp(`(?!.*${path.sep})(?!.*${path.sep})(.*)`, 'i')))
+        .filter((file) => file.match(new RegExp(`(?!.*${path.posix.sep})(?!.*${path.posix.sep})(.*)`, 'i')))
         .map((filteredFile) => {
           const found = filteredFile.match(/(?!.*\/)(?:(?!mode-|theme-|ace.js|snippets)(.*))*/i);
 

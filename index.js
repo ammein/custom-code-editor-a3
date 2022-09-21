@@ -33,19 +33,19 @@ module.exports = {
               if (process.env.NODE_ENV === 'development' && !_.isNull(checkPathType)) {
                 switch (true) {
                   case !_.isUndefined(checkPathType.groups.type) && checkPathType.groups.type === 'mode' && aceFiles.allModes.includes(checkPathType.groups.filename.replace('_js', '')):
-                    return 'ace-builds/modes/mode-' + checkPathType.groups.filename.replace('_js', '.js');
+                    return path.join('ace-builds', 'modes', 'mode-' + checkPathType.groups.filename.replace('_js', '.js'));
 
                   case !_.isUndefined(checkPathType.groups.type) && checkPathType.groups.type === 'theme' && aceFiles.allThemes.includes(checkPathType.groups.filename.replace('_js', '')):
-                    return 'ace-builds/theme/theme-' + checkPathType.groups.filename.replace('_js', '.js');
+                    return path.join('ace-builds', 'theme', 'theme-' + checkPathType.groups.filename.replace('_js', '.js'));
 
                   case !_.isUndefined(checkPathType.groups.type) && checkPathType.groups.type === 'snippets':
-                    return 'ace-builds/others/' + checkPathType.groups.type + '/' + checkPathType.groups.filename.replace('_js', '.js');
+                    return path.join('ace-builds', 'others', checkPathType.groups.type, checkPathType.groups.filename.replace('_js', '.js'));
 
                   default:
-                    return 'ace-builds/others/' + checkPathType.groups.type + '/' + checkPathType.groups.type + '-' + checkPathType.groups.filename.replace('_js', '.js');
+                    return path.join('ace-builds', 'others', checkPathType.groups.type, checkPathType.groups.type + '-' + checkPathType.groups.filename.replace('_js', '.js'));
                 }
               } else if (process.env.NODE_ENV === 'production') {
-                return 'ace-builds/production-builds/[id].js';
+                return path.join('ace-builds', 'production-builds', '[id].js');
               }
             }
           }

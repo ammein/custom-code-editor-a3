@@ -3,14 +3,14 @@ const fs = require('fs-extra');
 const glob = require('glob');
 const { getPackedSettings } = require('http2');
 const loadUtils = function() {
-  const publicFolderPath = path.join(process.cwd(), 'tests/public');
+  const publicFolderPath = path.join(process.cwd(), path.join('tests', 'public'));
 
   const deleteBuiltFolders = async (publicPath, deleteAposBuild = false) => {
-    await fs.remove(publicPath + '/apos-frontend');
-    await fs.remove(publicPath + '/uploads');
+    await fs.remove(path.join(publicPath, 'apos-frontend'));
+    await fs.remove(path.join(publicPath, 'uploads'));
 
     if (deleteAposBuild) {
-      await fs.remove(path.join(process.cwd(), 'tests/apos-build'));
+      await fs.remove(path.join(process.cwd(), 'tests', 'apos-build'));
     }
   };
 
@@ -18,16 +18,15 @@ const loadUtils = function() {
     await fs.remove(loc || cacheFolderPath);
   };
 
-  const cacheFolderPath = process.env.APOS_ASSET_CACHE ||
-              path.join(process.cwd(), 'tests/data/temp/webpack-cache');
+  const cacheFolderPath = process.env.APOS_ASSET_CACHE || path.join(process.cwd(), 'tests', 'data', 'temp', 'webpack-cache');
 
-  const getPublicPath = (p) => `${publicFolderPath}/apos-frontend/` + p;
+  const getPublicPath = (p) => path.join(publicFolderPath, 'apos-frontend', p);
 
   const checkFileExists = async (p) => fs.pathExists(getPublicPath(p));
 
   const checkOtherFilesExists = (p, filename) => {
     let regex = new RegExp(filename, 'i');
-    let files = glob.sync(publicFolderPath + '/apos-frontend/' + p, null);
+    let files = glob.sync(path.join(publicFolderPath, 'apos-frontend', p), null);
     if (files.some(e => regex.test(e))) {
       return true;
     }
@@ -61,14 +60,18 @@ const loadUtils = function() {
           break;
 
           default:
-            fileExists[path.posix.basename(arr[i], '.js')] = await fs.pathExists(getPublicPath(p + getFileType.groups.type + '/' + arr[i].replace(getFileType.groups.type + '-', '') + '.js'));
+            fileExists[path.posix.basename(arr[i], '.js')] = await fs.pathExists(getPublicPath(p + getFileType.groups.type + path.posix.sep + arr[i].replace(getFileType.groups.type + '-', '') + '.js'));
       }
     }
     return callback(fileExists);
   };
 
   const getReleaseId = async () => fs.readdir(getPublicPath('releases'));
-  const releasePath = async () => `releases/${await getReleaseId()}/default/`;
+  const releasePath = async () => {
+    const getReleaseIdPath = await getReleaseId();
+    const returnPath = path.join('releases', typeof getReleaseIdPath !== 'string' ? getReleaseIdPath[0] : getReleaseIdPath, 'default', path.posix.sep);
+    return returnPath;
+  };
 
   return {
     publicFolderPath,
