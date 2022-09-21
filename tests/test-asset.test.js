@@ -10,7 +10,6 @@ const testUtil = require('apostrophe/test-lib/test');
 const loadUtils = require('./utils.js');
 
 describe('Custom Code Editor : Clear Modes and Push All Assets', function () {
-  let originalOptionsTypes = require('../aceTypes.js');
   let apos, namespace, buildDir, bundleDir;
 
   const {

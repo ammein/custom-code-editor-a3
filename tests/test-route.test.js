@@ -60,8 +60,7 @@ describe('Custom Code Editor : Routes Saving Options', function () {
     });
   });
 
-  // Test pieces.newInstance()
-  it('should be able to insert a new user', async function () {
+  it('should be able to insert a new user as admin', async function () {
     assert(apos.user.newInstance);
     let user = apos.user.newInstance();
     assert(user);
@@ -81,7 +80,7 @@ describe('Custom Code Editor : Routes Saving Options', function () {
     dummyUser = user;
   });
 
-  it('should log in as dummy user', async function() {
+  it('should log in as admin user', async function() {
     jar = apos.http.jar();
 
     let response = await apos.http.post('/api/v1/@apostrophecms/login/login', {
@@ -117,6 +116,7 @@ describe('Custom Code Editor : Routes Saving Options', function () {
     req.user = _.assign(existingUser, myUser);
     req.body = _.cloneDeep(body);
 
+    // Save options
     try {
       expect(apos.permission.can(req, 'edit')).toBe(true);
 
@@ -137,6 +137,7 @@ describe('Custom Code Editor : Routes Saving Options', function () {
       assert(!err);
     }
 
+    // Check user options from db
     try {
       const checkUser = await apos.user.find(req, {
         username: 'abuBakar'
@@ -149,246 +150,370 @@ describe('Custom Code Editor : Routes Saving Options', function () {
     }
   });
 
-  // it('should get previous saves options', function (done) {
-  //   let req = apos.task.getReq();
-  //   let existingUser = _.cloneDeep(req.user);
-  //   let myUser = _.cloneDeep(dummyUser);
-  //   req.user = _.assign(existingUser, myUser);
-  //   apos.customCodeEditor.getOptions(req, function (err, result) {
-  //     if (err) {
-  //       console.log('ERROR (GET) : ', err);
-  //     }
-  //     assert(!err);
-  //     expect(result).toMatchObject(body.customCodeEditor);
-  //     expect(Object.keys(result).length).toBe(1);
-  //     // Check User Database to be match with customCodeEditor saving options
-  //     apos.user.find(req, {
-  //       username: 'abuBakar'
-  //     }).toObject(function (err, user) {
-  //       if (err) {
-  //         console.log('ERROR (USER GET) : ', err);
-  //       }
-  //       assert(!err);
-  //       // Must match with the result
-  //       expect(user.customCodeEditor).toMatchObject(result);
-  //       assert(user.username === 'abuBakar');
-  //       done();
-  //     });
-  //   });
-  // });
+  it('should get previous saves options', async function () {
+    let req = apos.task.getReq();
+    let existingUser = _.cloneDeep(req.user);
+    let myUser = _.cloneDeep(dummyUser);
+    req.user = _.assign(existingUser, myUser);
 
-  // it('should reset options successfully using DELETE route', function (done) {
-  //   let req = apos.task.getReq();
-  //   let existingUser = _.cloneDeep(req.user);
-  //   let myUser = _.cloneDeep(dummyUser);
-  //   req.user = _.assign(existingUser, myUser);
+    // Get Options
+    try {
+      const result = await apos.http.get(apos.customCodeEditor.action + '/options', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        jar
+      });
+      expect(result.status).toBe('success');
+      expect(JSON.parse(result.message)).toMatchObject(body.customCodeEditor);
+      expect(Object.keys(result).length).toBe(2);
+    } catch (e) {
+      assert(!e);
+    }
 
-  //   apos.customCodeEditor.removeOptions(req, function (err) {
-  //     if (err) {
-  //       console.log('ERROR (DELETE) : ', err);
-  //     }
-  //     assert(!err);
-  //     // Check user to see if it is truly removes all the options
-  //     apos.user.find(req, {
-  //       username: 'abuBakar'
-  //     }).toObject(function (err, user) {
-  //       if (err) {
-  //         console.log('ERROR (USER DELETE) : ', err);
-  //       }
-  //       assert(!err);
-  //       assert(user.username === 'abuBakar');
-  //       expect(user['customCodeEditor']).toBe(undefined);
-  //       done();
-  //     });
-  //   });
-  // });
+    // Check user options from db
+    try {
+      const checkUser = await apos.user.find(req, {
+        username: 'abuBakar'
+      }).toObject();
 
-  // it('should get empty saves options after removed all the options', function (done) {
-  //   let req = apos.task.getReq();
-  //   let existingUser = _.cloneDeep(req.user);
-  //   let myUser = _.cloneDeep(dummyUser);
-  //   req.user = _.assign(existingUser, myUser);
-  //   apos.customCodeEditor.getOptions(req, function (err, result) {
-  //     if (err) {
-  //       console.log('ERROR (GET) : ', err);
-  //     }
-  //     assert(!err);
-  //     expect(result).toMatchObject({});
-  //     expect(Object.keys(result).length).toBe(0);
-  //     done();
-  //   });
-  // });
+      expect(checkUser.customCodeEditor).toMatchObject(body.customCodeEditor);
+      expect(checkUser.username).toBe('abuBakar');
+    } catch (e) {
+      assert(!e);
+    }
+  });
 
-  // it('should save user options successfully - second time', function (done) {
-  //   let req = apos.task.getReq();
-  //   let existingUser = _.cloneDeep(req.user);
-  //   let myUser = _.cloneDeep(dummyUser);
-  //   req.user = _.assign(existingUser, myUser);
-  //   req.body = _.cloneDeep(body);
-  //   apos.customCodeEditor.submit(req, function (err) {
-  //     if (err) {
-  //       console.log('ERROR (POST) : ', err);
-  //     }
-  //     assert(!err);
-  //     // Check User Database to be match with customCodeEditor saving options
-  //     apos.user.find(req, {
-  //       username: 'abuBakar'
-  //     }).toObject(function (err, user) {
-  //       if (err) {
-  //         console.log('ERROR (USER POST) : ', err);
-  //       }
-  //       assert(!err);
-  //       expect(user.customCodeEditor).toMatchObject(body.customCodeEditor);
-  //       assert(user.username === 'abuBakar');
-  //       done();
-  //     });
-  //   });
-  // });
+  it('should reset options successfully using DELETE route', async function () {
+    let req = apos.task.getReq();
+    let existingUser = _.cloneDeep(req.user);
+    let myUser = _.cloneDeep(dummyUser);
+    req.user = _.assign(existingUser, myUser);
 
-  // it('should not submit wrong key value to save and must maintain the saves value', function (done) {
-  //   let req = apos.task.getReq();
-  //   let existingUser = _.cloneDeep(req.user);
-  //   let myUser = _.cloneDeep(dummyUser);
-  //   let cloneBody = _.cloneDeep(body);
-  //   req.user = _.assign(existingUser, myUser);
-  //   req.body = {
-  //     'NotCustomCodeEditor': cloneBody.customCodeEditor
-  //   };
-  //   apos.customCodeEditor.submit(req, function (err) {
-  //     assert(!err);
+    // Delete Options
+    try {
+      const result = await apos.http.delete(apos.customCodeEditor.action + '/remove', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        jar
+      });
+      expect(result.status).toBe('success');
+      expect(result.message).toEqual('Successfully delete all options');
+      expect(Object.keys(result).length).toBe(2);
+    } catch (e) {
+      assert(!e);
+    }
 
-  //     // Check User Database to be available
-  //     apos.user.find(req, {
-  //       username: 'abuBakar'
-  //     }).toObject(function (err, user) {
-  //       assert(!err);
-  //       expect(user.username).toBe('abuBakar');
-  //       expect(user.customCodeEditor).toMatchObject(body.customCodeEditor);
-  //       expect(user['NotCustomCodeEditor']).not.toBeTruthy();
-  //       expect(user['NotCustomCodeEditor']).toBeFalsy();
+    // Check user options from db
+    try {
+      const checkUser = await apos.user.find(req, {
+        username: 'abuBakar'
+      }).toObject();
 
-  //       apos.customCodeEditor.getOptions(req, function (err, result) {
-  //         assert(!err);
-  //         expect(result).toMatchObject(body.customCodeEditor);
-  //         done();
-  //       });
-  //     });
-  //   });
-  // });
+      expect(checkUser.customCodeEditor).toBe(undefined);
+      expect(checkUser.username).toBe('abuBakar');
+    } catch (e) {
+      assert(!e);
+    }
+  });
 
-  // it('should reset options successfully using DELETE route - second time', function (done) {
-  //   let req = apos.task.getReq();
-  //   let existingUser = _.cloneDeep(req.user);
-  //   let myUser = _.cloneDeep(dummyUser);
-  //   req.user = _.assign(existingUser, myUser);
+  it('should get empty saves options after removed all the options', async function () {
+    let req = apos.task.getReq();
+    let existingUser = _.cloneDeep(req.user);
+    let myUser = _.cloneDeep(dummyUser);
+    req.user = _.assign(existingUser, myUser);
 
-  //   apos.customCodeEditor.removeOptions(req, function (err) {
-  //     if (err) {
-  //       console.log('ERROR (DELETE) : ', err);
-  //     }
-  //     assert(!err);
-  //     // Check user to see if it is truly removes all the options
-  //     apos.user.find(req, {
-  //       username: 'abuBakar'
-  //     }).toObject(function (err, user) {
-  //       if (err) {
-  //         console.log('ERROR (USER DELETE) : ', err);
-  //       }
-  //       assert(!err);
-  //       assert(user.username === 'abuBakar');
-  //       expect(user['customCodeEditor']).toBe(undefined);
-  //       done();
-  //     });
-  //   });
-  // });
+    try {
+      const result = await apos.http.get(apos.customCodeEditor.action + '/options', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        jar
+      });
+      expect(result).toMatchObject({
+        status: 'empty',
+        message: '{}'
+      });
+      expect(Object.keys(result).length).toBe(2);
+    } catch (e) {
+      assert(!e);
+    }
 
-  // it('should not submit wrong key value to save and must return nothing', function (done) {
-  //   let req = apos.task.getReq();
-  //   let existingUser = _.cloneDeep(req.user);
-  //   let myUser = _.cloneDeep(dummyUser);
-  //   let cloneBody = _.cloneDeep(body);
-  //   req.user = _.assign(existingUser, myUser);
-  //   req.body = {
-  //     'NotCustomCodeEditor': cloneBody.customCodeEditor
-  //   };
-  //   apos.customCodeEditor.submit(req, function (err) {
-  //     assert(!err);
+  });
 
-  //     // Check User Database to be available
-  //     apos.user.find(req, {
-  //       username: 'abuBakar'
-  //     }).toObject(function (err, user) {
-  //       assert(!err);
-  //       expect(user.username).toBe('abuBakar');
-  //       expect(user.customCodeEditor).toBe(null);
-  //       expect(user['NotCustomCodeEditor']).not.toBeTruthy();
-  //       expect(user['NotCustomCodeEditor']).toBeFalsy();
+  it('should save user options successfully - second time', async function () {
+    let req = apos.task.getReq();
+    let existingUser = _.cloneDeep(req.user);
+    let myUser = _.cloneDeep(dummyUser);
+    req.user = _.assign(existingUser, myUser);
+    req.body = _.cloneDeep(body);
 
-  //       apos.customCodeEditor.getOptions(req, function (err, result) {
-  //         assert(!err);
-  //         expect(result).toMatchObject({});
-  //         done();
-  //       });
-  //     });
-  //   });
-  // });
+    // Save options
+    try {
+      expect(apos.permission.can(req, 'edit')).toBe(true);
 
-  // it('should save user options successfully - last time', function (done) {
-  //   let req = apos.task.getReq();
-  //   let existingUser = _.cloneDeep(req.user);
-  //   let myUser = _.cloneDeep(dummyUser);
-  //   req.user = _.assign(existingUser, myUser);
-  //   req.body = _.cloneDeep(body);
-  //   apos.customCodeEditor.submit(req, function (err) {
-  //     if (err) {
-  //       console.log('ERROR (POST) : ', err);
-  //     }
-  //     assert(!err);
-  //     // Check User Database to be match with customCodeEditor saving options
-  //     apos.user.find(req, {
-  //       username: 'abuBakar'
-  //     }).toObject(function (err, user) {
-  //       if (err) {
-  //         console.log('ERROR (USER POST) : ', err);
-  //       }
-  //       assert(!err);
-  //       expect(user.customCodeEditor).toMatchObject(body.customCodeEditor);
-  //       assert(user.username === 'abuBakar');
-  //       done();
-  //     });
-  //   });
-  // });
+      const saved = await apos.http.post(apos.customCodeEditor.action + '/submit', {
+        send: 'json',
+        body: _.cloneDeep(body),
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        jar
+      });
 
-  // it('should not saves wrong key value and must maintain the saves value', function (done) {
-  //   let req = apos.task.getReq();
-  //   let existingUser = _.cloneDeep(req.user);
-  //   let myUser = _.cloneDeep(dummyUser);
-  //   let cloneBody = _.cloneDeep(body);
-  //   req.user = _.assign(existingUser, myUser);
-  //   req.body = {
-  //     'NotCustomCodeEditor': {
-  //       'highlightActiveLine': false
-  //     }
-  //   };
-  //   apos.customCodeEditor.submit(req, function (err) {
-  //     assert(!err);
+      expect(saved).toMatchObject({
+        status: 'success',
+        message: 'All options saved'
+      });
+    } catch (err) {
+      assert(!err);
+    }
 
-  //     // Check User Database to be available
-  //     apos.user.find(req, {
-  //       username: 'abuBakar'
-  //     }).toObject(function (err, user) {
-  //       assert(!err);
-  //       expect(user.username).toBe('abuBakar');
-  //       expect(user.customCodeEditor).toMatchObject(body.customCodeEditor);
-  //       expect(user['NotCustomCodeEditor']).not.toBeTruthy();
-  //       expect(user['NotCustomCodeEditor']).toBeFalsy();
+    // Check user options from db
+    try {
+      const checkUser = await apos.user.find(req, {
+        username: 'abuBakar'
+      }).toObject();
 
-  //       apos.customCodeEditor.getOptions(req, function (err, result) {
-  //         assert(!err);
-  //         expect(result).toMatchObject(body.customCodeEditor);
-  //         done();
-  //       });
-  //     });
-  //   });
-  // });
+      expect(checkUser.customCodeEditor).toMatchObject(body.customCodeEditor);
+      expect(checkUser.username).toBe('abuBakar');
+    } catch (e) {
+      assert(!e);
+    }
+  });
+
+  it('should not submit wrong key value to save and must maintain the saves value', async function () {
+    let req = apos.task.getReq();
+    let existingUser = _.cloneDeep(req.user);
+    let myUser = _.cloneDeep(dummyUser);
+    let cloneBody = _.cloneDeep(body);
+    req.user = _.assign(existingUser, myUser);
+    req.body = {
+      'NotCustomCodeEditor': cloneBody.customCodeEditor
+    };
+
+    // Save options
+    try {
+      expect(apos.permission.can(req, 'edit')).toBe(true);
+
+      await apos.http.post(apos.customCodeEditor.action + '/submit', {
+        send: 'json',
+        body: _.cloneDeep(req.body),
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        jar
+      });
+    } catch (err) {
+      assert(err);
+      expect(JSON.parse(err)).toMatchObject({
+        status: 'error',
+        message: 'Unable to save your options'
+      });
+    }
+
+    // Check user options from db
+    try {
+      const checkUser = await apos.user.find(req, {
+        username: 'abuBakar'
+      }).toObject();
+
+      expect(checkUser.customCodeEditor).toMatchObject(body.customCodeEditor);
+      expect(checkUser['NotCustomCodeEditor']).not.toBeTruthy();
+      expect(checkUser['NotCustomCodeEditor']).toBeFalsy();
+      expect(checkUser.username).toBe('abuBakar');
+    } catch (e) {
+      assert(!e);
+    }
+  });
+
+  it('should reset options successfully using DELETE route - second time', async function () {
+    let req = apos.task.getReq();
+    let existingUser = _.cloneDeep(req.user);
+    let myUser = _.cloneDeep(dummyUser);
+    req.user = _.assign(existingUser, myUser);
+
+   // Delete Options
+    try {
+      const result = await apos.http.delete(apos.customCodeEditor.action + '/remove', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        jar
+      });
+      expect(result.status).toBe('success');
+      expect(result.message).toEqual('Successfully delete all options');
+      expect(Object.keys(result).length).toBe(2);
+    } catch (e) {
+      assert(!e);
+    }
+
+    // Check user options from db
+    try {
+      const checkUser = await apos.user.find(req, {
+        username: 'abuBakar'
+      }).toObject();
+
+      expect(checkUser.customCodeEditor).toBe(undefined);
+      expect(checkUser.username).toBe('abuBakar');
+    } catch (e) {
+      assert(!e);
+    }
+  });
+
+  it('should be able to insert a new user as guest', async function () {
+    assert(apos.user.newInstance);
+    let user = apos.user.newInstance();
+    assert(user);
+
+    user.firstName = 'Lala';
+    user.lastName = 'Move';
+    user.title = 'Lala Move';
+    user.username = 'lalamove';
+    user.password = 'lalapassword123';
+    user.email = 'lalamove@move.com';
+    user.role = 'guest';
+
+    assert(user.type === '@apostrophecms/user');
+    assert(apos.user.insert);
+
+    await expect(apos.user.insert(apos.task.getReq(), user)).resolves.not.toThrow();
+    dummyUser = user;
+  });
+
+  it('should log out admin user before login new guest user', async function() {
+    try {
+      await apos.http.post(
+        '/api/v1/@apostrophecms/login/logout',
+        {
+          body: {
+            username: 'abuBakar',
+            password: '123password'
+          },
+          headers: {
+            Authorization: `Bearer ${token}`
+          },
+          jar
+        }
+      );
+    } catch (e) {
+      assert(!e);
+    }
+  });
+
+  it('should log in as guest user', async function() {
+    jar = apos.http.jar();
+
+    let response = await apos.http.post('/api/v1/@apostrophecms/login/login', {
+      body: {
+        username: dummyUser.username,
+        password: 'lalapassword123'
+      }
+    });
+    expect(response).toBeTruthy();
+    expect(response.token).toEqual(expect.anything());
+    token = response.token;
+  });
+
+  it('should not get guest user save options on customCodeEditor', async function () {
+    try {
+      await apos.http.get(apos.customCodeEditor.action + '/options', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        jar
+      });
+    } catch (e) {
+      expect(e).toMatchObject({
+        status: 'error',
+        message: 'Unable to get existing options'
+      });
+      expect(Object.keys(e).length).toBe(2);
+    }
+  });
+
+  it('should not save user options as guest user', async function () {
+
+    let req = apos.task.getReq();
+    let existingUser = _.cloneDeep(req.user);
+    let myUser = _.cloneDeep(dummyUser);
+    req.user = _.assign(existingUser, myUser);
+    req.body = _.cloneDeep(body);
+
+    // Save options
+    try {
+      expect(apos.permission.can(req, 'edit')).toBe(false);
+      expect(apos.permission.can(req, 'view')).toBe(true);
+
+      await apos.http.post(apos.customCodeEditor.action + '/submit', {
+        send: 'json',
+        body: _.cloneDeep(body),
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        jar
+      });
+    } catch (err) {
+      assert(err);
+      expect(JSON.parse(err)).toMatchObject({
+        status: 'error',
+        message: 'Unable to save your options'
+      });
+    }
+
+    // Check user options from db
+    try {
+      req = apos.task.getAdminReq();
+      const checkUser = await apos.user.find(req, {
+        username: 'lalamove'
+      }).toObject();
+
+      expect(checkUser.customCodeEditor).toBe(undefined);
+      expect(checkUser.username).toBe('lalamove');
+    } catch (e) {
+      assert(!e);
+    }
+  });
+
+  it('should not able to reset user options as guest user', async function () {
+
+    let req = apos.task.getReq();
+    let existingUser = _.cloneDeep(req.user);
+    let myUser = _.cloneDeep(dummyUser);
+    req.user = _.assign(existingUser, myUser);
+    req.body = _.cloneDeep(body);
+
+    // Save options
+    try {
+      expect(apos.permission.can(req, 'edit')).toBe(false);
+      expect(apos.permission.can(req, 'view')).toBe(true);
+
+      await apos.http.delete(apos.customCodeEditor.action + '/remove', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        jar
+      });
+    } catch (err) {
+      assert(err);
+      expect(JSON.parse(err)).toMatchObject({
+        status: 'error',
+        message: 'Unable to delete options'
+      });
+    }
+
+    // Check user options from db
+    try {
+      req = apos.task.getAdminReq();
+      const checkUser = await apos.user.find(req, {
+        username: 'lalamove'
+      }).toObject();
+
+      expect(checkUser.customCodeEditor).toBe(undefined);
+      expect(checkUser.username).toBe('lalamove');
+    } catch (e) {
+      assert(!e);
+    }
+  });
 });
