@@ -4,15 +4,16 @@
   "description": "ApostropheCMS version 3 Code Schema Field",
   "main": "index.js",
   "scripts": {
-    "test": "eslint . && node ./tests/build-test-package-json.js && mocha ./tests/**/*.test.js",
+    "test": "eslint . && node ./tests/build-test-package-json.js && mocha --reporter spec --inspect ./tests/**/test-*.test.js",
     "jsdoc": "jsdoc -c 'conf.json'",
     "deploy-page": "npm run jsdoc && gh-pages -d docs"
   },
   "dependencies": {
-    "ace-builds": "^1.9.5",
+    "ace-builds": "^1.11.0",
     "clipboard": "^2.0.11",
     "file-loader": "^6.2.0",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "webpack": "^5.74.0"
   },
   "keywords": [
     "apostrophe3",
@@ -29,25 +30,25 @@
   "author": "Amin Shazrin",
   "license": "ISC",
   "devDependencies": {
-    "apostrophe": "^3.26.1",
-    "eslint": "^8.22.0",
+    "apostrophe": "^3.28.1",
+    "eslint": "^8.23.1",
     "eslint-config-punkave": "^2.1.0",
     "eslint-config-standard": "^17.0.0",
     "eslint-plugin-import": "^2.26.0",
-    "eslint-plugin-jest": "^26.8.3",
+    "eslint-plugin-jest": "^27.0.4",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^6.0.0",
-    "eslint-plugin-react": "^7.30.1",
+    "eslint-plugin-promise": "^6.0.1",
     "eslint-plugin-standard": "^4.1.0",
-    "expect": "^28.1.3",
+    "expect": "^29.0.3",
+    "fs-extra": "^10.1.0",
     "gh-pages": "^4.0.0",
+    "glob": "^8.0.3",
     "jsdoc": "^3.6.11",
     "jsdoc-vue": "^1.0.0",
     "mocha": "^10.0.0",
-    "nodemon": "^2.0.19",
+    "nodemon": "^2.0.20",
     "stylelint-config-punkave": "^1.1.3",
     "supertest": "^6.2.4",
-    "vue-template-compiler": "^2.7.8",
     "vue-x-docs": "^1.0.3"
   }
 }

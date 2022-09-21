@@ -75,6 +75,10 @@
 </template>
 
 <script>
+    // Get Browser Options
+    let browserOptions = apos.customCodeEditor.browser;
+
+    // Import Mixins & Components
     import AposInputMixin from 'Modules/@apostrophecms/schema/mixins/AposInputMixin';
     import ChevronCopyIcon from 'vue-material-design-icons/ClipboardMultiple.vue';
     import ChevronUndoIcon from 'vue-material-design-icons/Undo.vue';
@@ -86,10 +90,14 @@
     import ChevronDropupIcon from 'vue-material-design-icons/ChevronUp.vue';
     import OptionsContainerComponent from './OptionsContainer.vue';
     import CustomCodeEditorMixinVue from '../mixins/CustomCodeEditorMixin.js';
+
+    // Import lodash
     import _ from 'lodash';
 
     // Import Ace NPM
     import 'ace-builds';
+    
+    // Just use dynamic imports from webpack resolver. Let apostrophe compile acejs builds into its own folder by using webpack-merge
     import 'ace-builds/webpack-resolver';
 
     // Solve beautify problem
@@ -98,9 +106,6 @@
             // Do nothing
         })
     }
-
-    // Get Browser Options
-    let browserOptions = apos.customCodeEditor.browser;
 
     /**
      * @component CustomCodeEditor
@@ -402,14 +407,14 @@
                     switch (true) {
                         case _.isUndefined(saveValue) && !_.isUndefined(cloneObject.saveValue):
                             delete cloneObject.saveValue;
-                            break;
 
                         case cloneObject.saveValue && !_.isUndefined(saveValue):
-                            cloneObject.saveValue = saveValue; 
-                            break;
+                            cloneObject.saveValue = saveValue;
                     
                         default:
-                            val.value = value;
+                            if (value) {
+                                cloneObject.value = value;
+                            }
                             break;
                     }
 

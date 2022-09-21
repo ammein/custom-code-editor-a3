@@ -1,66 +1,59 @@
 const _ = require('lodash');
-const fs = require('fs');
+const getAceFiles = require('./getAceBuilds');
+const aceFiles = getAceFiles(process.env.NODE_ENV === 'development' ? 'src-noconflict' : 'src-min-noconflict');
+const webpack = require('webpack');
 const path = require('path');
 
 module.exports = {
   options: {
-    alias: 'customCodeEditor',
+    alias: 'customCodeEditor'
+  },
+  webpack: {
+    extensions: {
+      aceBuildsFileLoader(options) {
+        return {
+          // Issue Solve from: https://stackoverflow.com/questions/69406829/how-to-set-outputpath-for-inline-file-loader-imports/69407756#69407756
+          plugins: [
+            new webpack.NormalModuleReplacementPlugin(/^file-loader\?esModule=false!(.*)/, (res) => {
+              const replace = process.env.NODE_ENV === 'development' ? 'file-loader?esModule=false&outputPath=ace-builds/builds/dev&name=[name].[contenthash:16].[ext]!' : 'file-loader?esModule=false&outputPath=ace-builds/builds/prod&name=[name].[contenthash:16].[ext]!';
+              const out = res.request.replace(/^file-loader\?esModule=false!/, replace);
+              res.request = out;
+            })
+          ]
+        };
+      },
+      renameChunkFiles(options) {
+        return {
+          output: {
+            chunkFilename: (pathData) => {
+              const getGroupType = !require.main.filename.match(new RegExp(`node_modules${path.posix.sep}mocha`)) ? new RegExp(`(?:.*${process.env.NODE_ENV === 'development' ? 'src-noconflict' : 'src-min-noconflict'}_)(?:(?<type>ext|mode|theme|worker|snippets|keybinding|.*)(?:_|-)(?<filename>.*.js))*$`, 'i') : new RegExp(`^(?:tests)(?:.*${process.env.NODE_ENV === 'development' ? 'src-noconflict' : 'src-min-noconflict'}_)(?:(?<type>ext|mode|theme|worker|snippets|keybinding|.*)(?:_|-)(?<filename>.*.js))*$`, 'i');
+
+              const checkPathType = !_.isUndefined(pathData.chunk.id) && _.isString(pathData.chunk.id) ? pathData.chunk.id.match(getGroupType) : null;
+
+              if (process.env.NODE_ENV === 'development' && !_.isNull(checkPathType)) {
+                switch (true) {
+                  case !_.isUndefined(checkPathType.groups.type) && checkPathType.groups.type === 'mode' && aceFiles.allModes.includes(checkPathType.groups.filename.replace('_js', '')):
+                    return path.join('ace-builds', 'modes', 'mode-' + checkPathType.groups.filename.replace('_js', '.js'));
+
+                  case !_.isUndefined(checkPathType.groups.type) && checkPathType.groups.type === 'theme' && aceFiles.allThemes.includes(checkPathType.groups.filename.replace('_js', '')):
+                    return path.join('ace-builds', 'theme', 'theme-' + checkPathType.groups.filename.replace('_js', '.js'));
+
+                  case !_.isUndefined(checkPathType.groups.type) && checkPathType.groups.type === 'snippets':
+                    return path.join('ace-builds', 'others', checkPathType.groups.type, checkPathType.groups.filename.replace('_js', '.js'));
+
+                  default:
+                    return path.join('ace-builds', 'others', checkPathType.groups.type, checkPathType.groups.type + '-' + checkPathType.groups.filename.replace('_js', '.js'));
+                }
+              } else if (process.env.NODE_ENV === 'production') {
+                return path.join('ace-builds', 'production-builds', '[id].js');
+              }
+            }
+          }
+        };
+      }
+    }
   },
   beforeSuperClass(self) {
-    const aceDirectory = 'src-noconflict';
-    const allModes = [];
-    const allThemes = [];
-    const otherFiles = [];
-    const files = fs.readdirSync(path.resolve(path.dirname(require.resolve('ace-builds')), `../${aceDirectory}`));
-
-    if (!files) {
-      throw self.apos.error('Did you install `ace-builds` npm package yet?');
-    } else if (files) {
-      // Get All Modes
-      allModes
-        .push(...files
-          .filter((file) => file.match(/(mode)-([\w]+)(.js)/))
-          .map((filteredFile) => {
-            const found = filteredFile.match(/(?<mode>[mode]+)-(?<filename>[\w]+)(?<extension>.js)/);
-
-            if (found) {
-              return found.groups.filename;
-            }
-
-            return null;
-          })
-          .filter(Boolean));
-
-      otherFiles
-        .push(...files
-          .filter((file) => file.match(new RegExp(`(?!.*${path.sep})(?!.*${path.sep})(.*)`, 'i')))
-          .map((filteredFile) => {
-            const found = filteredFile.match(/(?!.*\/)(?:(?!mode-|theme-|ace.js|worker-|snippets)(.*))*/i);
-
-            if (found) {
-              return found[0];
-            }
-
-            return null;
-
-          })
-          .filter(Boolean));
-
-      // Get All Themes
-      allThemes
-        .push(...files
-          .filter((file) => file.match(/(theme)-([\w]+)(.js)/))
-          .map((filteredFile) => {
-            const found = filteredFile.match(/(?<theme>[theme]+)-(?<filename>[\w]+)(?<extension>.js)/);
-
-            if (found) {
-              return found.groups.filename;
-            }
-
-            return null;
-
-          }).filter(Boolean));
-    }
 
     const getAce = self.options.ace || {};
     _.defaults(getAce, {
@@ -70,9 +63,9 @@ module.exports = {
       optionsTypes: {}
     });
     self.ace = getAce;
-    self.ace._allModes = allModes;
-    self.ace._allThemes = allThemes;
-    self.ace._otherFiles = otherFiles;
+    self.ace._allModes = aceFiles.allModes;
+    self.ace._allThemes = aceFiles.allThemes;
+    self.ace._otherFiles = aceFiles.otherFiles;
     self.ace.optionsTypes = _.groupBy(_.merge(require('./aceTypes.js'), _.keyBy(self.ace.optionsTypes, 'name')), 'category');
     self.ace.defaultMode = self.ace.defaultMode || 'javascript';
     self.ace.theme = self.ace.theme || 'chrome';

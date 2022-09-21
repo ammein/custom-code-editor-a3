@@ -2,6 +2,7 @@
     import _ from 'lodash';
     import CollapseDown from 'vue-material-design-icons/MenuDown.vue';
     import CollapseUp from 'vue-material-design-icons/MenuUp.vue';
+    import Help from 'vue-material-design-icons/HelpCircleOutline.vue';
 
     /**
      * @typedef optionsTypes
@@ -29,7 +30,8 @@
     export default {
         components:{
             CollapseDown,
-            CollapseUp
+            CollapseUp,
+            Help
         },
         props: {
             /** 
@@ -76,6 +78,7 @@
             }
         },
         methods: {
+
             /**
              * @method getOptions
              * @desc ```js
@@ -102,6 +105,7 @@
                     throw new Error(e);
                 }
             },
+
             /**
              * @method saveOptions
              * @desc ```js
@@ -124,10 +128,11 @@
                     });
                     return saveOptions;
                 } catch (e) {
-                    console.warn('Save options ERROR', e);
-                    throw new Error(e);
+                    console.warn('Save options ERROR', JSON.parse(e));
+                    throw new Error(JSON.parse(e));
                 }
             },
+
             /**
              * @method deleteOptions
              * @desc ```js
@@ -147,10 +152,11 @@
 
                     return deleteOptions;
                 } catch (e) {
-                    console.warn('Delete options ERROR', e);
-                    throw new Error(e);
+                    console.warn('Delete options ERROR', JSON.parse(e));
+                    throw new Error(JSON.parse(e));
                 }
             },
+
             /**
              * @method buttonOptionsClick
              * @desc Trigger emits
@@ -428,6 +434,7 @@
                     }
                 }
             },
+
             /**
              * @method optionsInputs
              * @desc Init Options Lists and append to List Header
@@ -477,7 +484,7 @@
                                 domProps: {
                                     for: object.name
                                 }
-                            }, self.$parent.$parent.getName(object.name) + ' :');
+                            }, self.$parent.$parent.getName(object.name) + ': ');
 
                             // Create <span> for slider output
                             let output = h('span', {
@@ -537,6 +544,24 @@
                                 self.$emit('pushCache', cache);
                             }
 
+                            // Help Text
+                            if (object.help) {
+                                let helpIcon = h(Help, {
+                                    class: ['tooltip'],
+                                    attrs: {
+                                        'style': 'color: blue !important'
+                                    },
+                                    props: {
+                                        size:14
+                                    },
+                                }, []);
+                                let helpText = h('span', {
+                                        class: ['tooltiptext']
+                                    }, [ object.help ]);
+                                helpIcon.children.push(helpText);
+                                label.children.push(helpIcon);
+                            }
+
                             lists.children.push(label);
                             lists.children.push(input);
                             lists.children.push(output);
@@ -554,7 +579,7 @@
                                 attrs: {
                                     for: object.name
                                 }
-                            }, self.$parent.$parent.getName(object.name) + ' :');
+                            }, self.$parent.$parent.getName(object.name) + ': ');
 
                             // Create <select> element
                             let select = h('select', {
@@ -595,6 +620,24 @@
                                 self.$emit('pushCache', cache);
                             }
 
+                                                        // Help Text
+                            if (object.help) {
+                                let helpIcon = h(Help, {
+                                    class: ['tooltip'],
+                                    attrs: {
+                                        'style': 'color: blue !important'
+                                    },
+                                    props: {
+                                        size:14
+                                    },
+                                }, []);
+                                let helpText = h('span', {
+                                        class: ['tooltiptext']
+                                    }, [ object.help ]);
+                                helpIcon.children.push(helpText);
+                                label.children.push(helpIcon);
+                            }
+
                             lists.children.push(label);
                             lists.children.push(select);
                         })(this);
@@ -611,7 +654,7 @@
                                 domProps: {
                                     for: object.name
                                 }
-                            }, self.$parent.$parent.getName(object.name) + ' :');
+                            }, self.$parent.$parent.getName(object.name) + ': ');
 
                             // Create <select> element
                             let select = h('select', {
@@ -656,6 +699,24 @@
                                 self.$emit('pushCache', cache);
                             }
 
+                                                        // Help Text
+                            if (object.help) {
+                                let helpIcon = h(Help, {
+                                    class: ['tooltip'],
+                                    attrs: {
+                                        'style': 'color: blue !important'
+                                    },
+                                    props: {
+                                        size:14
+                                    },
+                                }, []);
+                                let helpText = h('span', {
+                                        class: ['tooltiptext']
+                                    }, [ object.help ]);
+                                helpIcon.children.push(helpText);
+                                label.children.push(helpIcon);
+                            }
+
                             lists.children.push(label);
                             lists.children.push(select);
                         })(this);
@@ -672,7 +733,7 @@
                                 domProps: {
                                     for: object.name
                                 }
-                            }, self.$parent.$parent.getName(object.name) + ' :');
+                            }, self.$parent.$parent.getName(object.name) + ': ');
 
                             let checked = null;
                             if (!_.isUndefined(object.saveValue)) {
@@ -710,6 +771,24 @@
                                 self.$emit('pushCache', cache);
                             }
 
+                                                        // Help Text
+                            if (object.help) {
+                                let helpIcon = h(Help, {
+                                    class: ['tooltip'],
+                                    attrs: {
+                                        'style': 'color: blue !important'
+                                    },
+                                    props: {
+                                        size:14
+                                    },
+                                }, []);
+                                let helpText = h('span', {
+                                        class: ['tooltiptext']
+                                    }, [ object.help ]);
+                                helpIcon.children.push(helpText);
+                                label.children.push(helpIcon);
+                            }
+
                             lists.children.push(label);
                             lists.children.push(input);
                         })(this);
@@ -719,6 +798,7 @@
 
                 return lists;
             },
+
             /**
              * @method loopOptions
              * @desc Loop function to loop with current save options and init with `optionsInput()` function
@@ -858,6 +938,14 @@
                                             h));
                                         break;
                                 }
+
+                                // Update Options Types Value
+                                self.$emit('updateOptionsTypes', {
+                                    category: categoryKey,
+                                    name: groupedOptions.name,
+                                    saveValue: !_.isUndefined(myOptions[key]) ? myOptions[key] : undefined,
+                                    value: groupedOptions.value
+                                })
                             }
                         }
                     }
@@ -865,6 +953,7 @@
 
                 return unorderedLists;
             },
+
             /**
              * @method
              * @desc When list header is clicked. `this.$forceUpdate()` triggers when done update titleClick[category]
@@ -876,6 +965,7 @@
                 this.titleClick[category] = !condition;
                 this.$forceUpdate();
             },
+
             /**
              * @method emitOptions
              * @desc Emit Events to `$root` by check the `input.type`
@@ -1078,6 +1168,32 @@
         }
     }
 
+    // Tooltip
+    .tooltip {
+        position: relative;
+        display: inline-block;
+        border-bottom: 1px dotted black;
+    }
+
+    .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 120px;
+        background-color: black;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 5px 5px;
+
+        /* Position the tooltip */
+        position: absolute;
+        z-index: 1;
+        right: 20px;
+    }
+
+    .tooltip:hover .tooltiptext {
+        visibility: visible;
+    }
+
     .lists-inputs {
         padding: 10px 0 10px 0;
         gap: 8px;
@@ -1153,7 +1269,7 @@
         // Slider
         /* Range Slider */
         .range-slider__range {
-            -webkit-appearance: none;
+            appearance: none;
             width: calc(100% - (73px));
             height: 19px;
             border-radius: 5px;

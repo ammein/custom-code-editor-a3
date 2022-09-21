@@ -3,3 +3,4 @@ data
 locales
 public
 /package.json
+apos-build/**

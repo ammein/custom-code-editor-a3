@@ -8,6 +8,7 @@ import ClipboardJS from 'clipboard';
  */
 export default {
   methods: {
+
     /**
      * @method beforeInit
      * @desc Easy extend using this function
@@ -16,6 +17,7 @@ export default {
     beforeInit(element) {
       // For extendMethods
     },
+
     /**
      * @method init
      * @desc Init Custom Code Editor
@@ -74,6 +76,7 @@ export default {
       // Always return editor so that superInit can get editor directly from the extend method.
       return editor;
     },
+
     /**
      * @method afterInit
      * @desc Easy extend after init
@@ -82,6 +85,7 @@ export default {
     afterInit(element) {
       this.setDefaultSubmitValue();
     },
+
     /**
      * @method initCopyClipboard
      * @desc Init ClipboardJS
@@ -91,6 +95,7 @@ export default {
       this.clipboard = new ClipboardJS(copyButton);
       this.clipboardEvents(this.clipboard);
     },
+
     /**
      * @method clipboardEvents
      * @desc Register Clipboard events
@@ -100,6 +105,7 @@ export default {
       clipboard.on('success', this.successClipboard);
       clipboard.on('error', this.errorClipboard);
     },
+
     /**
      * @method successClipboard
      * @desc Success Clipboard Event
@@ -113,6 +119,7 @@ export default {
 
       e.clearSelection();
     },
+
     /**
      * @method errorClipboard
      * @desc Error Clipboard Event
@@ -126,6 +133,7 @@ export default {
         dismiss: true
       });
     },
+
     /**
      * @method destroyClipboard
      * @desc Destroy Clipboard event
@@ -137,6 +145,7 @@ export default {
         this.clipboard.destroy();
       }
     },
+
     /**
      * @method setDropdown
      * @desc To Set Dropdown if dropdown enable
@@ -201,6 +210,7 @@ export default {
         }
       };
     },
+
     /**
      * @method filterModesList
      * @desc Filter Modes by Search Input Event
@@ -228,6 +238,7 @@ export default {
         }(i));
       }
     },
+
     /**
      * @method changeMode
      * @desc Change Mode event when mode dropdown is clicked
@@ -278,6 +289,7 @@ export default {
         }
       }
     },
+
     /**
      * @method setEditor
      * @desc Set Editor
@@ -289,6 +301,7 @@ export default {
         [this.field.name]: editor
       });
     },
+
     /**
      * @method getEditor
      * @desc Get Editor
@@ -301,6 +314,7 @@ export default {
 
       return null;
     },
+
     /**
      * @method editor
      * @desc Initialize editor
@@ -310,6 +324,7 @@ export default {
     editor(element) {
       return ace.edit(element);
     },
+
     /**
      * @method getName
      * @desc To convert any 'camelCase' name to 'Camel Case'
@@ -326,6 +341,7 @@ export default {
         .replace(/([A-Z])([A-Z][a-z])/g, '$1 $2')
         .trim();
     },
+
     /**
      * @method setDefaultSubmitValue
      * @desc To set default Submit value for `this.next` that will contains:
@@ -347,6 +363,7 @@ export default {
         this.originalValue = this.next.code;
       }
     },
+
     /**
      * @method setEditorValue
      * @desc Set editor value on `mounted` function.
@@ -358,6 +375,7 @@ export default {
         editor.session.setMode('ace/mode/' + this.next.type.toLowerCase());
       }
     },
+
     /**
      * @method setSubmitValue
      * @desc To set submit value whenever editor is blur
@@ -373,6 +391,7 @@ export default {
         this.next.type = mode;
       }
     },
+
     /**
      * @method editorEvents
      * @desc To register any Ace Editor Events

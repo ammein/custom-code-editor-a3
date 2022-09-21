@@ -1,148 +1,156 @@
 let assert = require('assert');
+const testUtil = require('apostrophe/test-lib/test');
+const {
+  expect
+} = require('expect');
 
-describe('Custom Code Editor : Basic Schema Test', function() {
-    let apos;
+describe('Custom Code Editor : Basic Schema Test', function () {
+  let apos;
+  this.timeout(5 * 60 * 5000);
 
-    // Apostrophe took some time to load
-    // Ends everything at 50 seconds
-    this.timeout(50000);
+  after(async function () {
+    return testUtil.destroy(apos);
+  });
 
-    after(function(done) {
-        try {
-            require('apostrophe/test-lib/util').destroy(apos, done);
-        } catch (e) {
-            console.warn('Old version of apostrophe does not export test-lib/util library, just dropping old test db');
-            apos.db.dropDatabase();
-            setTimeout(done, 1000);
+  it('should be a property of the apos object', async function () {
+    apos = await testUtil.create({
+      // Make it `module` to be enabled because we have pushAssets method called
+      root: module,
+      testModule: true,
+      baseUrl: 'http://localhost:7990',
+      modules: {
+        'apostrophe-express': {
+          options: {
+            port: 7990,
+            session: {
+              secret: 'test-this-module'
+            }
+          }
+        },
+        'custom-code-editor-a3': {},
+        testRunner: {
+          handlers(self) {
+            return {
+              'apostrophe:afterInit': {
+                checkCustomCodeEditor() {
+                  assert(self.apos.schema);
+                  assert(self.apos.modules['custom-code-editor-a3']);
+                }
+              }
+            };
+          }
         }
+      }
+    });
+  });
+
+  it('should submit the schema with empty object and must not return an error', async function () {
+    let req = apos.task.getReq();
+    let schema = apos.schema.compose({
+      addFields: [{
+        type: 'custom-code-editor',
+        name: 'mycode',
+        label: 'Paste your code here'
+      }]
+    });
+    let output = {};
+    await apos.schema.convert(req, schema, {}, output);
+    expect(output.mycode).toBe(null);
+  });
+
+  it('should always return string value even the submitted value is undefined', async function () {
+    let req = apos.task.getReq();
+    let schema = apos.schema.compose({
+      addFields: [{
+        type: 'custom-code-editor',
+        name: 'mycode',
+        label: 'Paste your code here'
+      }]
+    });
+    let output = {};
+    await apos.schema.convert(req, schema, {
+      mycode: {
+        code: apos.launder.string(undefined),
+        type: apos.launder.string(undefined)
+      }
+    }, output);
+
+    expect(output).toMatchObject({
+      mycode: {
+        code: '',
+        type: ''
+      }
+    });
+  });
+
+  it('should trigger an error if the field is required with empty value', async function () {
+    let req = apos.task.getReq();
+    let schema = apos.schema.compose({
+      addFields: [{
+        type: 'custom-code-editor',
+        name: 'mycode',
+        label: 'Paste your code here',
+        required: true
+      }]
     });
 
-    it('should be a property of the apos object', function (done) {
-        apos = require('apostrophe')({
-            // Windows seems to have problem with symlinkSync created by Apostrophe,
-            // Therefore, make it run on current folder and creates all nessecary files on current directory to initialize
-            root: process.platform === 'win32' && !process.env.TRAVIS ? module : undefined,
-            testModule: true,
-            baseUrl: 'http://localhost:7780',
-            modules: {
-                'apostrophe-express': {
-                    port: 7780
-                },
-                'custom-code-editor': {}
-            },
-            afterInit: function (callback) {
-                assert(apos.schemas);
-                assert(apos.modules['custom-code-editor']);
-                return callback(null);
-            },
-            afterListen: function (err) {
-                assert(!err);
-                done();
-            }
-        });
+    let output = {};
+    await expect(apos.schema.convert(req, schema, {}, output)).rejects.not.toThrow();
+  });
+
+  it('should not trigger any error if value present on required field', async function () {
+    let req = apos.task.getReq();
+    let schema = apos.schema.compose({
+      addFields: [{
+        type: 'custom-code-editor',
+        name: 'mycode',
+        label: 'Paste your code here',
+        required: true
+      }]
     });
 
-    it('should submit the schema with empty object and must not return an error', function(done) {
-        let req = apos.tasks.getReq();
-        let schema = apos.schemas.compose({
-            addFields: [{
-                type: 'custom-code-editor',
-                name: 'mycode',
-                label: 'Paste your code here'
-            }]
-        });
-        let output = {};
-        apos.schemas.convert(req, schema, 'form', {}, output, function(err) {
-            assert(!err);
-            done();
-        })
+    let output = {};
+
+    await apos.schema.convert(req, schema, {
+      mycode: {
+        code: '<html></html>',
+        type: 'html'
+      }
+    }, output);
+
+    expect(output).toMatchObject({
+      mycode: {
+        code: '<html></html>',
+        type: 'html'
+      }
+    });
+  });
+
+  it('should not panicked even the value is absent for code', async function () {
+    let req = apos.task.getReq();
+    let schema = apos.schema.compose({
+      addFields: [{
+        type: 'custom-code-editor',
+        name: 'mycode',
+        label: 'Paste your code here',
+        required: true
+      }]
     });
 
-    it('should always return string value even the submitted value is undefined', function(done) {
-        let req = apos.tasks.getReq();
-        let schema = apos.schemas.compose({
-            addFields: [{
-                type: 'custom-code-editor',
-                name: 'mycode',
-                label: 'Paste your code here'
-            }]
-        });
-        let output = {};
-        apos.schemas.convert(req, schema, 'form', {
-            mycode: {
-                code: apos.launder.string(undefined),
-                type: apos.launder.string(undefined)
-            }
-        }, output, function (err) {
-            assert(!err);
-            done();
-        })
-    })
+    let output = {};
 
-    it('should trigger an error if the field is required with empty value', function(done) {
-        let req = apos.tasks.getReq();
-        let schema = apos.schemas.compose({
-            addFields: [{
-                type: 'custom-code-editor',
-                name: 'mycode',
-                label: 'Paste your code here',
-                required: true
-            }]
-        });
+    await apos.schema.convert(req, schema, {
+      mycode: {
+        code: '',
+        type: 'html'
+      }
+    }, output);
 
-        let output = {};
-
-        apos.schemas.convert(req, schema, 'form', {}, output, function(err) {
-            assert(err);
-            done();
-        })
+    expect(output).toMatchObject({
+      mycode: {
+        code: '',
+        type: 'html'
+      }
     });
-
-    it('should not trigger any error if value present on required field', function(done) {
-        let req = apos.tasks.getReq();
-        let schema = apos.schemas.compose({
-            addFields: [{
-                type: 'custom-code-editor',
-                name: 'mycode',
-                label: 'Paste your code here',
-                required: true
-            }]
-        });
-
-        let output = {};
-
-        apos.schemas.convert(req, schema, 'form', {
-            mycode: {
-                code: '<html></html>',
-                type: 'html'
-            }
-        }, output, function (err) {
-            assert(!err);
-            done();
-        })
-    });
-
-    it('should not panicked even the value is absent for code', function(done) {
-        let req = apos.tasks.getReq();
-        let schema = apos.schemas.compose({
-            addFields: [{
-                type: 'custom-code-editor',
-                name: 'mycode',
-                label: 'Paste your code here',
-                required: true
-            }]
-        });
-
-        let output = {};
-
-        apos.schemas.convert(req, schema, 'form', {
-            mycode: {
-                code: '',
-                type: 'html'
-            }
-        }, output, function (err) {
-            assert(!err);
-            done();
-        })
-    })
-})
+  });
+});

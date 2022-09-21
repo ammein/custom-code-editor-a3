@@ -5,7 +5,8 @@
         "_": "readonly",
         "ace": "readonly",
         "apos": "writable",
-        "after": "readonly"
+        "after": "readonly",
+        "before": "readonly"
     },
     "plugins": [
         "jest"
@@ -18,12 +19,18 @@
     "rules": {
         "indent": "off",
         "space-before-function-paren": "off",
-        "semi": "off",
+        "semi": "warn",
         "no-return-assign": "off",
         "no-unused-expressions": "off",
         "padded-blocks": "off",
         "eol-last": "off",
         "no-unused-vars": "off",
-        "no-debugger": "off"
+        "no-debugger": "off",
+        "jest/valid-expect": [
+            "error",
+            {
+                "maxArgs": 2
+            }
+        ]
     }
 }
