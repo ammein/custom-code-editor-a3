@@ -48,7 +48,7 @@ describe('Custom Code Editor : Basic Schema Test', function () {
     let req = apos.task.getReq();
     let schema = apos.schema.compose({
       addFields: [{
-        type: 'custom-code-editor',
+        type: 'custom-code-editor-a3',
         name: 'mycode',
         label: 'Paste your code here'
       }]
@@ -62,7 +62,7 @@ describe('Custom Code Editor : Basic Schema Test', function () {
     let req = apos.task.getReq();
     let schema = apos.schema.compose({
       addFields: [{
-        type: 'custom-code-editor',
+        type: 'custom-code-editor-a3',
         name: 'mycode',
         label: 'Paste your code here'
       }]
@@ -87,7 +87,7 @@ describe('Custom Code Editor : Basic Schema Test', function () {
     let req = apos.task.getReq();
     let schema = apos.schema.compose({
       addFields: [{
-        type: 'custom-code-editor',
+        type: 'custom-code-editor-a3',
         name: 'mycode',
         label: 'Paste your code here',
         required: true
@@ -102,7 +102,7 @@ describe('Custom Code Editor : Basic Schema Test', function () {
     let req = apos.task.getReq();
     let schema = apos.schema.compose({
       addFields: [{
-        type: 'custom-code-editor',
+        type: 'custom-code-editor-a3',
         name: 'mycode',
         label: 'Paste your code here',
         required: true
@@ -130,7 +130,7 @@ describe('Custom Code Editor : Basic Schema Test', function () {
     let req = apos.task.getReq();
     let schema = apos.schema.compose({
       addFields: [{
-        type: 'custom-code-editor',
+        type: 'custom-code-editor-a3',
         name: 'mycode',
         label: 'Paste your code here',
         required: true
