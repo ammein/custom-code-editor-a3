@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const getAceFiles = require('./getAceBuilds');
-const aceFiles = getAceFiles(process.env.NODE_ENV === 'development' ? 'src-noconflict' : 'src-min-noconflict');
+const aceFiles = getAceFiles(process.env.NODE_ENV === 'production' ? 'src-min-noconflict' : 'src-noconflict');
 const webpack = require('webpack');
 const path = require('path');
 
@@ -12,42 +12,21 @@ module.exports = {
     extensions: {
       aceBuildsFileLoader(options) {
         return {
-          // Issue Solve from: https://stackoverflow.com/questions/69406829/how-to-set-outputpath-for-inline-file-loader-imports/69407756#69407756
+          // Issue solve for ace-builds replace webpack loader options: https://stackoverflow.com/questions/69406829/how-to-set-outputpath-for-inline-file-loader-imports/69407756#69407756
+          // Inline Loader Syntax for RegExp: https://github.com/webpack-contrib/file-loader/issues/31
           plugins: [
             new webpack.NormalModuleReplacementPlugin(/^file-loader\?esModule=false!(.*)/, (res) => {
-              const replace = process.env.NODE_ENV === 'development' ? 'file-loader?esModule=false&outputPath=ace-builds/builds/dev&name=[name].[contenthash:16].[ext]!' : 'file-loader?esModule=false&outputPath=ace-builds/builds/prod&name=[name].[contenthash:16].[ext]!';
+              const replace = process.env.NODE_ENV === 'production' ? 'file-loader?esModule=false&outputPath=ace-builds/builds&name=[name].[contenthash:16].[ext]!' : 'file-loader?esModule=false&regExp=(?:(?:.*src-min-noconflict|src-noconflict)(?:-|.*)(snippets|ext(?=-)|mode(?=-)|theme(?=-)|worker(?=-)|keybinding(?=-))(?:.*.js))&outputPath=ace-builds&name=[1]/[name].[ext]!';
               const out = res.request.replace(/^file-loader\?esModule=false!/, replace);
               res.request = out;
             })
           ]
         };
       },
-      renameChunkFiles(options) {
+      outputChunkFiles(options) {
         return {
           output: {
-            chunkFilename: (pathData) => {
-              const getGroupType = !require.main.filename.match(new RegExp(`node_modules${path.posix.sep}mocha`)) ? new RegExp(`(?:.*${process.env.NODE_ENV === 'development' ? 'src-noconflict' : 'src-min-noconflict'}_)(?:(?<type>ext|mode|theme|worker|snippets|keybinding|.*)(?:_|-)(?<filename>.*.js))*$`, 'i') : new RegExp(`^(?:tests)(?:.*${process.env.NODE_ENV === 'development' ? 'src-noconflict' : 'src-min-noconflict'}_)(?:(?<type>ext|mode|theme|worker|snippets|keybinding|.*)(?:_|-)(?<filename>.*.js))*$`, 'i');
-
-              const checkPathType = !_.isUndefined(pathData.chunk.id) && _.isString(pathData.chunk.id) ? pathData.chunk.id.match(getGroupType) : null;
-
-              if (process.env.NODE_ENV === 'development' && !_.isNull(checkPathType)) {
-                switch (true) {
-                  case !_.isUndefined(checkPathType.groups.type) && checkPathType.groups.type === 'mode' && aceFiles.allModes.includes(checkPathType.groups.filename.replace('_js', '')):
-                    return path.join('ace-builds', 'modes', 'mode-' + checkPathType.groups.filename.replace('_js', '.js'));
-
-                  case !_.isUndefined(checkPathType.groups.type) && checkPathType.groups.type === 'theme' && aceFiles.allThemes.includes(checkPathType.groups.filename.replace('_js', '')):
-                    return path.join('ace-builds', 'theme', 'theme-' + checkPathType.groups.filename.replace('_js', '.js'));
-
-                  case !_.isUndefined(checkPathType.groups.type) && checkPathType.groups.type === 'snippets':
-                    return path.join('ace-builds', 'others', checkPathType.groups.type, checkPathType.groups.filename.replace('_js', '.js'));
-
-                  default:
-                    return path.join('ace-builds', 'others', checkPathType.groups.type, checkPathType.groups.type + '-' + checkPathType.groups.filename.replace('_js', '.js'));
-                }
-              } else if (process.env.NODE_ENV === 'production') {
-                return path.join('ace-builds', 'production-builds', '[id].js');
-              }
-            }
+            chunkFormat: process.env.NODE_ENV === 'production' ? false : 'module'
           }
         };
       }

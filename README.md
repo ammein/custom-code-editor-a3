@@ -1,6 +1,6 @@
 # Custom-Code-Editor ApostropheCMS Schema
 
-[![Build Status](https://travis-ci.org/ammein/custom-code-editor.svg?branch=master)](https://travis-ci.org/ammein/custom-code-editor)
+[![test-custom-code-editor-a3](https://github.com/ammein/custom-code-editor-a3/actions/workflows/main.yml/badge.svg)](https://github.com/ammein/custom-code-editor-a3/actions/workflows/main.yml)
 
 An ApostropheCMS Custom Schema for your own custom-code-editor field. 
 

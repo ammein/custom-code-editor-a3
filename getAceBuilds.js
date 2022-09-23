@@ -14,7 +14,7 @@ module.exports = (aceDirectory) => {
     // Get All Modes
     allModes
       .push(...files
-        .filter((file) => file.match(/(mode)-([\w]+)(.js)/))
+        .filter((file) => file.match(/(mode)-((?!snippets)[\w]+)(.js)/))
         .map((filteredFile) => {
           const found = filteredFile.match(/(?<mode>[mode]+)-(?<filename>[\w]+)(?<extension>.js)/);
 

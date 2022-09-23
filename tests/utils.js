@@ -47,20 +47,20 @@ const loadUtils = function() {
       }
 
       switch (p.match(getDir)[1]) {
-        case 'modes':
-          fileExists[path.posix.basename(arr[i], '.js')] = await fs.pathExists(getPublicPath(p + 'mode-' + arr[i] + '.js'));
-          break;
-
-        case 'theme':
-          fileExists[path.posix.basename(arr[i], '.js')] = await fs.pathExists(getPublicPath(p + 'theme-' + arr[i] + '.js'));
-          break;
-
         case 'snippets':
           fileExists[path.posix.basename(arr[i], '.js')] = await fs.pathExists(getPublicPath(p + arr[i] + '.js'));
           break;
 
+        case 'mode':
+          fileExists[path.posix.basename(arr[i], '.js')] = await fs.pathExists(getPublicPath(p + 'mode-' + arr[i] + '.js'));
+        break;
+
+        case 'theme':
+          fileExists[path.posix.basename(arr[i], '.js')] = await fs.pathExists(getPublicPath(p + 'theme-' + arr[i] + '.js'));
+        break;
+
           default:
-            fileExists[path.posix.basename(arr[i], '.js')] = await fs.pathExists(getPublicPath(p + getFileType.groups.type + path.posix.sep + arr[i].replace(getFileType.groups.type + '-', '') + '.js'));
+            fileExists[path.posix.basename(arr[i], '.js')] = await fs.pathExists(getPublicPath(p + arr[i]));
       }
     }
     return callback(fileExists);
