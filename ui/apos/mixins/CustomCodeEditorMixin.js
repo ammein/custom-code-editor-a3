@@ -26,6 +26,9 @@ export default {
      */
     init(element) {
       const self = this;
+
+      // Set Default Submit Value
+      this.setDefaultSubmitValue();
       // Default Empty Value
       this.beforeInit(element);
       const editor = this.editor(element);
@@ -37,14 +40,12 @@ export default {
       // Register Editor Events
       this.editorEvents.call(self, editor);
 
-      // If got specific height for editor container
-      if (_.has(this.ace, 'config.editorHeight')) {
-        element.style.height = this.ace.config.editorHeight;
-      }
+      // Merge Config
+      this.mergeConfig();
 
-      // If got fontSize config for editor
-      if (_.has(this.ace, 'config.fontSize')) {
-        element.style.fontSize = (typeof this.ace.config.fontSize === 'number') ? 'font-size :' + this.ace.config.fontSize.toString() + 'px !important;' : 'font-size :' + this.ace.config.fontSize + ' !important;';
+      // Editor Configurations
+      if (_.has(this.ace.config, 'editorHeight') || _.has(this.ace.config, 'fontSize')) {
+        this.configEditor();
       }
 
       // Options reference: https://github.com/ajaxorg/ace/wiki/Configuring-Ace
@@ -61,6 +62,7 @@ export default {
       // Enable dropdown
       if (_.has(this.ace, 'config.dropdown') && _.has(this.ace, 'config.dropdown.enable')) {
         this.setDropdown();
+        this.configDropdown();
       }
 
       if (ClipboardJS.isSupported() && !_.has(this.ace, 'config.optionsCustomizer.enable')) {
@@ -73,7 +75,6 @@ export default {
       // Invoke after init
       this.afterInit(element);
 
-      // Always return editor so that superInit can get editor directly from the extend method.
       return editor;
     },
 
@@ -83,7 +84,7 @@ export default {
      * @param {HTMLElement} element
      */
     afterInit(element) {
-      this.setDefaultSubmitValue();
+      // For extends methods
     },
 
     /**
@@ -179,6 +180,11 @@ export default {
         readOnly: false
       });
 
+      // Remove Save Command if null
+      if (_.has(this.field, 'ace.config.saveCommand') && this.field.ace.config.saveCommand === null) {
+        editor.commands.removeCommand('saveNewCode');
+      }
+
       // create dropdown modes
       for (let i = 0; i < this.ace.modes.length; i++) {
 
@@ -186,6 +192,8 @@ export default {
         if (self.ace.defaultMode.toLowerCase() === self.ace.modes[i].name.toLowerCase()) {
 
           editor.session.setMode('ace/mode/' + self.ace.defaultMode.toLowerCase());
+
+          this.$el.querySelector('.dropdown-title').innerText = this.next.type.length > 0 ? this.next.type : self.ace.defaultMode;
 
           if (self.ace.modes[i].snippet && !self.ace.modes[i].disableSnippet) {
 
@@ -209,6 +217,146 @@ export default {
           }
         }
       };
+    },
+
+    /**
+     * @method configDropdown
+     * @desc CSS Config for Dropdown. Only accept this config object:
+     * ```js
+     * ace: {
+     *    config: {
+     *      dropdown: {
+     *          enable: <Boolean>,
+     *          height: <Number or String>,
+     *          borderRadius: <Number or String>,
+     *          fontFamily: <String>,
+     *          fontSize: <Number or String>,
+     *          backgroundColor: <String>,
+     *          textColor: <String>,
+     *          position: {
+     *              top: <Number or String>,
+     *              bottom: <Number or String>,
+     *              right: <Number or String>,
+     *              left: <Number or String>
+     *          },
+     *          arrowColor: <String (HEX or RGB or RGBA)>
+     *    }
+     * }
+     * ```
+     */
+    configDropdown() {
+      // Assign Styles to new object
+      const styles = _.assign({}, _.omitBy({
+        height: (_.has(this.ace.config.dropdown, 'height')) ? _.isNumber(this.ace.config.dropdown.height) ? this.ace.config.dropdown.height + 'px' : this.ace.config.dropdown.height : null,
+        borderRadius: (_.has(this.ace.config.dropdown, 'borderRadius')) ? _.isNumber(this.ace.config.dropdown.borderRadius) ? this.ace.config.dropdown.borderRadius + 'px' : this.ace.config.dropdown.borderRadius : null,
+        boxShadow: (_.has(this.ace.config.dropdown, 'boxShadow')) ? this.ace.config.dropdown.boxShadow : null,
+        width: (_.has(this.ace.config.dropdown, 'width')) ? _.isNumber(this.ace.config.dropdown.width) ? this.ace.config.dropdown.width + 'px' : this.ace.config.dropdown.width : null,
+        backgroundColor: (_.has(this.ace.config.dropdown, 'backgroundColor')) ? this.ace.config.dropdown.backgroundColor : null
+      }, _.isNil), _.has(this.ace.config.dropdown, 'position') && {
+        position: _.omitBy({
+          top: (_.has(this.ace.config.dropdown, 'position.top')) ? _.isNumber(this.ace.config.dropdown.position.top) ? this.ace.config.dropdown.position.top + 'px' : this.ace.config.dropdown.position.top : null,
+          left: (_.has(this.ace.config.dropdown, 'position.left')) ? _.isNumber(this.ace.config.dropdown.position.left) ? this.ace.config.dropdown.position.left + 'px' : this.ace.config.dropdown.position.left : null,
+          right: (_.has(this.ace.config.dropdown, 'position.right')) ? _.isNumber(this.ace.config.dropdown.position.right) ? this.ace.config.dropdown.position.right + 'px' : this.ace.config.dropdown.position.right : null,
+          bottom: (_.has(this.ace.config.dropdown, 'position.bottom')) ? _.isNumber(this.ace.config.dropdown.position.bottom) ? this.ace.config.dropdown.position.bottom + 'px' : this.ace.config.dropdown.position.bottom : null
+        }, _.isNil)
+      });
+
+      const titleStyles = _.assign({}, _.omitBy({
+        color: (_.has(this.ace.config.dropdown, 'textColor')) ? this.ace.config.dropdown.textColor : null,
+        fontFamily: (_.has(this.ace.config.dropdown, 'fontFamily')) ? this.ace.config.dropdown.fontFamily : null,
+        fontSize: (_.has(this.ace.config.dropdown, 'fontSize')) ? this.ace.config.dropdown.fontSize : null
+      }, _.isNil));
+
+      // Loop & assign dropdown style
+      for (let prop of Object.keys(styles)) {
+        if (styles.hasOwnProperty(prop)) {
+          if (typeof styles[prop.toString()] === 'object' && Object.keys(styles[prop.toString()]).length > 0) {
+            for (let innerProp of Object.keys(styles[prop.toString()])) {
+              this.$el.querySelector('.dropdown').style[innerProp.toString()] = styles[prop.toString()][innerProp.toString()];
+            }
+          }
+
+          this.$el.querySelector('.dropdown').style[prop.toString()] = styles[prop.toString()];
+        }
+      }
+
+      // Loop & assign dropdown-title style
+      for (let prop of Object.keys(titleStyles)) {
+        if (titleStyles.hasOwnProperty(prop)) {
+          this.$el.querySelector('.dropdown-title').style[prop.toString()] = titleStyles[prop.toString()];
+        }
+      }
+    },
+
+    /**
+     * @method mergeConfig
+     * @desc to merge any `this.field` specific schema options to merge with project level module options
+     */
+    mergeConfig() {
+      let merge = false;
+      let mergeOptions = {};
+      // Customize field options if any. Only allow some override options to be available
+      if (_.has(this.field, 'ace')) {
+          mergeOptions = {
+            defaultMode: _.has(this.field, 'ace.defaultMode') ? this.field.ace.defaultMode.toLowerCase() : this.ace.defaultMode.toLowerCase(),
+            // Let the devs to set undefined on config property if any, else just override it
+            config: !_.has(this.field, 'ace.config') ? null : _.assign({}, this.ace.config, this.field.ace.config)
+          };
+
+          let cloneAce = _.cloneDeep(this.ace);
+
+          // Non-Immutable Copies
+          this.ace = _.mergeWith(
+                        {}, cloneAce, mergeOptions,
+                        (a, b) => b === null ? null : b
+                      );
+
+          merge = true;
+      };
+
+      if (merge) {
+        // Clone to new object
+        const cloneOptions = _.cloneDeep(apos.customCodeEditor.browser.ace);
+
+        // Remove existing browser ace options
+        delete apos.customCodeEditor.browser.ace;
+
+        // Add with specific schema options
+        apos.customCodeEditor.browser = {
+          ...apos.customCodeEditor.browser,
+          ace: {
+            [this.field.name]: _.merge({}, cloneOptions, mergeOptions),
+            main: cloneOptions
+          }
+        };
+      }
+    },
+
+    /**
+     * @method configEditor
+     * @desc CSS Config for AceJS Editor. Only accept this config object:
+     * ```js
+     * ace: {
+     *    config: {
+     *        editorHeight: <Number or String>,
+     *        fontSize: <Number or String>
+     *    }
+     * }
+     * ```
+     *
+     */
+    configEditor() {
+      const editorStyles = _.assign({}, _.omitBy({
+        height: (_.has(this.ace.config, 'editorHeight')) ? _.isNumber(this.ace.config.editorHeight) ? this.ace.config.editorHeight + 'px' : this.ace.config.editorHeight : null,
+        fontSize: (_.has(this.ace.config, 'fontSize')) ? _.isNumber(this.ace.config.fontSize) ? this.ace.config.fontSize + 'px' : this.ace.config.fontSize : null
+      }, _.isNil));
+
+      // Loop & assign editor style
+      for (let prop of Object.keys(editorStyles)) {
+        if (editorStyles.hasOwnProperty(prop)) {
+          this.$el.querySelector('[data-editor]').style[prop.toString()] = editorStyles[prop.toString()];
+        }
+      }
     },
 
     /**
@@ -296,7 +444,6 @@ export default {
      * @param {aceEditor} editor
      */
     setEditor(editor) {
-      this.ace.aceEditor = editor;
       apos.customCodeEditor.browser.editor = apos.util.assign({}, apos.customCodeEditor.browser.editor, {
         [this.field.name]: editor
       });
@@ -308,8 +455,8 @@ export default {
      * @return {aceEditor} Get Editor or Null
      */
     getEditor() {
-      if (this.ace.aceEditor) {
-        return this.ace.aceEditor;
+      if (_.has(apos.customCodeEditor.browser, `editor.${this.field.name}`)) {
+        return apos.customCodeEditor.browser.editor[this.field.name];
       }
 
       return null;

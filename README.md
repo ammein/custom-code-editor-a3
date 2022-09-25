@@ -20,7 +20,7 @@ Include in app.js:
 ```javascript
 // In app.js
   modules: {
-    'custom-code-editor': {},
+    'custom-code-editor-a3': {},
     // ... other modules
 }
 ```
@@ -29,13 +29,14 @@ Include in app.js:
 # Enable Code Editor Schema
 Simple :
 ```javascript
-addFields : [
-    {
-        type : 'custom-code-editor',
-        name : 'mycode',
-        label : 'Paste your code here'
+fields: {
+    add: {
+        code: {
+            type: 'custom-code-editor-a3',
+            label: 'First Code'
+        }
     }
-]
+}
 ```
 
 ### Widget.html Get `custom-code-editor` Value
@@ -64,39 +65,41 @@ or you can simply use `apos.log()` to see what's available on `custom-code-edito
 # Custom-Code-Editor Options Available
 
 ```javascript
-// in lib/modules/custom-code-editor/index.js
+// in modules/custom-code-editor-a3/index.js
 module.exports = {
-    ace : {
-        theme : 'tomorrow', // themes available : https://github.com/ajaxorg/ace/tree/master/lib/ace/theme (Case Sensitive)
-        defaultMode : 'javascript',
-        options : {
-            // All options available in : https://github.com/ajaxorg/ace/wiki/Configuring-Ace
-        },
-        modes : [
-            {
-                title : 'Javascript', // Title to Override Name
-                name : 'javascript', // Name of the mode (Case-Sensitive)
-                snippet : '// Content Start Here \n print(\"Hello World\") \n @code-here', // Default Value (String)
-                disableSnippet : true // Disable default snippet value when switching (OPTIONAL - Boolean)
-            }
-        ],
-        config: {
-            fontSize: 16, // Editor Font Size (Number or String)
-            editorHeight: 500, // Editor Height (Number or String)
-            dropdown: {
-                enable: true, // Enable it for switching modes button (Boolean)
-                height: 30, // Height Dropdown (Number or String)
-                borderRadius: 5, // Border Radius Dropdown (Number or String)
-                fontFamily: "Mont-Regular", // Font Family Dropdown (String)
-                backgroundColor : "Orange", // Background Color Dropdown (String)
-                textColor : "white", // Text Color Dropdown (String)
-                fontSize: 16, // Font Size Dropdown (Number or String)
-                position: {
-                    // All top , left , right , bottom dropdown position enable for configs
-                    bottom: 20,
-                    right: 20
-                },
-                arrowColor: "blue" // To change arrow color in dropdown (String)
+    options: {
+        ace : {
+            theme : 'tomorrow', // themes available : https://github.com/ajaxorg/ace/tree/master/lib/ace/theme (Case Sensitive)
+            defaultMode : 'javascript',
+            options : {
+                // All options available in : https://github.com/ajaxorg/ace/wiki/Configuring-Ace
+            },
+            modes : [
+                {
+                    title : 'Javascript', // Title to Override Name
+                    name : 'javascript', // Name of the mode (Case-Sensitive)
+                    snippet : '// Content Start Here \n print(\"Hello World\") \n @code-here', // Default Value (String)
+                    disableSnippet : true // Disable default snippet value when switching (OPTIONAL - Boolean)
+                }
+            ],
+            config: {
+                fontSize: 16, // Editor Font Size (Number or String)
+                editorHeight: 500, // Editor Height (Number or String)
+                dropdown: {
+                    enable: true, // Enable it for switching modes button (Boolean)
+                    height: 30, // Height Dropdown (Number or String)
+                    borderRadius: 5, // Border Radius Dropdown (Number or String)
+                    fontFamily: "Mont-Regular", // Font Family Dropdown (String)
+                    backgroundColor : "Orange", // Background Color Dropdown (String)
+                    textColor : "white", // Text Color Dropdown (String)
+                    fontSize: 16, // Font Size Dropdown (Number or String)
+                    position: {
+                        // All top , left , right , bottom dropdown position enable for configs
+                        bottom: 20,
+                        right: 20
+                    },
+                    arrowColor: "blue" // To change arrow color in dropdown (String)
+                }
             }
         }
     }
@@ -191,12 +194,14 @@ ace : {
 ### `@code-here` On Snippet
 What is that syntax for ? Well , whenever you change your mode on dropdown , existing codes on schema will replace automatically on new snippet on `@code-here`. Amazing right ? If you did not provide that syntax , your existing value on editor schema will be lost. Let's make a new override snippet and has our own `@code-here` on it :
 ```javascript
-      modes : [
-         {
+ace: {
+    modes : [
+        {
             name :'javascript',
             snippet : "// Content Start Here \n print(\"Hello World\") \n @code-here"
-         }
-      ],
+        }
+    ],
+}
 ```
 
 ### Title of Dropdown
@@ -319,37 +324,42 @@ ace : {
 Well, I know some of you don't want some specific editor to be in the same options to all custom-code-editor field type, right ? To make it backward compatibility, only some of the options can be overridden on your schema fields. Here is an example :
 
 ```javascript
-addFields : [
-    {
-        type : 'custom-code-editor',
-        name : 'mycode',
-        label : 'Paste your code here',
-        ace : {
-            defaultMode : "html"
-            config : {
-                // All config options here
+fields: {
+    add: {
+        code: {
+            type: 'custom-code-editor-a3',
+            label: 'Your code here',
+            ace: {
+                defaultMode: 'c_cpp',
+                config: {
+                    dropdown: {
+                        backgroundColor: '#040303',
+                        textColor: '#fffcf2',
+                        arrowColor: '#fffcf2'
+                    }
+                }
             }
         }
     }
-]
+}
 ```
-> Why `modes` and `theme` are not available to override ? This will against the rule optimizing push asset feature that only project level options module by your own defined modes and theme get push to browser. This is because Ace JS contains 10 and more JS files available to use. All `options` values must be configure in project level module `index.js` or directly on `app.js` in `modules: {}`
+> Why `modes` and `theme` are not available to override ? This will against the rule optimizing webpack feature that only project level options module by your own defined modes and theme get setup in the browser. All `options` values must be configure in project level module `index.js` or directly on `app.js` in `modules: {}`
 
 ### If you wish to disable some options, just set it to `null` on that property option. It will removed from your specific field option. For example :
 ```javascript
-addFields : [
-    {
-        type : 'custom-code-editor',
-        name : 'mycode',
-        label : 'Paste your code here',
-        ace : {
-            defaultMode : "html"
-            config : {
-                saveCommand : null
+fields: {
+    add: {
+        code: {
+            type: 'custom-code-editor-a3',
+            label: 'Your code here',
+            ace: {
+                config: {
+                    saveCommand: null,
+                }
             }
         }
     }
-]
+}
 ```
 
 > Warning ! If you did not set any config value, config will not be available on specific field. To use existing config, simply set it as empty object `config : {}`
@@ -378,7 +388,7 @@ ace : {
 }
 ```
 
-# New Custom-Code-Editor V3 (Options Customizer)
+# Options Customizer
 Have you ever wonder that you are tired of testing options by restarting the app and adjust your options all over again ? 
 
 Say no more ! Introducing new **Options Customizer** ! 
@@ -435,7 +445,7 @@ You can also reset all options. This will remove current saves options and chang
 ## Modify Options
 What if you want to add your own help text, you could simply done it in project level module like this : 
 ```js
-// In custom-code-editor/index.js :
+// In custom-code-editor-a3/index.js :
 module.exports = {
     ace : {
         optionsTypes : [
@@ -453,7 +463,7 @@ module.exports = {
 ## Remove Options
 You wish to remove options customizer ? You don't like it ? Don't worry, just set it to `enable : false` like this :
 ```js
-// In custom-code-editor/index.js :
+// In custom-code-editor-a3/index.js :
 module.exports = {
     ace : {
         config : {
@@ -480,295 +490,112 @@ Simply you can find it on :
 apos.customCodeEditor
 ```
 
+> I keep it similar `apos.customCodeEditor` object from ApostropheCMS version 2 so that you can copy paste your previous code from ApostropheCMS version 2 into ApostropheCMS version 3 easily without breaking change.
+
 ### Get Editor Browser Object
 How can I get from the one that defined in javascript browser at `var editor = ace.edit("editor")` as in Ace Editor Website has telling you about ?
 
 You can get it via browser scripting
 ```javascript
-apos.customCodeEditor.editor
+apos.customCodeEditor.browser.editor[your-field-name]
 ```
 
 By that , you can test anything on browser-side. For example you open on Chrome Developer Tools and enter :
 
 ```javascript
-apos.customCodeEditor.editor.session.getValue()
+apos.customCodeEditor.browser.editor[your-field-name].session.getValue()
 ```
 
 ### Get Multiple Editor Browser in Single Schema
 Oops ! How can I get specific editor browser object if I have two fields in a same schema ? I made a simple for you , let say you have this fields :
 
 ```javascript
-addFields : [
-    {
-        type : 'custom-code-editor',
-        name : 'mycode',
-        label : 'Paste Your First Code Here'
-    },
-    {
-        type : 'custom-code-editor',
-        name : 'mysecondcode',
-        label : 'Paste Your Second Code Here'
+fields: {
+    add: {
+        code: {
+            type: 'custom-code-editor-a3',
+            label: 'First Code'
+        },
+        secondCode: {
+                type: 'custom-code-editor-a3',
+                label: 'Second Code',
+                ace: {
+                    defaultMode: 'html',
+                    config: {
+                        saveCommand: null
+                    }
+                }
+        }
     }
-]
+}
 ```
 
 Next, simply get the `name` property to get specific schema in browser object : 
 ```javascript
 // First Editor
-apos.customCodeEditor.mycode.editor
+apos.customCodeEditor.browser.editor.code
 
 // Second Editor
-apos.customCodeEditor.mysecondcode.editor
+apos.customCodeEditor.browser.editor.secondCode
 ```
 
 > Easy right ? Hell yeah it is ! :D
 
 # Advanced Configuration (Skip this if you comfortable with current feature)
 
-## How To Insert My Stylesheets/Scripts Files ?
-I provide a simple object for you. Behold !
-
-### Stylesheets inside `public/css/<all css files>`
-```javascript
-ace : {
-    // All ace options
-},
-stylesheets : {
-    files : [
-        {
-            name : 'style.min', // This will get style.min.css
-            when : 'user'
-        },
-        {
-            name : 'parentFolder/style', // This will get style.css inside parentFolder
-            when : 'user'
-        }
-    ],
-    acceptFiles : ["css" , "sass" , "less" , "min.css"] // List of all accept files (Less , CSS and SASS are push by default)
-}
-```
-
-> Default `acceptFiles` : `css` , `sass` and `less`
-
-### Scripts inside `public/js/<all js files>`
-How about javascripts files ? Same as above example :
-
-```javascript
-ace : {
-    // All ace options
-},
-scripts : {
-    files : [
-        {
-            name : "custom", // This will get custom.js
-            when : "user"
-        }
-        {
-            name : 'parentFolder/myScript', // This will get myScript.js inside parentFolder
-            when : 'user'
-        }
-    ],
-    acceptFiles : ["js" , "min.js"] // List of all accept files (js and min.js are push by default)
-}
-```
-
-> Default `acceptFiles` : `js` and `min.js`.
-
-### Error on pushing file assets
-If you receive an error while pushing files assets to browser , please make sure your directory is in correct path without extension name and accept any files extension name by your own modified extension names. For example
-
-```javascript
-ace : {
-    // All ace options
-},
-scripts : {
-    files : [
-        {
-            // Or you can manually get custom.js inside parentFolder for specific js file
-            name : 'parentFolder/custom',
-            when : 'user'
-        },
-        {
-            // If got subfolder inside parentFolder
-            // Include it too
-            name : 'parentFolder/subFolder/custom', 
-            when : 'user'
-        },
-        {
-            name : 'index', // get index.js
-            when : 'user'
-        }
-    ]
-    acceptFiles : ["con.min.js"] // and other prefix extension file names available
-}
-```
-
-> NOTE : You don't have to include `'js/filedirectory'` or `'css/filedirectory'` in it. APOSTROPHECMS will push based on `self.pushAsset()` that you may found in [ApostropheCMS Push Asset Documentation](https://apostrophecms.org/docs/tutorials/getting-started/pushing-assets.html#configuring-stylesheets). Easy right ?
-
-
-### Why I cannot switch other themes or other modes by scripting ?
-As I already mentioned in Push Asset section , by default we only push asset that are ONLY defined modes. It detect by your modes name and push. The rest of the modes will not be available in your browser. This is due to performance where Ace Editor contains more than 10 js files for all modes. If you really want to do by scripting that can switch themes or maybe other modes via scripting , you have to push ALL ACE's JS files in order to do that. Here is the code :
-
-```javascript
-ace : {
-    // all ace options
-},
-scripts : {
-    pushAllAce : true
-}
-```
-
-> NOTE : Beware that this push ALL ACE JS files including your own mode. Enable this only when you wanted to configure more ace on your own script. This might decrease performance and may require long time page loads.
-
-
-# Add More Methods/Commands/Event Listener To Your Ace Editor
+## Add More Methods/Commands/Event Listener To Your Ace Editor
 
 Let say you want to add MORE commands that you already refer to [Ace Editor HOW TO](https://ace.c9.io/#nav=howto) or maybe add new events by yourself. First , let's create new js file to any name you like and push like this :
 
-```javascript
-// In custom-code-editor/index.js
-ace : {
-    // All ace options
-},
-scripts : {
-    files : [
-        {
-            name : 'custom', // will get /js/custom.js
-            when : 'user'
-        }
-    ]
-}
-```
+Inside `CustomCodeEditor.vue` :
+```vue
+// In modules/custom-code-editor-a3/ui/apos/components/CustomCodeEditor.vue
 
-And inside `custom.js` :
-```javascript
-// In custom-code-editor/public/js/custom.js
+<script>
+import customCodeEditor from 'custom-code-editor-a3/components/CustomCodeEditor.vue';
 
-apos.define('custom-code-editor', {
-    construct : function(self,options){
-        // create superPopulate to extend method
-        var superPopulate = self.populate;
-
-        // Get extension self object
-        var _this = self;
-
-        self.populate = function(object, name, $field, $el, field, callback){
-            // Locate the element on specific schema
-            var $fieldSet = apos.schemas.findFieldset($el, name);
-
-            // Get Editor
-            var $fieldInput = $fieldSet.find("[data-editor]").get(0);
-
-            // Init Editor
-            var editor = ace.edit($fieldInput);
-
+export default {
+    extends: customCodeEditor,
+    mixins: [customCodeEditor],
+    methods: {
+        afterInit(element) {
+            const editor = this.getEditor();
+            const self = this;
             // Add my own custom command
             editor.commands.addCommand({
                 name: 'myCommand',
-                bindKey: {win: 'Ctrl-M',  mac: 'Command-M'},
+                bindKey: {win: 'Ctrl-Shift-M',  mac: 'Command-Shift-M'},
                 exec: function(editor) {
-                    //...
+                    // Your commands code in here...
+                    return apos.notify('"' + self.field.name + '" field: ' + 'Ctrl + M/ Command + M is pressed!', {
+                        type: 'success',
+                        dismiss: true
+                    });
                 },
                 readOnly: true // false if this command should not apply in readOnly mode
             });
-
-            // ... your custom codes here
-
-            superPopulate(object, name , $field , $el , field , callback);
         }
     }
-})
+}
+</script>
 ```
 
-## Methods available
+## Extend Methods available
 These methods are available for you to use :
 
 
 | Method | Description |
 | --- | --- |
-| self.populate | Run once. If contain any bind event like clickEvent, mouseEvent and etc, it will execute normally like your javascript browser. Check documentation here : [self.populate](https://apostrophecms.org/docs/tutorials/intermediate/custom-schema-field-types.html#handling-user-input-the-browser-side)
-| self.convert | Run multiple times. It will trigger on submission. Check documentation here : [self.convert](https://apostrophecms.org/docs/tutorials/intermediate/custom-schema-field-types.html#what-39-s-going-on-in-this-code) |
-| _this | Just an example use of self . Because inside self.populate ,you cannot access self directly. You have to define it to a new variable. It returns all methods & options. |
-| self.has / _this.has | `self.has`/`_this.has` accepts object and a string of path. This works similar as `_.has` in lodash but to access nested object , you only can use dot notation in that string. It returns `boolean`. |
+| `this.beforeInit` | This extend method is initialised before editor is initialised but you can access `this.next` default value in it. |
+| `this.afterInit` | You can get `this.getEditor()` easily from this method so that you can add more commands anything to editor or you can add more functional programming to yourself :)
 
-
-### How to use `.has()` method ?
-
- How to use ? Simple :
-
-```javascript
-var myObject = {
-    nested : {
-        anotherNested : {
-            valueHere : true
-        }
-    }
-}
-
-// _this from extension object from self as shown example previously
-_this.has(myObject , "nested.anotherNested.valueHere");
-// Returns true
-
-_this.has(myObject , "nested.anotherNested.getValue"); 
-// Returns false since there is no getValue property inside anotherNested.getValue
-```
+## Methods available
+You can refer methods available for you to use in here:
+[Custom Code Editor Methods](https://ammein.github.io/custom-code-editor-a3/)
 
 #### Access all options available in `ace : {}` object
 Simple , you can access it via `self.ace` or `_this.ace`
 
 # Changelog
-### 3.1.7
-- Add `appearance : none` to checkbox to remove default checkbox CSS
-- Fix all codes by removing ES6 codes for minifying ApostropheCMS issue
-
-### 3.1.6
-- Build Passing
-- Add Unit Tests
-
-### 3.1.4
-- Adjust Readme to use proper configuration
-
-### 3.1.3
-- Using _.assign() to assign existing config options
-- Make merge options to be able on undefined some property that are will not be use or override.
-
-### 3.1.1
-- New feature, specific field customization available to override
-
-### 3.0.2
-- Fix README and typos.
-- Bug Fixes.
-
-### 3.0.1
-- Button Options display issue.
-
-### 3.0.0
-- New feature released, Options Customizer. Also change a bit stylish UI for user friendly.
-
-### 2.9.0
-- Update CSS to be cursor:pointer for better mouse hover experience
-
-### 2.8.6
-- Adjust README for better "first setup" experience to beginners.
-
-### 2.8.0
-- Push Asset Feature where push modes & themes that are only defined by User. The rest of the JS files will not be pushed. However , you can push All Ace JS files by configure option in scripts object. Refer the documentation.
-
-### 2.6.7
-- Fix every `name` of the modes into lowerCase(). This to avoid errors when developers setting it to capitalize words or any uppercase letters (tested). Also fix `getTitle` where `.capitalize()` helper is removed from that variable.
-
-### 2.6.5
-- Fix CSS where code folding can't be seen in your code editor. Now you can press it on gutter area.
-
-### 2.6.0
-- **NEW SAVE FEATURE ADDED !** Provide new shortcut key to save your own selection and switch dropdown with your own selection ! . Adjust README to have better documentation to all developers.
-
-- Fix if got empty modes when `clearModes : true` and should return text of `object[name].type`. This will not return empty text on dropdown when you have an existing value in schema.
-
-### 2.5.0
-
-- Fix default mode name should be show in dropdown if got `object[name]`. This will not be return empty text on dropdown.
-
-### 2.3.0
-
-- Adjust README and FIXED on existing dropdown `title` bug that would not update if open the schema again
+### 1.0.0
+- Initial package using the same as Custom-Code-Editor in ApostropheCMS version 2.x.x. First Release for ApostropheCMS version 3.x.x!

@@ -1,4 +1,4 @@
-@import "index.scss";
+@import "custom-code-editor-a3/style/index.scss";
 
 // Code Editor
 .editor-container {
@@ -161,12 +161,13 @@
 
 .button-options {
     border: 0;
-    background-color: $white-smoke-3;
+    background-color: $white-smoke-3-blur-opac;
     box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
     width: 35px;
     height: 50px;
     border-radius: 0 0 0 15px;
     cursor: pointer;
+    backdrop-filter: blur(0.8px);
 
     &:hover {
         background-color: $gainsboro;

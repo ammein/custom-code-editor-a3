@@ -10,6 +10,17 @@ module.exports = {
   },
   webpack: {
     extensions: {
+      aliasModules(options) {
+        return {
+          resolve: {
+            alias: {
+              'custom-code-editor-a3/components': path.resolve(__dirname, 'ui/apos/components'),
+              'custom-code-editor-a3/mixins': path.resolve(__dirname, 'ui/apos/mixins'),
+              'custom-code-editor-a3/style': path.resolve(__dirname, 'ui/src')
+            }
+          }
+        };
+      },
       aceBuildsFileLoader(options) {
         return {
           // Issue solve for ace-builds replace webpack loader options: https://stackoverflow.com/questions/69406829/how-to-set-outputpath-for-inline-file-loader-imports/69407756#69407756

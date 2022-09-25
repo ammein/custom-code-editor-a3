@@ -7,7 +7,7 @@
                     <div class="editor-container">
                         <div class="dropdown" v-if="checkDropdown">
                             <button class="button-dropdown result" @click="dropdownClick = !dropdownClick">
-                                <component :is="dropdownComponentSwitch" /><span
+                                <component :is="dropdownComponentSwitch" :fill-color="checkDropdownColor" /><span
                                     class="dropdown-title">{{ getTitle }}</span></button>
                             <div class="dropdown-content" v-show="dropdownClick">
                                 <input type="text" placeholder="Search.." class="my-input" @keyup.stop="filterModesList"/>
@@ -28,7 +28,7 @@
                         </div>
                         <div v-if="checkOptionsCustomizer"
                             class="options-config">
-                            <button class="button-options" title="Adjust Options" @click="optionsClick = !optionsClick">
+                            <button class="button-options" title="Adjust Options" :style="optionsClick ? 'background: rgba(248, 248, 248, 1);' : '' " @click="optionsClick = !optionsClick">
                                 <ChevronGearIcon :size="16" />
                             </button>
                             <div class="options-container" v-show="optionsClick" @scroll="optionsScroll">
@@ -254,11 +254,9 @@
              */
             checkOptionsCustomizer() {
                 let condition = true;
-
                 if (_.has(this.ace, 'config.optionsCustomizer.enable')) {
                     condition = this.ace.config.optionsCustomizer.enable;
                 }
-
                 return condition;
             },
             /**
@@ -276,6 +274,16 @@
                     return 'ChevronDropupIcon';
                 } else {
                     return 'ChevronDropdownIcon';
+                }
+            },
+            /**
+             * @computed {String} checkDropdownColor Arrow Color for Dropdown Config
+             */
+            checkDropdownColor() {
+                if (_.has(this.ace.config, 'dropdown.arrowColor')) {
+                    return this.ace.config.dropdown.arrowColor;
+                } else {
+                    return ''
                 }
             },
             /**
@@ -307,7 +315,7 @@
                         })(i, this);
                     });
                 }
-
+                
                 return title;
             }
         },
@@ -400,7 +408,7 @@
                 const getIndex = _.findIndex(this.ace.optionsTypes[category], (val) => {
                     return val.name === name;
                 });
-
+                
                 if(getIndex !== -1) {
                     const cloneObject = _.cloneDeep(this.ace.optionsTypes[category][getIndex]);
 
@@ -426,5 +434,5 @@
 </script>
 
 <style lang="scss" scoped>
-    @import "../../src/editor.scss";
+    @import "custom-code-editor-a3/style/editor.scss";
 </style>

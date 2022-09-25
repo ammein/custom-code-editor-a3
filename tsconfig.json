@@ -2,21 +2,24 @@
     "compilerOptions": {
         "allowJs": true,
         "module": "ES6",
+        "jsx": "preserve",
         "declaration": true,
         "noImplicitAny": true,
         "lib": [
             "es2019"
         ],
-        "outDir": "ui"
+        "outDir": "."
     },
     "exclude": [
         "node_modules",
         "public",
+        "./apostrophe/test-lib/test.js",
         ".stylelintrc"
     ],
     "include": [
         "./tests/**/*.js",
-        "ui/apos/**/*.js",
+        "./ui/apos/**/*.js",
+        "./ui/apos/**/*.vue",
         "./lib/**/*.js",
         "index.js"
     ]
