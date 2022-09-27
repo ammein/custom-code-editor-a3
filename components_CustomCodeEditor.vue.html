@@ -388,6 +388,26 @@
             if (_.has(this.ace, 'config.optionsCustomizer.enable')) {
                 this.destroyClipboard();
             }
+
+            // Safe delete on `fieldAce`
+            if (_.has(apos.customCodeEditor.browser, `fieldAce.${this.field.name}`)) {
+                delete apos.customCodeEditor.browser.fieldAce[this.field.name];
+
+                // Safe delete after all this component initialized is remove
+                if (Object.keys(apos.customCodeEditor.browser.fieldAce).length === 0) {
+                    delete apos.customCodeEditor.browser.fieldAce;
+                }
+            }
+
+            // Safe delete on editor object
+            if (_.has(apos.customCodeEditor.browser, `editor.${this.field.name}`)) {
+                delete apos.customCodeEditor.browser.editor[this.field.name];
+
+                // Safe delete after all this component initialized is remove
+                if (Object.keys(apos.customCodeEditor.browser.editor).length === 0) {
+                    delete apos.customCodeEditor.browser.editor;
+                }
+            }
         },
         methods: {
 
