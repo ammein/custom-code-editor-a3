@@ -3,6 +3,7 @@ const getAceFiles = require('./getAceBuilds');
 const aceFiles = getAceFiles(process.env.NODE_ENV === 'production' ? 'src-min-noconflict' : 'src-noconflict');
 const webpack = require('webpack');
 const path = require('path');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
   options: {
@@ -10,23 +11,66 @@ module.exports = {
   },
   webpack: {
     extensions: {
+      aliasModules(options) {
+        return {
+          resolve: {
+            alias: {
+              'custom-code-editor-a3/components': path.resolve(__dirname, 'ui/apos/components'),
+              'custom-code-editor-a3/mixins': path.resolve(__dirname, 'ui/apos/mixins'),
+              'custom-code-editor-a3/style': path.resolve(__dirname, 'ui/src')
+            }
+          }
+        };
+      },
       aceBuildsFileLoader(options) {
         return {
           // Issue solve for ace-builds replace webpack loader options: https://stackoverflow.com/questions/69406829/how-to-set-outputpath-for-inline-file-loader-imports/69407756#69407756
           // Inline Loader Syntax for RegExp: https://github.com/webpack-contrib/file-loader/issues/31
           plugins: [
             new webpack.NormalModuleReplacementPlugin(/^file-loader\?esModule=false!(.*)/, (res) => {
-              const replace = process.env.NODE_ENV === 'production' ? 'file-loader?esModule=false&outputPath=ace-builds/builds&name=[name].[contenthash:16].[ext]!' : 'file-loader?esModule=false&regExp=(?:(?:.*src-min-noconflict|src-noconflict)(?:-|.*)(snippets|ext(?=-)|mode(?=-)|theme(?=-)|worker(?=-)|keybinding(?=-))(?:.*.js))&outputPath=ace-builds&name=[1]/[name].[ext]!';
+              const replace = 'file-loader?esModule=' + (options.esModule || process.env.NODE_ENV === `production` ? 'true' : 'false') + '&regExp=(?:(?:.*src-min-noconflict|src-noconflict)(?:-|.*)(snippets|ext(?=-)|mode(?=-)|theme(?=-)|worker(?=-)|keybinding(?=-))(?:.*.js))&outputPath=ace-builds&name=[1]/[name].[ext]!';
               const out = res.request.replace(/^file-loader\?esModule=false!/, replace);
               res.request = out;
+            }),
+
+            // Due to webpack cache issue & different path related to production/development, we need to clean some build assets to let apostrophe rebuild the files...
+            process.env.NODE_ENV === 'production' ? new CleanWebpackPlugin({
+              cleanOnceBeforeBuildPatterns: [
+                path.join(process.cwd(), 'public/apos-frontend/default/ace-builds/**'),
+                path.join(process.cwd(), 'public/apos-frontend/default/modules/**'),
+                '!apos-*',
+                '!src-*',
+                '!public-*'
+              ],
+              cleanAfterEveryBuildPatterns: [
+                '!apos-*',
+                '!src-*',
+                '!public-*'
+              ]
+            }) : new CleanWebpackPlugin({
+              cleanOnceBeforeBuildPatterns: [
+                path.join(process.cwd(), 'public/apos-frontend/default/apos-*'),
+                path.join(process.cwd(), 'public/apos-frontend/default/src-*'),
+                path.join(process.cwd(), 'public/apos-frontend/default/public-*')
+              ],
+              cleanAfterEveryBuildPatterns: [
+                path.join(process.cwd(), 'public/apos-frontend/releases/**/default/modules/**'),
+                '!apos-*',
+                '!src-*',
+                '!public-*'
+              ]
             })
           ]
         };
       },
       outputChunkFiles(options) {
-        return {
+        return process.env.NODE_ENV === 'production' ? {
           output: {
-            chunkFormat: process.env.NODE_ENV === 'production' ? false : 'module'
+            chunkFilename: 'modules/custom-code-editor-a3/[chunkhash].js'
+          }
+        } : {
+          output: {
+            chunkFormat: 'module'
           }
         };
       }

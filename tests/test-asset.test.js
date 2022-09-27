@@ -229,14 +229,17 @@ describe('Custom Code Editor : Clear Modes and Push All Assets', function () {
 
   it('should generates all assets from custom-code-editor module from production modes', async function () {
     process.env.NODE_ENV = 'production';
+    process.env.APOS_RELEASE_ID = new Date().toLocaleDateString().replace(/\//g, '-');
 
     try {
-      await apos.asset.tasks.build.task();
+      await apos.asset.tasks.build.task({
+        'check-apos-build': true
+      });
     } catch (error) {
       // Do nothing
     }
     let releaseId = await releasePath();
-    let checkProdBuild = await checkFileExists(releaseId);
+    let checkProdBuild = await fs.pathExists(path.resolve(bundleDir, '..', releaseId));
     expect(checkProdBuild).toBe(true);
   });
 });

@@ -7,7 +7,7 @@
                     <div class="editor-container">
                         <div class="dropdown" v-if="checkDropdown">
                             <button class="button-dropdown result" @click="dropdownClick = !dropdownClick">
-                                <component :is="dropdownComponentSwitch" /><span
+                                <component :is="dropdownComponentSwitch" :fill-color="checkDropdownColor" /><span
                                     class="dropdown-title">{{ getTitle }}</span></button>
                             <div class="dropdown-content" v-show="dropdownClick">
                                 <input type="text" placeholder="Search.." class="my-input" @keyup.stop="filterModesList"/>
@@ -28,7 +28,7 @@
                         </div>
                         <div v-if="checkOptionsCustomizer"
                             class="options-config">
-                            <button class="button-options" title="Adjust Options" @click="optionsClick = !optionsClick">
+                            <button class="button-options" title="Adjust Options" :style="optionsClick ? 'background: rgba(248, 248, 248, 1);' : '' " @click="optionsClick = !optionsClick">
                                 <ChevronGearIcon :size="16" />
                             </button>
                             <div class="options-container" v-show="optionsClick" @scroll="optionsScroll">
@@ -88,8 +88,8 @@
     import ChevronDeleteIcon from 'vue-material-design-icons/Delete.vue';
     import ChevronDropdownIcon from 'vue-material-design-icons/ChevronDown.vue';
     import ChevronDropupIcon from 'vue-material-design-icons/ChevronUp.vue';
-    import OptionsContainerComponent from './OptionsContainer.vue';
-    import CustomCodeEditorMixinVue from '../mixins/CustomCodeEditorMixin.js';
+    import OptionsContainerComponent from 'custom-code-editor-a3/components/OptionsContainer.vue';
+    import CustomCodeEditorMixinVue from 'custom-code-editor-a3/mixins/CustomCodeEditorMixin.js';
 
     // Import lodash
     import _ from 'lodash';
@@ -98,7 +98,31 @@
     import 'ace-builds';
     
     // Just use dynamic imports from webpack resolver. Let apostrophe compile acejs builds into its own folder by using webpack-merge
-    import 'ace-builds/webpack-resolver';
+    if (browserOptions.mode === 'development') {
+        import('ace-builds/webpack-resolver');
+    } else {
+        // Push All Ace files if true
+        if (_.has(browserOptions.ace, 'scripts.pushAllAce')){
+            // Import All Modes
+            for (let allModes = 0; allModes < browserOptions.ace._allModes.length; allModes++) {
+                import(`ace-builds/src-noconflict/mode-${browserOptions.ace._allModes[allModes]}.js`);
+                import(`ace-builds/src-noconflict/snippets/${browserOptions.ace._allModes[allModes]}.js`);
+            }
+            // Import All Themes
+            for (let allThemes = 0; allThemes < browserOptions.ace._allThemes.length; allThemes++) {
+                import(`ace-builds/src-noconflict/theme-${browserOptions.ace._allThemes[allThemes]}.js`);
+            }
+        } else {
+            // Dynamic Import Modes, Themes, and Snippets that are defined by your module
+            for (let i = 0; i < browserOptions.ace.modes.length; i++) {
+                import(`ace-builds/src-noconflict/mode-${browserOptions.ace.modes[i].name}`)
+                    .catch((e) => console.warn(`Unable to use mode for: '${browserOptions.ace.modes[i].name}''. Please make sure you use the correct mode names defined by 'Ace' Module`));
+                import(`ace-builds/src-noconflict/snippets/${browserOptions.ace.modes[i].name}`).catch((e) => null);
+            };
+            // Import just One Theme
+            import(`ace-builds/src-noconflict/theme-${browserOptions.ace.theme}.js`);
+        }
+    }
 
     // Solve beautify problem
     for(let i = 0; i < apos.customCodeEditor.browser.ace._otherFiles.length; i++) {
@@ -254,11 +278,9 @@
              */
             checkOptionsCustomizer() {
                 let condition = true;
-
                 if (_.has(this.ace, 'config.optionsCustomizer.enable')) {
                     condition = this.ace.config.optionsCustomizer.enable;
                 }
-
                 return condition;
             },
             /**
@@ -276,6 +298,16 @@
                     return 'ChevronDropupIcon';
                 } else {
                     return 'ChevronDropdownIcon';
+                }
+            },
+            /**
+             * @computed {String} checkDropdownColor Arrow Color for Dropdown Config
+             */
+            checkDropdownColor() {
+                if (_.has(this.ace.config, 'dropdown.arrowColor')) {
+                    return this.ace.config.dropdown.arrowColor;
+                } else {
+                    return ''
                 }
             },
             /**
@@ -307,7 +339,7 @@
                         })(i, this);
                     });
                 }
-
+                
                 return title;
             }
         },
@@ -318,6 +350,26 @@
         beforeDestroy() {
             if (_.has(this.ace, 'config.optionsCustomizer.enable')) {
                 this.destroyClipboard();
+            }
+
+            // Safe delete on `fieldAce`
+            if (_.has(apos.customCodeEditor.browser, `fieldAce.${this.field.name}`)) {
+                delete apos.customCodeEditor.browser.fieldAce[this.field.name];
+
+                // Safe delete after all this component initialized is remove
+                if (Object.keys(apos.customCodeEditor.browser.fieldAce).length === 0) {
+                    delete apos.customCodeEditor.browser.fieldAce;
+                }
+            }
+
+            // Safe delete on editor object
+            if (_.has(apos.customCodeEditor.browser, `editor.${this.field.name}`)) {
+                delete apos.customCodeEditor.browser.editor[this.field.name];
+
+                // Safe delete after all this component initialized is remove
+                if (Object.keys(apos.customCodeEditor.browser.editor).length === 0) {
+                    delete apos.customCodeEditor.browser.editor;
+                }
             }
         },
         methods: {
@@ -400,7 +452,7 @@
                 const getIndex = _.findIndex(this.ace.optionsTypes[category], (val) => {
                     return val.name === name;
                 });
-
+                
                 if(getIndex !== -1) {
                     const cloneObject = _.cloneDeep(this.ace.optionsTypes[category][getIndex]);
 
@@ -426,5 +478,5 @@
 </script>
 
 <style lang="scss" scoped>
-    @import "../../src/editor.scss";
+    @import "custom-code-editor-a3/style/editor.scss";
 </style>

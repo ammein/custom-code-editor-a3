@@ -25,7 +25,7 @@
         "padded-blocks": "off",
         "eol-last": "off",
         "no-unused-vars": "off",
-        "no-debugger": "off",
+        "no-debugger": "warn",
         "jest/valid-expect": [
             "error",
             {
