@@ -1156,7 +1156,7 @@
 
 
 <style lang="scss" scoped>
-    @import "../../src/index.scss";
+    @import "custom-code-editor-a3/style/index.scss";
 
     .label-text {
         color: $dim-gray;

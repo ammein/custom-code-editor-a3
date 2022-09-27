@@ -35,6 +35,9 @@ export default {
       editor.setValue('');
       editor.session.setMode(this.ace.aceModePath + this.ace.defaultMode.toLowerCase());
       editor.setTheme(this.ace.aceThemePath + this.ace.theme);
+      if (apos.customCodeEditor.browser.mode === 'production') {
+        editor.setOption('useWorker', false);
+      }
       editor.setOption('enableEmmet', false);
 
       // Register Editor Events
@@ -196,9 +199,7 @@ export default {
           this.$el.querySelector('.dropdown-title').innerText = this.next.type.length > 0 ? this.next.type : self.ace.defaultMode;
 
           if (self.ace.modes[i].snippet && !self.ace.modes[i].disableSnippet) {
-
-            // eslint-disable-next-line no-undef
-            const beautify = ace.require('ace/ext/beautify');
+            let beautify = ace.require('ace/ext/beautify');
             editor.session.setValue(self.ace.modes[i].snippet);
             beautify.beautify(editor.session);
             // Find the template for replace the code area
@@ -406,7 +407,7 @@ export default {
               return;
             }
 
-            const beautify = ace.require('ace/ext/beautify');
+            let beautify = ace.require('ace/ext/beautify');
             editor.session.setValue(this.ace.modes[i].snippet);
             beautify.beautify(editor.session);
             // If changing mode got existing codes , replace the value
