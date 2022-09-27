@@ -480,7 +480,7 @@ Well, some other options will break apostrophe's UI and also against the rule of
 # Browser
 
 ### Browser Object
-How can I get this schema browser object for my `custom-code-editor` ?
+How can I get this schema browser object for my `custom-code-editor-a3` ?
 
 Simply you can find it on :
 

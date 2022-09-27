@@ -6,10 +6,10 @@
 
     /**
      * @typedef optionsTypes
-     * @prop {String} name
-     * @prop {String} type
-     * @prop {Object[] | Object | String | Null} value
-     * @prop {String} category
+     * @prop {String} name - Options Name
+     * @prop {String | Array} type - Options Types either that accept string value of `string`, `number` and/or `boolean`
+     * @prop {Object[] | Array | Object | String | Null} value - Default value of options
+     * @prop {String} category - Category of options
      */
 
     /**
@@ -977,6 +977,7 @@
                          * // This function emits on input type `select`
                          * this.$root.$emit('customCodeEditor:getOptions', {
                          * customCodeEditor: {
+                         *          field: this.$parent.field.name,
                          *          input: input,
                          *          name: input.name,
                          *          value: value.toString(),
@@ -1007,6 +1008,7 @@
                          * // This function emits on input type `range`
                          * this.$root.$emit('customCodeEditor:getOptions', {
                          * customCodeEditor: {
+                         *          field: this.$parent.field.name,
                          *          input: input,
                          *          name: input.name,
                          *          value: parseFloat(input.value),
@@ -1037,6 +1039,7 @@
                          * // This function emits on input type `checkbox`
                          * this.$root.$emit('customCodeEditor:getOptions', {
                          * customCodeEditor: {
+                         *          field: this.$parent.field.name,
                          *          input: input,
                          *          name: input.name,
                          *          value: input.checked,
