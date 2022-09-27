@@ -445,13 +445,15 @@ What if you want to add your own help text, you could simply done it in project 
 ```js
 // In custom-code-editor-a3/index.js :
 module.exports = {
-    ace : {
-        optionsTypes : [
-            {
-                name : "highlightActiveLine",
-                help : "This will highlight active line cursor position"
-            }
-        ]
+    options: {
+        ace : {
+            optionsTypes : [
+                {
+                    name : "highlightActiveLine",
+                    help : "This will highlight active line cursor position"
+                }
+            ]
+        }
     }
 }
 ```
@@ -463,11 +465,13 @@ You wish to remove options customizer ? You don't like it ? Don't worry, just se
 ```js
 // In custom-code-editor-a3/index.js :
 module.exports = {
-    ace : {
-        config : {
-            optionsCustomizer : {
-                enable : false
-                // More configuration coming soon
+    options: {
+        ace : {
+            config : {
+                optionsCustomizer : {
+                    enable : false
+                    // More configuration coming soon
+                }
             }
         }
     }
@@ -540,6 +544,25 @@ apos.customCodeEditor.browser.editor.secondCode
 > Easy right ? Hell yeah it is ! :D
 
 # Advanced Configuration (Skip this if you comfortable with current feature)
+
+## Why I cannot switch other themes or other modes by scripting ?
+As I already mentioned in Push Asset section , by default we only push asset that are ONLY defined modes. It detect by your modes name and push. The rest of the modes will not be available in your browser. This is due to performance where Ace Editor contains more than 10 js files for all modes. If you really want to do by scripting that can switch themes or maybe other modes via scripting , you have to push ALL ACE's JS files in order to do that. Here is the code :
+
+```javascript
+// In modules/custom-code-editor-a3/index.js
+module.exports = {
+    options: {
+        ace : {
+            // all other ace options...
+            scripts : {
+                pushAllAce : true
+            }
+        }
+    }
+}
+```
+
+> NOTE : Beware that this push ALL ACE JS files including your own mode. Enable this only when you wanted to configure more ace on your own script. This might decrease performance and may require long time page loads.
 
 ## Add More Methods/Commands/Event Listener To Your Ace Editor
 
