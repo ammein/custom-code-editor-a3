@@ -1038,6 +1038,7 @@
                          * // This function emits on input type `select`
                          * this.$root.$emit('customCodeEditor:getOptions', {
                          * customCodeEditor: {
+                         *          field: this.$parent.field.name,
                          *          input: input,
                          *          name: input.name,
                          *          value: value.toString(),
@@ -1068,6 +1069,7 @@
                          * // This function emits on input type `range`
                          * this.$root.$emit('customCodeEditor:getOptions', {
                          * customCodeEditor: {
+                         *          field: this.$parent.field.name,
                          *          input: input,
                          *          name: input.name,
                          *          value: parseFloat(input.value),
@@ -1098,6 +1100,7 @@
                          * // This function emits on input type `checkbox`
                          * this.$root.$emit('customCodeEditor:getOptions', {
                          * customCodeEditor: {
+                         *          field: this.$parent.field.name,
                          *          input: input,
                          *          name: input.name,
                          *          value: input.checked,
