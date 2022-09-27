@@ -737,18 +737,18 @@
 
                             let checked = null;
                             if (!_.isUndefined(object.saveValue)) {
-                                checked = !checked;
+                                checked = object.saveValue;
                                 editor.setOption(object.name, object.saveValue);
                             } else if (_.isUndefined(object.saveValue)) {
                                 editor.getOptions()[object.name] ? checked = editor.getOptions()[object.name] : null;
                             }
 
-                            // Create <select> element
+                            // Create <checkbox> element
                             let input = h('input', {
                                 domProps: {
-                                    checked,
                                     type: 'checkbox',
                                     name: object.name,
+                                    checked: checked,
                                 },
                                 class: 'error',
                                 on: {
@@ -807,10 +807,6 @@
              * @return {Vue.VNode} Returns <ul> element that are grouped all the lists in the children
              */
             loopOptions(myOptions, h) {
-                if (Object.keys(this.originalOptions).length === 0) {
-                    this.originalOptions = _.cloneDeep(this.editor.getOptions())
-                }
-
                 let editor = this.editor;
                 let self = this;
                 // Create new <ul> element to group all lists in its children
@@ -993,6 +989,7 @@
                          */
                         this.$root.$emit('customCodeEditor:getOptions', {
                             customCodeEditor: {
+                                field: this.$parent.field.name,
                                 input: input,
                                 name: input.name,
                                 value: value.toString(),
@@ -1022,6 +1019,7 @@
                          */
                         this.$root.$emit('customCodeEditor:getOptions', {
                             customCodeEditor: {
+                                field: this.$parent.field.name,
                                 input: input,
                                 name: input.name,
                                 value: parseFloat(input.value),
@@ -1051,6 +1049,7 @@
                          */
                         this.$root.$emit('customCodeEditor:getOptions', {
                             customCodeEditor: {
+                                field: this.$parent.field.name,
                                 input: input,
                                 name: input.name,
                                 value: input.checked,
@@ -1070,7 +1069,7 @@
              * @fires component:OptionsContainerComponent~customCodeEditor:getOptions
              */
             updateOptions(e){
-                if(e.customCodeEditor && !_.isUndefined(e.customCodeEditor.value)) {
+                if(!_.isUndefined(e.customCodeEditor) && !_.isUndefined(e.customCodeEditor.value) && e.customCodeEditor.field !== this.$parent.field.name) {
                     // Find input from this current component
                     let input = this.$el.querySelector(`[name="${e.customCodeEditor.input.name}"]`);
 
@@ -1113,6 +1112,11 @@
         created(){
             this.getOptions()
                 .then((options) => {
+                    // Save to original Options first
+                    if (Object.keys(this.originalOptions).length === 0) {
+                        this.originalOptions = _.assign({}, _.cloneDeep(this.editor.getOptions()), _.isUndefined(apos.customCodeEditor.browser, `fieldAce.${this.$parent.field.name}`) ? !_.isUndefined(apos.customCodeEditor.browser.ace, 'options') ? apos.customCodeEditor.browser.ace.options : {} : !_.isUndefined(apos.customCodeEditor.browser.fieldAce[this.$parent.field.name], `options`) ? apos.customCodeEditor.browser.fieldAce[this.$parent.field.name].options : {})
+                    }
+
                     try {
                         if (options.status !== 'error') {
                             return JSON.parse(options.message);
@@ -1123,7 +1127,7 @@
                         throw new Error(e.message)
                     }
                 })
-                .then((result) => this.options = _.assign(this.options, result))
+                .then((result) => this.options = _.assign({}, this.options, result))
                 .then(() => this.$forceUpdate())
                 .catch((message) => {
                      apos.notify(message, {

@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import _ from 'lodash';
 import ClipboardJS from 'clipboard';
 
@@ -36,6 +35,7 @@ export default {
       editor.setValue('');
       editor.session.setMode(this.ace.aceModePath + this.ace.defaultMode.toLowerCase());
       editor.setTheme(this.ace.aceThemePath + this.ace.theme);
+      editor.setOption('enableEmmet', false);
 
       // Register Editor Events
       this.editorEvents.call(self, editor);
@@ -318,15 +318,12 @@ export default {
         // Clone to new object
         const cloneOptions = _.cloneDeep(apos.customCodeEditor.browser.ace);
 
-        // Remove existing browser ace options
-        delete apos.customCodeEditor.browser.ace;
-
         // Add with specific schema options
         apos.customCodeEditor.browser = {
           ...apos.customCodeEditor.browser,
-          ace: {
-            [this.field.name]: _.merge({}, cloneOptions, mergeOptions),
-            main: cloneOptions
+          // Store all merged that has override on schema level options into `fieldAce`.
+          fieldAce: {
+            [this.field.name]: _.merge({}, cloneOptions, mergeOptions)
           }
         };
       }

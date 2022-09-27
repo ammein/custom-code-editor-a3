@@ -7,7 +7,7 @@ An ApostropheCMS Custom Schema for your own custom-code-editor field.
 This schema uses Ace Editor library that you may found here [Ace Editor](https://ace.c9.io/)
 
 
-![Ace Editor Example](https://media.giphy.com/media/33F6GoBCalksXavQyN/giphy.gif)
+![Ace Editor Example](https://thumbs.gfycat.com/DecisiveThickGilamonster-size_restricted.gif)
 
 Falling in love with custom-code-editor module ? Send love ❤️ through Paypal here : <br>
 [Paypal.me/AminShazrin](https://paypal.me/AminShazrin?locale.x=en_US)
@@ -368,12 +368,12 @@ fields: {
 ### Search Bar
 Ace got it owns search bar. Simply hit `Ctrl + F` ! 
 
-![Search Function](https://media.giphy.com/media/dQlgFYEG6CbgoHWdHw/giphy.gif)
+![Search Function](https://thumbs.gfycat.com/HandsomeHopefulFallowdeer-size_restricted.gif)
 
 ### Save Selection
 Now this one is a new function ONLY for ApostropheCMS . If you hit `Ctrl + Shift + S` while selecting new code, it will replace an existing highlighted text previously when you change your mode. Don't believe me ? Check it out !
 
-![Save Feature](https://media.giphy.com/media/4EFt3QBgKu1NG5oz5a/giphy.gif)
+![Save Feature](https://thumbs.gfycat.com/ReliableHastyGrouper-size_restricted.gif)
 
 Wait ! Can I change save command ? Yup , you can. Add options like this :
 ```javascript
@@ -389,11 +389,9 @@ ace : {
 ```
 
 # Options Customizer
-Have you ever wonder that you are tired of testing options by restarting the app and adjust your options all over again ? 
+Have you ever wonder that you are tired of testing options by restarting the app and adjust your options all over again ? Here is Options Customizer that helps your editor options configuration better.
 
-Say no more ! Introducing new **Options Customizer** ! 
-
-![Options Customizer](https://media.giphy.com/media/JT1C49z4ghRFIvKPx1/giphy.gif)
+![Options Customizer](https://thumbs.gfycat.com/GrossShoddyIbisbill-size_restricted.gif)
 
 ### What does it do ?
 It brings you more features that you can't live without ! All options available for you to modify are now can be save to each logged in user or even you could copy all the desired options and paste it to your project level module ! Here are four core features for Options Customizer :
@@ -407,7 +405,7 @@ It brings you more features that you can't live without ! All options available 
 ## Copy Options
 You can copy your modified options and paste it on your project level module that will apply to all ! The copy features uses [Clipboard JS](https://clipboardjs.com/) to make it work. Below are the demonstration on how to use it :
 
-![Copy Options](https://media.giphy.com/media/MaNmlXtVdItUCXRR17/giphy.gif)
+![Copy Options](https://thumbs.gfycat.com/WarmheartedGlossyCow-size_restricted.gif)
 
 
 > NOTE : It only copies from modified changes, not on its entire options. If your module options are already configured, it will not copy your module options. Instead, it will copy all your changes options that you did on On/Off Toggle(s), Select Input(s) and Range Input(s).
@@ -415,7 +413,7 @@ You can copy your modified options and paste it on your project level module tha
 ## Undo Options
 You can undo your modified options to default settings. This will help you reset your changes to default options.
 
-![Undo Options](https://media.giphy.com/media/KbpWScHGzbpGfTAUTN/giphy.gif)
+![Undo Options](https://thumbs.gfycat.com/ElementaryGeneralCentipede-size_restricted.gif)
 
 
 > NOTE : This will not undo saved options to default setting. If you wish to reset from saved options, refer to section "Reset Options" below.
@@ -438,7 +436,7 @@ In MongoDB, you will see this data directly on `type : apostrophe-user` :
 ## Reset Options
 You can also reset all options. This will remove current saves options and change it to default module options settings. Let say you have follows save options demonstration above, you simply click `Reset` like example below :
 
-![Reset Options](https://media.giphy.com/media/RhYUiFiT5xoxM8cvIj/giphy.gif)
+![Reset Options](https://thumbs.gfycat.com/BlandWelloffAngwantibo-size_restricted.gif)
 
 > NOTE : This will only affect to current logged in user only. It will not removes any other users options.
 
@@ -460,7 +458,7 @@ module.exports = {
 
 > NOTE : If you wish to add more options, take a look at `aceTypes.js` in `node_modules/custom-code-editor/aceTypes.js` to see how it is done. And MAKE SURE you do it in an ARRAY like above example.
 
-## Remove Options
+## Disable Options Customizer
 You wish to remove options customizer ? You don't like it ? Don't worry, just set it to `enable : false` like this :
 ```js
 // In custom-code-editor-a3/index.js :
