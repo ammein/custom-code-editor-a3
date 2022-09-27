@@ -422,7 +422,7 @@ You can undo your modified options to default settings. This will help you reset
 ## Save Options
 You can also saves all your modified options. This will keep all your modified options apply to all custom-code-editor types !
 
-![Save Options](https://media.giphy.com/media/dsvKmzLZID4CyrRNWu/giphy.gif)
+![Save Options](https://thumbs.gfycat.com/KlutzyAridCavy-size_restricted.gif)
 
 In MongoDB, you will see this data directly on `type : apostrophe-user` :
 ```json

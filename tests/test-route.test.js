@@ -5,7 +5,7 @@ const {
 } = require('expect');
 const _ = require('lodash');
 
-describe('Custom Code Editor : Routes Saving Options', function () {
+describe('Custom Code Editor : Routes GET/POST/DELETE Options', function () {
 
   let dummyUser, apos, jar, token;
   let body = {

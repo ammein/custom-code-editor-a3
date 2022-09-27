@@ -5,7 +5,7 @@ const {
 } = require('expect');
 const _ = require('lodash');
 
-describe('Custom Code Editor : Override Options and Push Asset Test', function () {
+describe('Custom Code Editor : Override Options Test', function () {
   let originalOptionsTypes = require('../aceTypes');
   let apos;
 
