@@ -3,13 +3,30 @@ const getAceFiles = require('./getAceBuilds');
 const aceFiles = getAceFiles(process.env.NODE_ENV === 'production' ? 'src-min-noconflict' : 'src-noconflict');
 const webpack = require('webpack');
 const path = require('path');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const {
+  CleanWebpackPlugin
+} = require('clean-webpack-plugin');
 
 module.exports = {
   options: {
     alias: 'customCodeEditor'
   },
   webpack: {
+    extensionOptions: {
+      aceBuildsFileLoader(options) {
+        const clean = _.has(options, 'clean') ? options.clean : true;
+        const esModule = _.has(options, 'esModule') ? options.esModule : undefined;
+        const releaseId = _.has(options, 'releaseId') ? options.releaseId : undefined;
+
+        let optionsResult = _.omitBy({
+          clean: clean,
+          esModule: esModule,
+          releaseId: releaseId
+        }, _.isNil);
+
+        return optionsResult;
+      }
+    },
     extensions: {
       aliasModules(options) {
         return {
@@ -28,7 +45,7 @@ module.exports = {
           // Inline Loader Syntax for RegExp: https://github.com/webpack-contrib/file-loader/issues/31
           plugins: [
             new webpack.NormalModuleReplacementPlugin(/^file-loader\?esModule=false!(.*)/, (res) => {
-              const replace = 'file-loader?esModule=' + (options.esModule || process.env.NODE_ENV === `production` ? 'true' : 'false') + '&regExp=(?:(?:.*src-min-noconflict|src-noconflict)(?:-|.*)(snippets|ext(?=-)|mode(?=-)|theme(?=-)|worker(?=-)|keybinding(?=-))(?:.*.js))&outputPath=ace-builds&name=[1]/[name].[ext]!';
+              const replace = 'file-loader?esModule=' + (options.esModule || 'false') + '&regExp=(?:(?:.*src-min-noconflict|src-noconflict)(?:-|.*)(snippets|ext(?=-)|mode(?=-)|theme(?=-)|worker(?=-)|keybinding(?=-))(?:.*.js))&outputPath=ace-builds&name=[1]/[name].[ext]!';
               const out = res.request.replace(/^file-loader\?esModule=false!/, replace);
               res.request = out;
             }),
@@ -54,7 +71,7 @@ module.exports = {
                 path.join(process.cwd(), 'public/apos-frontend/default/public-*')
               ],
               cleanAfterEveryBuildPatterns: [
-                path.join(process.cwd(), 'public/apos-frontend/releases/**/default/modules/**'),
+                options.clean && path.join(process.cwd(), 'public/apos-frontend/releases/' + (options.releaseId || process.env.APOS_RELEASE_ID || '**') + '/default/modules/**'),
                 '!apos-*',
                 '!src-*',
                 '!public-*'

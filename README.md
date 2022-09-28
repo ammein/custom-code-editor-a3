@@ -1,20 +1,20 @@
-# Custom-Code-Editor ApostropheCMS Schema
+# Custom-Code-Editor-A3 ApostropheCMS Schema
 
 [![test-custom-code-editor-a3](https://github.com/ammein/custom-code-editor-a3/actions/workflows/main.yml/badge.svg)](https://github.com/ammein/custom-code-editor-a3/actions/workflows/main.yml)
 
-An ApostropheCMS Custom Schema for your own custom-code-editor field. 
+An ApostropheCMS Custom Schema for your own custom-code-editor-a3 field. 
 
 This schema uses Ace Editor library that you may found here [Ace Editor](https://ace.c9.io/)
 
 
 ![Ace Editor Example](https://thumbs.gfycat.com/DecisiveThickGilamonster-size_restricted.gif)
 
-Falling in love with custom-code-editor module ? Send love ❤️ through Paypal here : <br>
+Falling in love with custom-code-editor-a3 module ? Send love ❤️ through Paypal here : <br>
 [Paypal.me/AminShazrin](https://paypal.me/AminShazrin?locale.x=en_US)
 
 
 # Install
-From within your apostrophe project `npm install --save custom-code-editor`
+From within your apostrophe project `npm install --save custom-code-editor-a3`
 
 Include in app.js:
 ```javascript
@@ -39,8 +39,8 @@ fields: {
 }
 ```
 
-### Widget.html Get `custom-code-editor` Value
-This custom-code-editor schema returns an object. 
+### Widget.html Get `custom-code-editor-a3` Value
+This custom-code-editor-a3 schema returns an object. 
 ```javascript
 {
     code : '<string code value>',
@@ -55,14 +55,14 @@ If you did an example above , in `widget.html` you can simply get an object like
 {{ data.widget.mycode.type }}
 ```
 
-or you can simply use `apos.log()` to see what's available on `custom-code-editor` objects :
+or you can simply use `apos.log()` to see what's available on `custom-code-editor-a3` objects :
 
 ```twig
 {{ apos.log(data.widget.mycode) }}
 ```
 
 
-# Custom-Code-Editor Options Available
+# Custom-Code-Editor-A3 Options Available
 
 ```javascript
 // in modules/custom-code-editor-a3/index.js
@@ -116,7 +116,7 @@ module.exports = {
 - Javascript
 
 # Name Of The Modes References
-### [List of all Modes](https://github.com/ajaxorg/ace/blob/master/lib/ace/ext/modelist.js#L45)
+### [List of all Modes](https://github.com/ajaxorg/ace-builds/blob/6526ea4a845a3682789a9224f319271496051873/src/ext-modelist.js#L33)
 
 # How to Override Existing Mode ?
 Simple , make sure the name of the mode is similar to default modes provided. 
@@ -242,7 +242,7 @@ ace : {
 > Don't worry about indent in Snippet , it will automatically beautify the codes whenever you enter your new content
 
 # Insert My Own Theme
-By default , `theme : 'ambiance'` . If you wish to change theme (Case Sensitive). You can find all available themes here [All Ace Editor Themes Available](https://github.com/ajaxorg/ace/tree/master/lib/ace/theme) :
+By default , `theme : 'ambiance'` . If you wish to change theme (Case Sensitive). You can find all available themes here [All Ace Editor Themes Available](https://github.com/ajaxorg/ace-builds/blob/6526ea4a845a3682789a9224f319271496051873/src/ext-themelist.js#L9) :
 ```javascript
 ace : {
     theme : 'monokai'
@@ -280,29 +280,33 @@ Then load emmet library in your template views :
 <script src="https://cloud9ide.github.io/emmet-core/emmet.js"></script>
 ```
 
-# Custom-Code-Editor & Dropdown Configurations
+# Custom-Code-Editor-A3 & Dropdown Configurations
 Well , you also can customize your own dropdown/ace editor css styles. All dropdown configuratins available for you are :
 
 ```javascript
-ace : {
-    config : {
-        fontSize : '<Number or String>', // Editor Font Size
-        editorHeight : '<Number or String>', // Editor Height
-        dropdown : {
-            enable : '<Boolean>', // Enable it for switching modes button
-            height : '<Number or String>', // Height Dropdown - Default : 30
-            borderRadius : '<Number or String>', // Border Radius Dropdown
-            fontFamily : '<String>', // Font Family Dropdown
-            fontSize : '<Number or String>' , // Font Size Dropdown
-            backgroundColor : "<String>", // Background Color Dropdown (String)
-            textColor : "<String>", // Text Color Dropdown (String)
-            position : {
-                top : '<Number or String>',
-                bottom : '<Number or String>',
-                right : '<Number or String>',
-                left : '<Number or String>'
-            },
-            arrowColor : '<String or Hex or RGB or RGBA>' // To change arrow color in dropdown - Default : "black"
+module.exports = {
+    options: {
+        ace : {
+            config : {
+                fontSize : '<Number or String>', // Editor Font Size
+                editorHeight : '<Number or String>', // Editor Height
+                dropdown : {
+                    enable : '<Boolean>', // Enable it for switching modes button
+                    height : '<Number or String>', // Height Dropdown - Default : 30
+                    borderRadius : '<Number or String>', // Border Radius Dropdown
+                    fontFamily : '<String>', // Font Family Dropdown
+                    fontSize : '<Number or String>' , // Font Size Dropdown
+                    backgroundColor : "<String>", // Background Color Dropdown (String)
+                    textColor : "<String>", // Text Color Dropdown (String)
+                    position : {
+                        top : '<Number or String>',
+                        bottom : '<Number or String>',
+                        right : '<Number or String>',
+                        left : '<Number or String>'
+                    },
+                    arrowColor : '<String or Hex or RGB or RGBA>' // To change arrow color in dropdown - Default : "black"
+                }
+            }
         }
     }
 }
@@ -321,7 +325,7 @@ ace : {
 > Because we have a css issue on `!important` to override apostrophe css default normalize. So I did it for you to easily override it on `config` options. Or maybe you can push your own file to override it. Either way , both are possible override options :)
 
 # Specific Field Customization
-Well, I know some of you don't want some specific editor to be in the same options to all custom-code-editor field type, right ? To make it backward compatibility, only some of the options can be overridden on your schema fields. Here is an example :
+Well, I know some of you don't want some specific editor to be in the same options to all custom-code-editor-a3 field type, right ? To make it backward compatibility, only some of the options can be overridden on your schema fields. Here is an example :
 
 ```javascript
 fields: {
@@ -420,7 +424,7 @@ You can undo your modified options to default settings. This will help you reset
 
 
 ## Save Options
-You can also saves all your modified options. This will keep all your modified options apply to all custom-code-editor types !
+You can also saves all your modified options. This will keep all your modified options apply to all custom-code-editor-a3 types !
 
 ![Save Options](https://thumbs.gfycat.com/KlutzyAridCavy-size_restricted.gif)
 
@@ -442,7 +446,7 @@ You can also reset all options. This will remove current saves options and chang
 
 ## Modify Options
 What if you want to add your own help text, you could simply done it in project level module like this : 
-```js
+```javascript
 // In custom-code-editor-a3/index.js :
 module.exports = {
     options: {
@@ -458,11 +462,11 @@ module.exports = {
 }
 ```
 
-> NOTE : If you wish to add more options, take a look at `aceTypes.js` in `node_modules/custom-code-editor/aceTypes.js` to see how it is done. And MAKE SURE you do it in an ARRAY like above example.
+> NOTE : If you wish to add more options, take a look at `aceTypes.js` in `node_modules/custom-code-editor-a3/aceTypes.js` to see how it is done. And MAKE SURE you do it in an ARRAY like above example.
 
 ## Disable Options Customizer
 You wish to remove options customizer ? You don't like it ? Don't worry, just set it to `enable : false` like this :
-```js
+```javascript
 // In custom-code-editor-a3/index.js :
 module.exports = {
     options: {
@@ -614,9 +618,62 @@ These methods are available for you to use :
 You can refer methods available for you to use in here:
 [Custom Code Editor Methods](https://ammein.github.io/custom-code-editor-a3/)
 
+## Webpack Extension Options
+### ES Module
+If you wish to use ES Module in your project, simply set `esModule` to `true` inside `extensionOptions` called `aceBuildsFileLoader` like below example:
+```javascript
+// In modules/custom-code-editor-a3/index.js
+module.exports = {
+    webpack: {
+        extensionOptions: {
+            aceBuildsFileLoader: {
+                esModule: true
+            }
+        }
+    }
+}
+```
+
+### Disable Clean Release Build for Custom-Code-Editor-A3
+If you wish to disable cleaning release modules for custom-code-editor-a3, simply set `clean` to `false` inside `extensionOptions` called `aceBuildsFileLoader` like below example:
+```javascript
+// In modules/custom-code-editor-a3/index.js
+module.exports = {
+    webpack: {
+        extensionOptions: {
+            aceBuildsFileLoader: {
+                clean: false
+            }
+        }
+    }
+}
+```
+
+### Clean Specific Release Build for Custom-Code-Editor-A3
+If you wish to clean specific release modules instead for custom-code-editor-a3, simply set `releaseId` to any releaseID that you initialized in production like below example:
+```javascript
+// In modules/custom-code-editor-a3/index.js
+module.exports = {
+    webpack: {
+        extensionOptions: {
+            aceBuildsFileLoader: {
+                releaseId: 'my-release-id'
+            }
+        }
+    }
+}
+```
+
 #### Access all options available in `ace : {}` object
-Simple , you can access it via `self.ace` or `_this.ace`
+Simple , you can access it via `this.ace` in `CustomCodeEditor.vue` extends file in your project level module ui component. You may refer methods available down here:
+
+[Custom Code Editor Methods](https://ammein.github.io/custom-code-editor-a3/)
 
 # Changelog
+### 1.0.1
+- Fix clean-webpack-plugin onto dependencies and remove it from devDependencies
+- Fix README.md on `Custom-Code-Editor` to `Custom-Code-Editor-A3`
+- Add options for webpack to override from project level module
+
 ### 1.0.0
 - Initial package using the same as Custom-Code-Editor in ApostropheCMS version 2.x.x. First Release for ApostropheCMS version 3.x.x!
