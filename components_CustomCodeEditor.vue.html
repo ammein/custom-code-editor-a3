@@ -149,8 +149,8 @@
     import ChevronDeleteIcon from 'vue-material-design-icons/Delete.vue';
     import ChevronDropdownIcon from 'vue-material-design-icons/ChevronDown.vue';
     import ChevronDropupIcon from 'vue-material-design-icons/ChevronUp.vue';
-    import OptionsContainerComponent from './OptionsContainer.vue';
-    import CustomCodeEditorMixinVue from '../mixins/CustomCodeEditorMixin.js';
+    import OptionsContainerComponent from 'custom-code-editor-a3/components/OptionsContainer.vue';
+    import CustomCodeEditorMixinVue from 'custom-code-editor-a3/mixins/CustomCodeEditorMixin.js';
 
     // Import lodash
     import _ from 'lodash';
@@ -159,7 +159,31 @@
     import 'ace-builds';
     
     // Just use dynamic imports from webpack resolver. Let apostrophe compile acejs builds into its own folder by using webpack-merge
-    import 'ace-builds/webpack-resolver';
+    if (browserOptions.mode === 'development') {
+        import('ace-builds/webpack-resolver');
+    } else {
+        // Push All Ace files if true
+        if (_.has(browserOptions.ace, 'scripts.pushAllAce')){
+            // Import All Modes
+            for (let allModes = 0; allModes &lt; browserOptions.ace._allModes.length; allModes++) {
+                import(`ace-builds/src-noconflict/mode-${browserOptions.ace._allModes[allModes]}.js`);
+                import(`ace-builds/src-noconflict/snippets/${browserOptions.ace._allModes[allModes]}.js`);
+            }
+            // Import All Themes
+            for (let allThemes = 0; allThemes &lt; browserOptions.ace._allThemes.length; allThemes++) {
+                import(`ace-builds/src-noconflict/theme-${browserOptions.ace._allThemes[allThemes]}.js`);
+            }
+        } else {
+            // Dynamic Import Modes, Themes, and Snippets that are defined by your module
+            for (let i = 0; i &lt; browserOptions.ace.modes.length; i++) {
+                import(`ace-builds/src-noconflict/mode-${browserOptions.ace.modes[i].name}`)
+                    .catch((e) => console.warn(`Unable to use mode for: '${browserOptions.ace.modes[i].name}''. Please make sure you use the correct mode names defined by 'Ace' Module`));
+                import(`ace-builds/src-noconflict/snippets/${browserOptions.ace.modes[i].name}`).catch((e) => null);
+            };
+            // Import just One Theme
+            import(`ace-builds/src-noconflict/theme-${browserOptions.ace.theme}.js`);
+        }
+    }
 
     // Solve beautify problem
     for(let i = 0; i &lt; apos.customCodeEditor.browser.ace._otherFiles.length; i++) {
