@@ -303,7 +303,7 @@ Once enable your dropdown , you will frustated with the position of dropdown is 
 </code></pre>
 <h1>Custom-Code-Editor-A3 &amp; Dropdown Configurations</h1>
 <p>Well , you also can customize your own dropdown/ace editor css styles. All dropdown configuratins available for you are :</p>
-<pre class="prettyprint source lang-js"><code>module.exports = {
+<pre class="prettyprint source lang-javascript"><code>module.exports = {
     options: {
         ace : {
             config : {
@@ -445,7 +445,7 @@ Once enable your dropdown , you will frustated with the position of dropdown is 
 </blockquote>
 <h2>Modify Options</h2>
 <p>What if you want to add your own help text, you could simply done it in project level module like this :</p>
-<pre class="prettyprint source lang-js"><code>// In custom-code-editor-a3/index.js :
+<pre class="prettyprint source lang-javascript"><code>// In custom-code-editor-a3/index.js :
 module.exports = {
     options: {
         ace : {
@@ -464,7 +464,7 @@ module.exports = {
 </blockquote>
 <h2>Disable Options Customizer</h2>
 <p>You wish to remove options customizer ? You don't like it ? Don't worry, just set it to <code>enable : false</code> like this :</p>
-<pre class="prettyprint source lang-js"><code>// In custom-code-editor-a3/index.js :
+<pre class="prettyprint source lang-javascript"><code>// In custom-code-editor-a3/index.js :
 module.exports = {
     options: {
         ace : {
@@ -605,7 +605,7 @@ export default {
 <h2>Webpack Extension Options</h2>
 <h3>ES Module</h3>
 <p>If you wish to use ES Module in your project, simply set <code>esModule</code> to <code>true</code> inside <code>extensionOptions</code> called <code>aceBuildsFileLoader</code> like below example:</p>
-<pre class="prettyprint source lang-js"><code>// In modules/custom-code-editor-a3/index.js
+<pre class="prettyprint source lang-javascript"><code>// In modules/custom-code-editor-a3/index.js
 module.exports = {
     webpack: {
         extensionOptions: {
@@ -618,7 +618,7 @@ module.exports = {
 </code></pre>
 <h3>Disable Clean Release Build for Custom-Code-Editor-A3</h3>
 <p>If you wish to disable cleaning release modules for custom-code-editor-a3, simply set <code>clean</code> to <code>false</code> inside <code>extensionOptions</code> called <code>aceBuildsFileLoader</code> like below example:</p>
-<pre class="prettyprint source lang-js"><code>// In modules/custom-code-editor-a3/index.js
+<pre class="prettyprint source lang-javascript"><code>// In modules/custom-code-editor-a3/index.js
 module.exports = {
     webpack: {
         extensionOptions: {
@@ -631,7 +631,7 @@ module.exports = {
 </code></pre>
 <h3>Clean Specific Release Build for Custom-Code-Editor-A3</h3>
 <p>If you wish to clean specific release modules instead for custom-code-editor-a3, simply set <code>releaseId</code> to any releaseID that you initialized in production like below example:</p>
-<pre class="prettyprint source lang-js"><code>// In modules/custom-code-editor-a3/index.js
+<pre class="prettyprint source lang-javascript"><code>// In modules/custom-code-editor-a3/index.js
 module.exports = {
     webpack: {
         extensionOptions: {
