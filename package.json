@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "ace-builds": "^1.11.2",
+    "clean-webpack-plugin": "^4.0.0",
     "clipboard": "^2.0.11",
     "file-loader": "^6.2.0",
     "lodash": "^4.17.21",
@@ -32,7 +33,6 @@
   "license": "ISC",
   "devDependencies": {
     "apostrophe": "^3.28.1",
-    "clean-webpack-plugin": "^4.0.0",
     "eslint": "^8.24.0",
     "eslint-config-punkave": "^2.1.0",
     "eslint-config-standard": "^17.0.0",
