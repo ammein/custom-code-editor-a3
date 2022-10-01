@@ -689,6 +689,9 @@ Simple , you can access it via `this.ace` in `CustomCodeEditor.vue` extends file
 
 # Changelog
 ### 1.1.0
+- Fix typos & comments
+
+### 1.1.0
 - Fix `aceBuildsFileLoader` to have better & proper cleaning builds folder options from project level module to override.
 - Fix lint codes on Vue files
 - Fix `checkOptionsCustomizer` to have better override config merge value
