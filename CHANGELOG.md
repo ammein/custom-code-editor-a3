@@ -1,4 +1,4 @@
-### 1.1.2
+### 1.1.0
 - Fix `aceBuildsFileLoader` to have better & proper cleaning builds folder options from project level module to override.
 - Fix lint codes on Vue files
 - Fix `checkOptionsCustomizer` to have better override config merge value
