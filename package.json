@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "eslint . && node ./tests/build-test-package-json.js && mocha --reporter spec --inspect ./tests/**/test-*.test.js",
+    "lint": "eslint .",
     "jsdoc": "jsdoc -c 'conf.json'",
     "deploy-page": "npm run jsdoc && gh-pages -d docs"
   },
@@ -41,6 +42,7 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^6.0.1",
     "eslint-plugin-standard": "^4.1.0",
+    "eslint-plugin-vue": "^9.5.1",
     "expect": "^29.0.3",
     "fs-extra": "^10.1.0",
     "gh-pages": "^4.0.0",

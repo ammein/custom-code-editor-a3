@@ -63,14 +63,16 @@ export default {
       }
 
       // Enable dropdown
-      if (_.has(this.ace, 'config.dropdown') && _.has(this.ace, 'config.dropdown.enable')) {
+      if (_.has(this.ace, 'config.dropdown') && _.has(this.ace, 'config.dropdown.enable') && this.ace.config.dropdown.enable) {
         this.setDropdown();
         this.configDropdown();
       }
 
-      if (ClipboardJS.isSupported() && !_.has(this.ace, 'config.optionsCustomizer.enable')) {
-        // Init ClipboardJS
-        this.initCopyClipboard(this.$el.querySelector('button.copy-options'));
+      if (ClipboardJS.isSupported() && (!_.has(this.ace, 'config.optionsCustomizer.enable') || !_.has(this.field, 'ace.config.optionsCustomizer.enable'))) {
+        // Init ClipboardJS. Need to make sure that optionsCustomizer is enable so that we can initialize ClipboardJS
+        if (this.$el.querySelector('button.copy-options')) {
+          this.initCopyClipboard(this.$el.querySelector('button.copy-options'));
+        }
       } else if (!ClipboardJS.isSupported()) {
         console.warn('ClipboardJS is not supported in this browser');
       }
@@ -217,7 +219,7 @@ export default {
             }
           }
         }
-      };
+      }
     },
 
     /**
@@ -270,7 +272,7 @@ export default {
 
       // Loop & assign dropdown style
       for (let prop of Object.keys(styles)) {
-        if (styles.hasOwnProperty(prop)) {
+        if (Object.prototype.hasOwnProperty.call(styles, prop)) {
           if (typeof styles[prop.toString()] === 'object' && Object.keys(styles[prop.toString()]).length > 0) {
             for (let innerProp of Object.keys(styles[prop.toString()])) {
               this.$el.querySelector('.dropdown').style[innerProp.toString()] = styles[prop.toString()][innerProp.toString()];
@@ -283,7 +285,7 @@ export default {
 
       // Loop & assign dropdown-title style
       for (let prop of Object.keys(titleStyles)) {
-        if (titleStyles.hasOwnProperty(prop)) {
+        if (Object.prototype.hasOwnProperty.call(titleStyles, prop)) {
           this.$el.querySelector('.dropdown-title').style[prop.toString()] = titleStyles[prop.toString()];
         }
       }
@@ -313,11 +315,18 @@ export default {
                       );
 
           merge = true;
-      };
+      }
 
       if (merge) {
         // Clone to new object
         const cloneOptions = _.cloneDeep(apos.customCodeEditor.browser.ace);
+
+        // Remove unnecessary arrays/objects that will affect web performance
+        for (let optionsName of Object.keys(cloneOptions)) {
+          if (!Object.prototype.hasOwnProperty.call(mergeOptions, optionsName)) {
+            delete cloneOptions[optionsName];
+          }
+        }
 
         // Add with specific schema options
         apos.customCodeEditor.browser = {
@@ -351,7 +360,7 @@ export default {
 
       // Loop & assign editor style
       for (let prop of Object.keys(editorStyles)) {
-        if (editorStyles.hasOwnProperty(prop)) {
+        if (Object.prototype.hasOwnProperty.call(editorStyles, prop)) {
           this.$el.querySelector('[data-editor]').style[prop.toString()] = editorStyles[prop.toString()];
         }
       }
@@ -539,7 +548,7 @@ export default {
 
     /**
      * @method editorEvents
-     * @desc To register any Ace Editor Events
+     * @desc (DON'T OVERRIDE THIS) To register blur & focus Ace Editor Events
      * @param {aceEditor} editor
      */
     editorEvents(editor) {

@@ -19,7 +19,7 @@
      * @see {@link https://ace.c9.io/#nav=api} API Reference
      */
 
-    /** 
+    /**
      * @component OptionsContainerComponent
      * @desc Options Container Component that will generate options and compare from module options
      * @lifecycle created Get `options` from `this.getOptions` async function that call server GET route to get current user saved options
@@ -28,19 +28,22 @@
      * @lifecycle render Only render when `this.editor` & `this.optionsTypes` is available
      */
     export default {
-        components:{
+        components: {
             CollapseDown,
             CollapseUp,
             Help
         },
+
         props: {
-            /** 
+
+            /**
              * @vprop {optionsTypes} optionsTypes - Default Options Types
              */
             optionsTypes: {
                 type: Object,
                 required: true
             },
+
             /**
              * @vprop {Object[]} cache - Cache Storage
              */
@@ -48,12 +51,14 @@
                 type: Array,
                 required: true
             },
+
             /**
              * @vprop {aceEditor} editor - Ace Editor JS
              */
             editor: {
                 type: Object
             },
+
             /**
              * @vprop {String} search - Search input
              */
@@ -61,6 +66,7 @@
                 type: String
             }
         },
+
         data() {
             return {
                 /**
@@ -74,9 +80,48 @@
                 /**
                  * @member {Object.<Boolean>} - Title Click Check
                  */
-                titleClick: {},
-            }
+                titleClick: {}
+            };
         },
+
+        created() {
+            this.getOptions()
+                .then((options) => {
+                    // Save to original Options first
+                    if (Object.keys(this.originalOptions).length === 0) {
+                        this.originalOptions = _.assign({}, _.cloneDeep(this.editor.getOptions()), _.isUndefined(apos.customCodeEditor.browser, `fieldAce.${this.$parent.field.name}`) ? !_.isUndefined(apos.customCodeEditor.browser.ace, 'options') ? apos.customCodeEditor.browser.ace.options : {} : !_.isUndefined(apos.customCodeEditor.browser.fieldAce[this.$parent.field.name], `options`) ? apos.customCodeEditor.browser.fieldAce[this.$parent.field.name].options : {});
+                    }
+
+                    try {
+                        if (options.status !== 'error') {
+                            return JSON.parse(options.message);
+                        } else {
+                            throw new Error(options.message);
+                        }
+                    } catch (e) {
+                        throw new Error(e.message);
+                    }
+                })
+                .then((result) => this.options = _.assign({}, this.options, result))
+                .then(() => this.$forceUpdate())
+                .catch((message) => {
+                        apos.notify(message, {
+                        dismiss: true,
+                        type: 'error'
+                    });
+                });
+        },
+
+        mounted() {
+            this.$root.$on('customCodeEditor:getOptions', this.updateOptions);
+        },
+
+        beforeUnmount() {
+            this.$root.$off('customCodeEditor:getOptions', this.updateOptions);
+            // eslint-disable-next-line vue/require-explicit-emits
+            this.$emit('resetCache');
+        },
+
         methods: {
 
             /**
@@ -101,7 +146,7 @@
                     let getOptions = await apos.http.get(apos.customCodeEditor.browser.action + '/options', {});
                     return getOptions;
                 } catch (e) {
-                    console.warn('Unable to get options due to error:\n', e)
+                    console.warn('Unable to get options due to error:\n', e);
                     throw new Error(e);
                 }
             },
@@ -165,8 +210,8 @@
             buttonOptionsClick(e) {
                 let button = e.currentTarget;
                 let allCopy = {};
-                let inputEmits = {}
-                var self = this;
+                let inputEmits = {};
+                let self = this;
                 this.$el.querySelectorAll('li:not([data-header])').forEach(function (value, i) {
                     let key = Object.keys(self.cache[i])[0];
                     let cacheValue = self.cache[i];
@@ -181,13 +226,11 @@
                                 self.$emit('updateCache', {
                                     property: input.name,
                                     value: self.originalOptions[input.name]
-                                })
+                                });
                             }
 
                             // Transform the value
-                            let value = (input.options[input.selectedIndex].value === 'true' || input.options[
-                                input.selectedIndex].value === 'false') ? JSON.parse(input.options[input
-                                .selectedIndex].value) : input.options[input.selectedIndex].value;
+                            let value = (input.options[input.selectedIndex].value === 'true' || input.options[input.selectedIndex].value === 'false') ? JSON.parse(input.options[input.selectedIndex].value) : input.options[input.selectedIndex].value;
 
                             if (value !== cacheValue[input.name]) {
                                 let passValue = '';
@@ -237,7 +280,7 @@
                                 self.$emit('updateCache', {
                                     property: input.name,
                                     value: self.originalOptions[input.name]
-                                })
+                                });
                             }
 
                             if (
@@ -303,13 +346,13 @@
                                 self.$emit('updateCache', {
                                     property: input.name,
                                     value: _.isUndefined(self.originalOptions[input.name]) ? false : self.originalOptions[input.name]
-                                })
+                                });
                             }
 
                             if (input.checked !== cacheValue[input.name]) {
                                 if (button.className === 'copy-options' || button.className ===
                                     'save-options') {
-                                    allCopy[input.name] = input.checked
+                                    allCopy[input.name] = input.checked;
                                 } else if (button.className === 'undo-options') {
                                     // Revert to default value
                                     input.checked = cacheValue[input.name];
@@ -336,7 +379,7 @@
                             }
                             break;
                     }
-                })
+                });
 
                 if (button.className === 'copy-options') {
                     // Merge allCopy options
@@ -345,7 +388,7 @@
 
                         // Loop and find if existing default saved options detected matches module options
                         for (let key of Object.keys(self.originalOptions)) {
-                            if (self.originalOptions.hasOwnProperty(key)) {
+                            if (Object.prototype.hasOwnProperty.call(self.originalOptions, key)) {
 
                                 // Only allow non-module options to be copy
                                 if (self.originalOptions[key] === allCopy[key]) {
@@ -373,36 +416,36 @@
                             return apos.notify(data.message, {
                                 dismiss: true,
                                 type: 'error'
-                            })
+                            });
                         }).catch((e) => {
                             return apos.notify('Unable to save options. Please try again', {
                                 type: 'error',
                                 dismiss: true
-                            })
-                        })
+                            });
+                        });
                     } else {
                         return apos.notify(
                             'ERROR : Save unsuccessful, options empty. Try adjust your desire options than your default settings.', {
                                 type: 'error',
                                 dismiss: 8
-                            })
+                            });
                     }
                 } else if (button.className === 'delete-options') {
                     self.deleteOptions().then((result) => {
                         if (result.status === 'success') {
                             // Set self.options to be empty too
-                            self.options = {}
+                            self.options = {};
 
                             // Loop the optionsTypes, if there is `saveValue` assigned to it, delete it
                             for (let categoryKey of Object.keys(self.optionsTypes)) {
-                                if (self.optionsTypes.hasOwnProperty(categoryKey)) {
-                                    for(let key of Object.keys(self.optionsTypes[categoryKey])) {
+                                if (Object.prototype.hasOwnProperty.call(self.optionsTypes, categoryKey)) {
+                                    for (let key of Object.keys(self.optionsTypes[categoryKey])) {
                                         if (!_.isUndefined(self.optionsTypes[categoryKey][key].saveValue)) {
                                             self.$emit('updateOptionsTypes', {
                                                 category: categoryKey,
                                                 name: self.optionsTypes[categoryKey][key].name,
                                                 saveValue: undefined
-                                            })
+                                            });
                                         }
                                     }
                                 }
@@ -423,13 +466,13 @@
                             type: 'error',
                             dismiss: true
                         });
-                    })
+                    });
                 }
 
                 if (Object.keys(inputEmits).length > 0) {
-                    for (let key in inputEmits){
-                        if(inputEmits.hasOwnProperty(key)){
-                            self.emitOptions.call(self, inputEmits[key]);
+                    for (let key in inputEmits) {
+                        if (Object.prototype.hasOwnProperty.call(inputEmits, key)) {
+                            self.emitOptions(inputEmits[key]);
                         }
                     }
                 }
@@ -471,7 +514,7 @@
                     style: {
                         display
                     }
-                }, [])
+                }, []);
                 switch (type) {
                     case 'slider':
                         (function (self) {
@@ -492,7 +535,7 @@
                                 style: {
                                     display: 'none'
                                 }
-                            }, '')
+                            }, '');
 
                             // Create <input> element
                             let input = h('input', {
@@ -511,7 +554,7 @@
                                             object.value.max - object.value.min);
                                         let newPos = (parseInt(getComputedStyle(e.currentTarget)
                                             .width) - e.currentTarget.style.marginLeft) * percent;
-                                        e.currentTarget.nextElementSibling.style.left = newPos + "px";
+                                        e.currentTarget.nextElementSibling.style.left = newPos + 'px';
                                         e.currentTarget.nextElementSibling.style.display = null;
                                         e.currentTarget.nextElementSibling.innerHTML = e.currentTarget
                                             .value;
@@ -532,15 +575,15 @@
                                 editor.setOption(object.name, object.saveValue);
                             } else if (_.isUndefined(object.saveValue)) {
                                 (editor.getOptions()[object.name]) ? input.data.domProps.value = editor
-                                    .getOptions()[object.name]: input.data.domProps.value = 0;
+                                    .getOptions()[object.name] : input.data.domProps.value = 0;
                             }
 
                             let cache = {
                                 [object.name]: (!_.isUndefined(object.saveValue)) ? object.saveValue : editor
                                     .getOptions()[object.name]
-                            }
+                            };
 
-                            if (!self.cache.some(eachCache => eachCache.hasOwnProperty(object.name))) {
+                            if (!self.cache.some(eachCache => Object.prototype.hasOwnProperty.call(eachCache, object.name))) {
                                 self.$emit('pushCache', cache);
                             }
 
@@ -552,8 +595,8 @@
                                         'style': 'color: blue !important'
                                     },
                                     props: {
-                                        size:14
-                                    },
+                                        size: 14
+                                    }
                                 }, []);
                                 let helpText = h('span', {
                                         class: ['tooltiptext']
@@ -600,7 +643,7 @@
                                     selected = true;
                                     editor.setOption(object.name, object.saveValue);
                                 } else if (_.isUndefined(object.saveValue)) {
-                                    (editor.getOptions()[object.name] === val) ? selected = true: null;
+                                    (editor.getOptions()[object.name] === val) ? selected = true : null;
                                 }
 
                                 return h('option', {
@@ -614,9 +657,9 @@
                             let cache = {
                                 [object.name]: (!_.isUndefined(object.saveValue)) ? object.saveValue : editor
                                     .getOptions()[object.name]
-                            }
+                            };
 
-                            if (!self.cache.some(eachCache => eachCache.hasOwnProperty(object.name))) {
+                            if (!self.cache.some(eachCache => Object.prototype.hasOwnProperty.call(eachCache, object.name))) {
                                 self.$emit('pushCache', cache);
                             }
 
@@ -628,8 +671,8 @@
                                         'style': 'color: blue !important'
                                     },
                                     props: {
-                                        size:14
-                                    },
+                                        size: 14
+                                    }
                                 }, []);
                                 let helpText = h('span', {
                                         class: ['tooltiptext']
@@ -643,7 +686,7 @@
                         })(this);
                         break;
 
-                    case "dropdownObject":
+                    case 'dropdownObject':
                         (function (self) {
                             // Create <label> element
                             let label = h('label', {
@@ -678,8 +721,7 @@
                                     selected = true;
                                     editor.setOption(object.name, object.saveValue);
                                 } else if (_.isUndefined(object.saveValue)) {
-                                    (editor.getOptions()[object.name] === val.value) ? selected = true:
-                                        null;
+                                    (editor.getOptions()[object.name] === val.value) ? selected = true : null;
                                 }
 
                                 return h('option', {
@@ -693,9 +735,9 @@
                             let cache = {
                                 [object.name]: (!_.isUndefined(object.saveValue)) ? object.saveValue : editor
                                     .getOptions()[object.name]
-                            }
+                            };
 
-                            if (!self.cache.some(eachCache => eachCache.hasOwnProperty(object.name))) {
+                            if (!self.cache.some(eachCache => Object.prototype.hasOwnProperty.call(eachCache, object.name))) {
                                 self.$emit('pushCache', cache);
                             }
 
@@ -707,8 +749,8 @@
                                         'style': 'color: blue !important'
                                     },
                                     props: {
-                                        size:14
-                                    },
+                                        size: 14
+                                    }
                                 }, []);
                                 let helpText = h('span', {
                                         class: ['tooltiptext']
@@ -722,7 +764,7 @@
                         })(this);
                         break;
 
-                    case "checkbox":
+                    case 'checkbox':
                         (function (self) {
                             // Create <label> element
                             let label = h('label', {
@@ -748,7 +790,7 @@
                                 domProps: {
                                     type: 'checkbox',
                                     name: object.name,
-                                    checked: checked,
+                                    checked: checked
                                 },
                                 class: 'error',
                                 on: {
@@ -765,9 +807,9 @@
                             let cache = {
                                 [object.name]: (!_.isUndefined(object.saveValue)) ? object.saveValue : !!editor
                                     .getOptions()[object.name]
-                            }
+                            };
 
-                            if (!self.cache.some(eachCache => eachCache.hasOwnProperty(object.name))) {
+                            if (!self.cache.some(eachCache => Object.prototype.hasOwnProperty.call(eachCache, object.name))) {
                                 self.$emit('pushCache', cache);
                             }
 
@@ -779,8 +821,8 @@
                                         'style': 'color: blue !important'
                                     },
                                     props: {
-                                        size:14
-                                    },
+                                        size: 14
+                                    }
                                 }, []);
                                 let helpText = h('span', {
                                         class: ['tooltiptext']
@@ -816,12 +858,11 @@
                 // Create default <li> element as starting Header List element
                 let listHeader = h('li', {
                     style: {
-                        marginBottom: "60px"
+                        marginBottom: '60px'
                     }
                 }, [ ]);
                 // Grab props Options Types
                 let optionsTypes = this.optionsTypes;
-                let categoryTitle = '';
 
                 // Loop Group By Options
                 for (let categoryKey in optionsTypes) {
@@ -842,16 +883,16 @@
                     // Create new listHeader
                     listHeader = h('li', {
                         style: {
-                            marginBottom: "60px",
+                            marginBottom: '60px',
                             display
                         }
-                    }, [])
+                    }, []);
                     // Assign Attributes to listHeader
                     listHeader.data.attrs = {
                         'data-category': this.$parent.$parent.getName(categoryKey),
                         'data-header': this.$parent.$parent.getName(categoryKey),
                         id: categoryKey
-                    }
+                    };
 
                     // Assign Data Title Click for checking
                     if (_.isUndefined(this.titleClick[_.camelCase(categoryKey)])) {
@@ -878,15 +919,13 @@
                         ]);
                     // Push <h1> to new listHeader created
                     listHeader.children.push(h1);
-                    // Assign new categoryTitle for this particular loop conditional
-                    categoryTitle = categoryKey;
                     // Finally push the listHeader to <ul> parent element
                     unorderedLists.children.push(listHeader);
 
                     // Loop existing Editor Options
                     // Something is wrong in here. Should do filter instead
                     for (let key of Object.keys(this.editor.getOptions())) {
-                        if (editor.getOptions().hasOwnProperty(key)) {
+                        if (Object.prototype.hasOwnProperty.call(editor.getOptions(), key)) {
                             let groupedOptions = optionsTypes[categoryKey].find((val) => val.name === key);
 
                             // Assign child of listHeader
@@ -900,7 +939,7 @@
                                             }) : groupedOptions;
 
                                         listHeader.children.push(this.optionsInputs(groupedOptions, 'dropdownArray',
-                                            editor, h))
+                                            editor, h));
                                         break;
 
                                     case _.isArray(groupedOptions.value) && _.every(groupedOptions.value, _.isObject):
@@ -910,7 +949,7 @@
                                             }) : groupedOptions;
 
                                         listHeader.children.push(this.optionsInputs(groupedOptions, 'dropdownObject',
-                                            editor, h))
+                                            editor, h));
                                         break;
 
                                     case _.isObject(groupedOptions.value):
@@ -920,7 +959,7 @@
                                             }) : groupedOptions;
 
                                         listHeader.children.push(this.optionsInputs(groupedOptions, 'slider', editor,
-                                            h))
+                                            h));
                                         break;
 
                                     case groupedOptions.type === 'boolean':
@@ -928,7 +967,6 @@
                                             groupedOptions, {
                                                 saveValue: myOptions[key]
                                             }) : groupedOptions;
-                                            
 
                                         listHeader.children.push(this.optionsInputs(groupedOptions, 'checkbox', editor,
                                             h));
@@ -941,7 +979,7 @@
                                     name: groupedOptions.name,
                                     saveValue: !_.isUndefined(myOptions[key]) ? myOptions[key] : undefined,
                                     value: groupedOptions.value
-                                })
+                                });
                             }
                         }
                     }
@@ -955,7 +993,7 @@
              * @desc When list header is clicked. `this.$forceUpdate()` triggers when done update titleClick[category]
              * @param {HTMLEvent} e - HTML Event Click
              */
-            listHeaderClick(e){
+            listHeaderClick(e) {
                 let category = _.camelCase(e.currentTarget.parentElement.dataset.category);
                 let condition = this.titleClick[category];
                 this.titleClick[category] = !condition;
@@ -967,9 +1005,9 @@
              * @desc Emit Events to `$root` by check the `input.type`
              * @param {{ input: HTMLElement, value: String | Boolean, button: HTMLElement, allCopy: Object }} value - Grab Options Value
              */
-            emitOptions({input ,value, button, allCopy}){
+            emitOptions({ input, value, button, allCopy }) {
                 // Emit event to alert other similar components
-                switch(true) {
+                switch (true) {
                     case (/select/g).test(input.type):
                         /**
                          * @event component:OptionsContainerComponent~customCodeEditor:getOptions
@@ -1065,19 +1103,20 @@
 
                 }
             },
+
             /**
              * @method updateOptions
              * @desc Update Options whenever other similar OptionsContainer is modified
              * @param {Event} e - Vue Event Emitter
              * @fires component:OptionsContainerComponent~customCodeEditor:getOptions
              */
-            updateOptions(e){
-                if(!_.isUndefined(e.customCodeEditor) && !_.isUndefined(e.customCodeEditor.value) && e.customCodeEditor.field !== this.$parent.field.name) {
+            updateOptions(e) {
+                if (!_.isUndefined(e.customCodeEditor) && !_.isUndefined(e.customCodeEditor.value) && e.customCodeEditor.field !== this.$parent.field.name) {
                     // Find input from this current component
                     let input = this.$el.querySelector(`[name="${e.customCodeEditor.input.name}"]`);
 
-                    switch (e.customCodeEditor.input.type){
-                        case "checkbox":
+                    switch (e.customCodeEditor.input.type) {
+                        case 'checkbox':
                             input.checked = e.customCodeEditor.value;
                             break;
 
@@ -1086,23 +1125,23 @@
                             input.removeAttribute('value');
                     }
 
-                    if(e.customCodeEditor.action) {
+                    if (e.customCodeEditor.action) {
                         let copyButton = this.$parent.$el.querySelector('button.copy-options');
-                        switch(e.customCodeEditor.action){
-                            case "copy":
+                        switch (e.customCodeEditor.action) {
+                            case 'copy':
                                     copyButton.dataset.clipboardText = JSON.stringify(e.customCodeEditor.options);
                                 break;
 
-                            case "undo":
+                            case 'undo':
                                     // Remove self.options[key] if available
-                                    if(this.options[e.customCodeEditor.name]) {
+                                    if (this.options[e.customCodeEditor.name]) {
                                         delete this.options[e.customCodeEditor.name];
                                     }
                                     copyButton.dataset.clipboardText = JSON.stringify(this.options);
                                 break;
 
-                            case "delete":
-                                if(this.options){
+                            case 'delete':
+                                if (this.options) {
                                     this.options = {};
                                     delete copyButton.dataset.clipboardText;
                                 }
@@ -1110,50 +1149,18 @@
                         }
                     }
                 }
-            },
+            }
         },
-        created(){
-            this.getOptions()
-                .then((options) => {
-                    // Save to original Options first
-                    if (Object.keys(this.originalOptions).length === 0) {
-                        this.originalOptions = _.assign({}, _.cloneDeep(this.editor.getOptions()), _.isUndefined(apos.customCodeEditor.browser, `fieldAce.${this.$parent.field.name}`) ? !_.isUndefined(apos.customCodeEditor.browser.ace, 'options') ? apos.customCodeEditor.browser.ace.options : {} : !_.isUndefined(apos.customCodeEditor.browser.fieldAce[this.$parent.field.name], `options`) ? apos.customCodeEditor.browser.fieldAce[this.$parent.field.name].options : {})
-                    }
 
-                    try {
-                        if (options.status !== 'error') {
-                            return JSON.parse(options.message);
-                        } else {
-                            throw new Error(options.message);
-                        }
-                    } catch (e) {
-                        throw new Error(e.message)
-                    }
-                })
-                .then((result) => this.options = _.assign({}, this.options, result))
-                .then(() => this.$forceUpdate())
-                .catch((message) => {
-                     apos.notify(message, {
-                        dismiss: true,
-                        type: 'error'
-                    })
-                });
-        },
-        mounted(){
-            this.$root.$on('customCodeEditor:getOptions', this.updateOptions);
-        },
-        beforeDestroy(){
-            this.$root.$off('customCodeEditor:getOptions', this.updateOptions);
-            this.$emit('resetCache');
-        },
         render(h) {
             if (this.editor && this.optionsTypes) {
                 return this.loopOptions(this.options, h);
+            } else {
+                return null;
             }
         }
-    }
+    };
 </script>
-
 
 <style lang="scss" scoped>
     @import "custom-code-editor-a3/style/index.scss";
@@ -1271,7 +1278,6 @@
         input[type='checkbox']:checked:after {
             left: 45%;
         }
-
 
         // Slider
         /* Range Slider */

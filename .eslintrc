@@ -1,5 +1,10 @@
 {
-    "extends": "punkave",
+    "extends": [
+        "punkave",
+        "eslint:recommended",
+        "plugin:vue/vue3-recommended",
+        "plugin:vue/vue3-essential"
+    ],
     "globals": {
         "$": "readonly",
         "_": "readonly",
@@ -17,14 +22,51 @@
         "jest/globals": true
     },
     "rules": {
+        "vue/html-indent": [
+            "error",
+            "tab"
+        ], // enforce tabs in template
+        "vue/first-attribute-linebreak": [
+            "error",
+            {
+                "singleline": "ignore",
+                "multiline": "ignore"
+            }
+        ],
+        "vue/html-closing-bracket-spacing": "off",
+        "vue/max-attributes-per-line": [
+            "warn",
+            {
+                "singleline": {
+                    "max": 4
+                },
+                "multiline": {
+                    "max": 4
+                }
+            }
+        ],
+        "vue/new-line-between-multi-line-property": [
+            "error",
+            {
+                "minLineOfMultilineProperty": 2
+            }
+        ],
+        "vue/require-default-prop": "off",
+        "vue/attribute-hyphenation": "off",
+        "vue/v-on-event-hyphenation": "off",
+        "vue/html-closing-bracket-newline": "off",
+        "vue/html-self-closing": "off",
+        "no-case-declarations": "off",
         "indent": "off",
         "space-before-function-paren": "off",
         "semi": "warn",
+        "no-tabs": "off",
         "no-return-assign": "off",
+        "no-unused-labels": "error",
         "no-unused-expressions": "off",
         "padded-blocks": "off",
         "eol-last": "off",
-        "no-unused-vars": "off",
+        "no-unused-vars": "error",
         "no-debugger": "warn",
         "jest/valid-expect": [
             "error",

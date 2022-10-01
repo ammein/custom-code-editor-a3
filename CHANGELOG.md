@@ -1,3 +1,9 @@
+### 1.1.2
+- Fix `aceBuildsFileLoader` to have better & proper cleaning builds folder options from project level module to override.
+- Fix lint codes on Vue files
+- Fix `checkOptionsCustomizer` to have better override config merge value
+- Add lint rules & extends into `.eslintrc` file
+
 ### 1.0.1
 - Fix clean-webpack-plugin onto dependencies and remove it from devDependencies
 - Fix README.md on `Custom-Code-Editor` to `Custom-Code-Editor-A3`
