@@ -544,14 +544,13 @@ module.exports = {
 }
 </code></pre>
 <blockquote>
-<p>NOTE : Beware that this push ALL ACE JS files including your own mode. Enable this only when you wanted to configure more ace on your own script. This might decrease performance and may require long time page loads.</p>
+<p>NOTE: Beware that this push ALL ACE JS files including your own mode. Enable this only when you wanted to configure more ace on your own script. This might decrease performance and may require long time page loads.</p>
 </blockquote>
 <h2>Add More Methods/Commands/Event Listener To Your Ace Editor</h2>
 <p>Let say you want to add MORE commands that you already refer to <a href="https://ace.c9.io/#nav=howto">Ace Editor HOW TO</a> or maybe add new events by yourself. First , let's create new js file to any name you like and push like this :</p>
 <p>Inside <code>CustomCodeEditor.vue</code> :</p>
-<pre class="prettyprint source lang-vue"><code>// In modules/custom-code-editor-a3/ui/apos/components/CustomCodeEditor.vue
-
-&lt;script>
+<pre class="prettyprint source lang-vue"><code>&lt;script>
+// In modules/custom-code-editor-a3/ui/apos/components/CustomCodeEditor.vue
 import customCodeEditor from 'custom-code-editor-a3/components/CustomCodeEditor.vue';
 
 export default {
@@ -610,20 +609,36 @@ module.exports = {
     webpack: {
         extensionOptions: {
             aceBuildsFileLoader: {
-                esModule: true
+                esModule: true // Default: false
             }
         }
     }
 }
 </code></pre>
-<h3>Disable Clean Release Build for Custom-Code-Editor-A3</h3>
-<p>If you wish to disable cleaning release modules for custom-code-editor-a3, simply set <code>clean</code> to <code>false</code> inside <code>extensionOptions</code> called <code>aceBuildsFileLoader</code> like below example:</p>
+<h3>Disable Cleaning Build Files for Custom-Code-Editor-A3</h3>
+<p>If you wish to disable all cleaning release modules for custom-code-editor-a3, simply set <code>clean</code> to <code>false</code> inside <code>extensionOptions</code> called <code>aceBuildsFileLoader</code> like below example:</p>
 <pre class="prettyprint source lang-javascript"><code>// In modules/custom-code-editor-a3/index.js
 module.exports = {
     webpack: {
         extensionOptions: {
             aceBuildsFileLoader: {
-                clean: false
+                clean: false // Default: true
+            }
+        }
+    }
+}
+</code></pre>
+<blockquote>
+<p>This is because there is some errors on Ace-Builds that generates for Production from Development &amp; from Development from Production that I already tested it. To prevent it happen</p>
+</blockquote>
+<h3>Disable Clean Release Build for Custom-Code-Editor-A3</h3>
+<p>If you wish to disable cleaning release modules for custom-code-editor-a3, simply set <code>cleanRelease</code> to <code>false</code> inside <code>extensionOptions</code> called <code>aceBuildsFileLoader</code> like below example:</p>
+<pre class="prettyprint source lang-javascript"><code>// In modules/custom-code-editor-a3/index.js
+module.exports = {
+    webpack: {
+        extensionOptions: {
+            aceBuildsFileLoader: {
+                cleanRelease: false // Default: true
             }
         }
     }
@@ -642,10 +657,20 @@ module.exports = {
     }
 }
 </code></pre>
+<blockquote>
+<p>// Default: <code>**</code> - That will run cleaning to any APOS_RELEASE_ID that already created to production</p>
+</blockquote>
 <h4>Access all options available in <code>ace : {}</code> object</h4>
 <p>Simple , you can access it via <code>this.ace</code> in <code>CustomCodeEditor.vue</code> extends file in your project level module ui component. You may refer methods available down here:</p>
 <p><a href="https://ammein.github.io/custom-code-editor-a3/">Custom Code Editor Methods</a></p>
 <h1>Changelog</h1>
+<h3>1.1.0</h3>
+<ul>
+<li>Fix <code>aceBuildsFileLoader</code> to have better &amp; proper cleaning builds folder options from project level module to override.</li>
+<li>Fix lint codes on Vue files</li>
+<li>Fix <code>checkOptionsCustomizer</code> to have better override config merge value</li>
+<li>Add lint rules &amp; extends into <code>.eslintrc</code> file</li>
+</ul>
 <h3>1.0.1</h3>
 <ul>
 <li>Fix clean-webpack-plugin onto dependencies and remove it from devDependencies</li>
