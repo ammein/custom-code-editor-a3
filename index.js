@@ -7,6 +7,11 @@ const {
   CleanWebpackPlugin
 } = require('clean-webpack-plugin');
 
+/**
+ * TODO:
+ * - [ ] Override Disable Options Customizer not working!!!
+ */
+
 module.exports = {
   options: {
     alias: 'customCodeEditor'
@@ -15,11 +20,13 @@ module.exports = {
     extensionOptions: {
       aceBuildsFileLoader(options) {
         const clean = _.has(options, 'clean') ? options.clean : true;
+        const cleanRelease = _.has(options, 'cleanRelease') ? options.cleanRelease : true;
         const esModule = _.has(options, 'esModule') ? options.esModule : undefined;
         const releaseId = _.has(options, 'releaseId') ? options.releaseId : undefined;
 
         let optionsResult = _.omitBy({
           clean: clean,
+          cleanRelease: cleanRelease,
           esModule: esModule,
           releaseId: releaseId
         }, _.isNil);
@@ -51,7 +58,7 @@ module.exports = {
             }),
 
             // Due to webpack cache issue & different path related to production/development, we need to clean some build assets to let apostrophe rebuild the files...
-            process.env.NODE_ENV === 'production' ? new CleanWebpackPlugin({
+            process.env.NODE_ENV === 'production' ? options.clean && new CleanWebpackPlugin({
               cleanOnceBeforeBuildPatterns: [
                 path.join(process.cwd(), 'public/apos-frontend/default/ace-builds/**'),
                 path.join(process.cwd(), 'public/apos-frontend/default/modules/**'),
@@ -64,20 +71,20 @@ module.exports = {
                 '!src-*',
                 '!public-*'
               ]
-            }) : new CleanWebpackPlugin({
+            }) : options.clean && new CleanWebpackPlugin({
               cleanOnceBeforeBuildPatterns: [
                 path.join(process.cwd(), 'public/apos-frontend/default/apos-*'),
                 path.join(process.cwd(), 'public/apos-frontend/default/src-*'),
                 path.join(process.cwd(), 'public/apos-frontend/default/public-*')
               ],
               cleanAfterEveryBuildPatterns: [
-                options.clean && path.join(process.cwd(), 'public/apos-frontend/releases/' + (options.releaseId || process.env.APOS_RELEASE_ID || '**') + '/default/modules/**'),
+                options.cleanRelease && path.join(process.cwd(), 'public/apos-frontend/releases/' + (options.releaseId || process.env.APOS_RELEASE_ID || '**') + '/default/modules/**'),
                 '!apos-*',
                 '!src-*',
                 '!public-*'
               ]
             })
-          ]
+          ].filter(Boolean)
         };
       },
       outputChunkFiles(options) {

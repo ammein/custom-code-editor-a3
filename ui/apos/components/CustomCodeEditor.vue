@@ -1,83 +1,86 @@
 <template>
-    <AposInputWrapper :modifiers="modifiers" :field="field" :error="effectiveError" :uid="uid"
-        :display-options="displayOptions">
-        <template #body>
-            <div class="apos-input-wrapper">
-                <div class="input-wrapper">
-                    <div class="editor-container">
-                        <div class="dropdown" v-if="checkDropdown">
-                            <button class="button-dropdown result" @click="dropdownClick = !dropdownClick">
-                                <component :is="dropdownComponentSwitch" :fill-color="checkDropdownColor" /><span
-                                    class="dropdown-title">{{ getTitle }}</span></button>
-                            <div class="dropdown-content" v-show="dropdownClick">
-                                <input type="text" placeholder="Search.." class="my-input" @keyup.stop="filterModesList"/>
-                                <template v-for="(mode, key) in ace.modes">
-                                    <li :key="key + mode.title" v-if="mode.title" :data-title="mode.title"
-                                        :data-name="mode.name.toLowerCase()" @click="changeMode">
-                                        {{ mode.title }}
-                                    </li>
-                                    <li :key="key + mode.name" v-else :data-name="mode.name.toLowerCase()"
-                                        @click="changeMode">
-                                        {{ getName(mode.name) }}
-                                    </li>
-                                </template>
-                            </div>
-                        </div>
-                        <div class="code-snippet-wrapper" ref="editor" data-editor>
-                            <!-- Where the codes begin -->
-                        </div>
-                        <div v-if="checkOptionsCustomizer"
-                            class="options-config">
-                            <button class="button-options" title="Adjust Options" :style="optionsClick ? 'background: rgba(248, 248, 248, 1);' : '' " @click="optionsClick = !optionsClick">
-                                <ChevronGearIcon :size="16" />
-                            </button>
-                            <div class="options-container" v-show="optionsClick" @scroll="optionsScroll">
-                                <div class="search-buttons">
-                                    <div class="first-row">
-                                        <input type="text" class="search-bar" placeholder="Search" v-model="searchOptions" />
-                                        <button class="more-options-button"
-                                            @click="moreOptionsClick = !moreOptionsClick">
-                                            <ChevronDotVerticalIcon :size="16" />
-                                        </button>
-                                        <div class="more-options" v-show="moreOptionsClick">
-                                            <button class="save-options" @click="optionsEvents">
-                                                <ChevronSaveIcon :size="16" />Save
-                                            </button>
-                                            <button class="delete-options" @click="optionsEvents">
-                                                <ChevronDeleteIcon :size="16" /> Reset
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="input-wrapper">
-                                        <button class="copy-options" @click="optionsEvents">
-                                            <ChevronCopyIcon :size="16" />
-                                        </button>
-                                        <button class="undo-options" @click="optionsEvents">
-                                            <ChevronUndoIcon :size="16" />
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="divider-buttons">
-                                    <img alt="" class="divider-title"
-                                        src="https://static.overlay-tech.com/assets/2ea72787-5ae1-42f3-aa97-80b116cc2ab2.svg" />
-                                </div>
-                                <!-- This is where all options begins -->
-                                <OptionsContainerComponent :optionsTypes="ace.optionsTypes" :editor="getEditor()"
-                                    :cache="ace.cache" @pushCache="ace.cache.push($event)" :search="searchOptions"
-                                    @updateCache="updateCacheValue" ref="optionsContainer" @moreOptionsClick="moreOptionsClick = $event" @updateOptionsTypes="updateOptionsTypesValue" @resetCache="resetCacheValue" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </template>
-    </AposInputWrapper>
+	<AposInputWrapper
+		:modifiers="modifiers" :field="field" :error="effectiveError"
+		:uid="uid" :display-options="displayOptions">
+		<template #body>
+			<div class="apos-input-wrapper">
+				<div class="input-wrapper">
+					<div class="editor-container">
+						<div v-if="checkDropdown" class="dropdown">
+							<button class="button-dropdown result" @click="dropdownClick = !dropdownClick">
+								<component :is="dropdownComponentSwitch" :fill-color="checkDropdownColor" />
+								<span class="dropdown-title">{{ getTitle }}</span>
+							</button>
+							<div v-show="dropdownClick" class="dropdown-content">
+								<input type="text" placeholder="Search.." class="my-input" @keyup.stop="filterModesList"/>
+								<template v-for="(mode, key) in ace.modes">
+									<li
+										v-if="mode.title" :key="key + mode.title"
+										:data-title="mode.title" :data-name="mode.name.toLowerCase()" @click="changeMode">
+										{{ mode.title }}
+									</li>
+									<li v-else :key="key + mode.name" :data-name="mode.name.toLowerCase()" @click="changeMode">
+										{{ getName(mode.name) }}
+									</li>
+								</template>
+							</div>
+						</div>
+						<div ref="editor" class="code-snippet-wrapper" data-editor>
+							<!-- Where the codes begin -->
+						</div>
+						<div v-if="checkOptionsCustomizer"
+							class="options-config">
+							<button class="button-options"
+								title="Adjust Options" :style="optionsClick ? 'background: rgba(248, 248, 248, 1);' : '' " @click="optionsClick = !optionsClick">
+								<ChevronGearIcon :size="16" />
+							</button>
+							<div v-show="optionsClick" class="options-container" @scroll="optionsScroll">
+								<div class="search-buttons">
+									<div class="first-row">
+										<input v-model="searchOptions" type="text" class="search-bar" placeholder="Search"/>
+										<button class="more-options-button" @click="moreOptionsClick = !moreOptionsClick">
+											<ChevronDotVerticalIcon :size="16" />
+										</button>
+										<div v-show="moreOptionsClick" class="more-options">
+											<button class="save-options" @click="optionsEvents">
+												<ChevronSaveIcon :size="16" />Save
+											</button>
+											<button class="delete-options" @click="optionsEvents">
+												<ChevronDeleteIcon :size="16" /> Reset
+											</button>
+										</div>
+									</div>
+									<div class="input-wrapper">
+										<button class="copy-options" @click="optionsEvents">
+											<ChevronCopyIcon :size="16" />
+										</button>
+										<button class="undo-options" @click="optionsEvents">
+											<ChevronUndoIcon :size="16" />
+										</button>
+									</div>
+								</div>
+								<div class="divider-buttons">
+									<img alt="" class="divider-title" src="https://static.overlay-tech.com/assets/2ea72787-5ae1-42f3-aa97-80b116cc2ab2.svg" />
+								</div>
+								<!-- This is where all options begins -->
+								<OptionsContainerComponent ref="optionsContainer"
+									:optionsTypes="ace.optionsTypes" :editor="getEditor()"
+									:cache="ace.cache" :search="searchOptions"
+									@pushCache="ace.cache.push($event)"
+									@updateCache="updateCacheValue"
+									@moreOptionsClick="moreOptionsClick = $event"
+									@updateOptionsTypes="updateOptionsTypesValue"
+									@resetCache="resetCacheValue" />
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</template>
+	</AposInputWrapper>
 </template>
 
 <script>
-    // Get Browser Options
-    let browserOptions = apos.customCodeEditor.browser;
-
     // Import Mixins & Components
     import AposInputMixin from 'Modules/@apostrophecms/schema/mixins/AposInputMixin';
     import ChevronCopyIcon from 'vue-material-design-icons/ClipboardMultiple.vue';
@@ -90,19 +93,21 @@
     import ChevronDropupIcon from 'vue-material-design-icons/ChevronUp.vue';
     import OptionsContainerComponent from 'custom-code-editor-a3/components/OptionsContainer.vue';
     import CustomCodeEditorMixinVue from 'custom-code-editor-a3/mixins/CustomCodeEditorMixin.js';
-
     // Import lodash
     import _ from 'lodash';
 
     // Import Ace NPM
     import 'ace-builds';
-    
+
+    // Get Browser Options
+    let browserOptions = apos.customCodeEditor.browser;
+
     // Just use dynamic imports from webpack resolver. Let apostrophe compile acejs builds into its own folder by using webpack-merge
     if (browserOptions.mode === 'development') {
         import('ace-builds/webpack-resolver');
     } else {
         // Push All Ace files if true
-        if (_.has(browserOptions.ace, 'scripts.pushAllAce')){
+        if (_.has(browserOptions.ace, 'scripts.pushAllAce')) {
             // Import All Modes
             for (let allModes = 0; allModes < browserOptions.ace._allModes.length; allModes++) {
                 import(`ace-builds/src-noconflict/mode-${browserOptions.ace._allModes[allModes]}.js`);
@@ -118,17 +123,17 @@
                 import(`ace-builds/src-noconflict/mode-${browserOptions.ace.modes[i].name}`)
                     .catch((e) => console.warn(`Unable to use mode for: '${browserOptions.ace.modes[i].name}''. Please make sure you use the correct mode names defined by 'Ace' Module`));
                 import(`ace-builds/src-noconflict/snippets/${browserOptions.ace.modes[i].name}`).catch((e) => null);
-            };
+            }
             // Import just One Theme
             import(`ace-builds/src-noconflict/theme-${browserOptions.ace.theme}.js`);
         }
     }
 
     // Solve beautify problem
-    for(let i = 0; i < apos.customCodeEditor.browser.ace._otherFiles.length; i++) {
-        import("ace-builds/src-noconflict/" + apos.customCodeEditor.browser.ace._otherFiles[i]).catch((e) => {
+    for (let i = 0; i < apos.customCodeEditor.browser.ace._otherFiles.length; i++) {
+        import('ace-builds/src-noconflict/' + apos.customCodeEditor.browser.ace._otherFiles[i]).catch((e) => {
             // Do nothing
-        })
+        });
     }
 
     /**
@@ -140,11 +145,8 @@
      */
     export default {
         name: 'CustomCodeEditor',
-        mixins: [
-            AposInputMixin,
-            CustomCodeEditorMixinVue
-            ],
-        components: {
+
+				components: {
             ChevronCopyIcon,
             ChevronUndoIcon,
             ChevronDotVerticalIcon,
@@ -155,6 +157,12 @@
             ChevronDropupIcon,
             OptionsContainerComponent
         },
+
+        mixins: [
+            AposInputMixin,
+            CustomCodeEditorMixinVue
+            ],
+
         data() {
             return {
                 /**
@@ -243,8 +251,9 @@
                      * ace.config: <Object[]>
                      * ```
                      */
-                    config: _.has(browserOptions, "ace.config") ? browserOptions.ace.config : null,
+                    config: _.has(browserOptions, 'ace.config') ? browserOptions.ace.config : null
                 },
+
                 /**
                  * @member {String} [originalValue=''] - Original value storage for editor.getValue()
                  */
@@ -269,20 +278,22 @@
                  * @member {console.log} log - For logging template value
                  */
                 log: console.log
-            }
+            };
         },
+
         computed: {
             /**
              * @computed {String} Check config optionsCustomizer object is enable or not
              * @return {Boolean}
              */
             checkOptionsCustomizer() {
-                let condition = true;
-                if (_.has(this.ace, 'config.optionsCustomizer.enable')) {
-                    condition = this.ace.config.optionsCustomizer.enable;
+                if ((_.get(this.field, 'ace.config.optionsCustomizer', true) && _.get(this.ace, 'config.optionsCustomizer.enable', true)) === null) {
+                    return false;
+                } else {
+                    return _.get(this.field, 'ace.config.optionsCustomizer', true) && _.get(this.field, 'ace.config.optionsCustomizer.enable', true) && _.get(this.ace, 'config.optionsCustomizer.enable', true);
                 }
-                return condition;
             },
+
             /**
              * @computed {Boolean} checkDropdown Check whether module options for dropdown is configured or not
              * @return {Boolean}
@@ -290,6 +301,7 @@
             checkDropdown() {
                 return _.has(this.ace, 'config.dropdown.enable');
             },
+
             /**
              * @computed {String} dropdownComponentSwitch Switch dropdown icon component
              */
@@ -300,6 +312,7 @@
                     return 'ChevronDropdownIcon';
                 }
             },
+
             /**
              * @computed {String} checkDropdownColor Arrow Color for Dropdown Config
              */
@@ -307,16 +320,17 @@
                 if (_.has(this.ace.config, 'dropdown.arrowColor')) {
                     return this.ace.config.dropdown.arrowColor;
                 } else {
-                    return ''
+                    return '';
                 }
             },
+
             /**
              * @computed {String} getTitle Get title from modes
              * @return {String}
              */
             getTitle() {
                 let title = '';
-                if(!_.isObject(this.next)) {
+                if (!_.isObject(this.next)) {
                     // Exit immediately
                     return;
                 }
@@ -339,16 +353,18 @@
                         })(i, this);
                     });
                 }
-                
+
                 return title;
             }
         },
+
         mounted() {
-            let editor = this.init(this.$refs.editor);
+            this.init(this.$refs.editor);
             this.setEditorValue();
         },
-        beforeDestroy() {
-            if (_.has(this.ace, 'config.optionsCustomizer.enable')) {
+
+        beforeUnmount() {
+            if (_.has(this.field, 'ace.config.optionsCustomizer.enable') || _.has(this.ace, 'config.optionsCustomizer.enable')) {
                 this.destroyClipboard();
             }
 
@@ -372,6 +388,7 @@
                 }
             }
         },
+
         methods: {
 
             /**
@@ -390,38 +407,38 @@
 
                 return false;
             },
-            
+
             /**
              * @method optionsEvents
              * @desc Trigger reference to optionsContainerComponent to trigger buttonOptionsClick method
              * @param {Event} e
              */
             optionsEvents(e) {
-                this.$refs.optionsContainer.buttonOptionsClick(e);
+							this.$refs.optionsContainer.buttonOptionsClick(e);
             },
 
             /**
              * @method resetCacheValue
              * @desc Reset data for `ace.cache` value
              */
-            resetCacheValue(){
+            resetCacheValue() {
                 this.ace.cache = [];
             },
 
             /**
              * @method updateCacheValue
              * @desc Update cache value event
-             * @param {{property: String, value: String | Boolean}} ObjectValue 
+             * @param {{property: String, value: String | Boolean}} ObjectValue
              * ```js
              * updateCacheValue({property, value})
              * ```
              */
             updateCacheValue({ property, value }) {
                 const getIndex = _.findIndex(this.ace.cache, (val) => {
-                    return val.hasOwnProperty(property);
-                })
+                    return Object.prototype.hasOwnProperty.call(val, property);
+                });
 
-                if(getIndex !== -1 && this.ace.cache[getIndex][property] !== value){
+                if (getIndex !== -1 && this.ace.cache[getIndex][property] !== value) {
                     this.ace.cache[getIndex] = {
                         [property]: value
                     };
@@ -433,8 +450,8 @@
              * @desc Deactivate `moreOptionsClick` whenever the options container is scrolled
              * @param {Event} e - HTML Event
              */
-            optionsScroll(e){
-                if(this.moreOptionsClick) {
+            optionsScroll(e) {
+                if (this.moreOptionsClick) {
                     this.moreOptionsClick = false;
                 }
             },
@@ -445,24 +462,26 @@
              * @param {{ category: String, name: String, value: String | Boolean, saveValue: Boolean }}
              */
             updateOptionsTypesValue({ category, name, value, saveValue }) {
-                if(!name) {
+                if (!name) {
                     throw new Error('You must include value for `property` object');
                 }
 
                 const getIndex = _.findIndex(this.ace.optionsTypes[category], (val) => {
                     return val.name === name;
                 });
-                
-                if(getIndex !== -1) {
+
+                if (getIndex !== -1) {
                     const cloneObject = _.cloneDeep(this.ace.optionsTypes[category][getIndex]);
 
                     switch (true) {
                         case _.isUndefined(saveValue) && !_.isUndefined(cloneObject.saveValue):
                             delete cloneObject.saveValue;
+                            break;
 
                         case cloneObject.saveValue && !_.isUndefined(saveValue):
                             cloneObject.saveValue = saveValue;
-                    
+                            break;
+
                         default:
                             if (value) {
                                 cloneObject.value = value;
@@ -474,7 +493,7 @@
                 }
             }
         }
-    }
+    };
 </script>
 
 <style lang="scss" scoped>

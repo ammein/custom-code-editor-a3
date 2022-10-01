@@ -566,7 +566,7 @@ module.exports = {
 }
 ```
 
-> NOTE : Beware that this push ALL ACE JS files including your own mode. Enable this only when you wanted to configure more ace on your own script. This might decrease performance and may require long time page loads.
+> NOTE: Beware that this push ALL ACE JS files including your own mode. Enable this only when you wanted to configure more ace on your own script. This might decrease performance and may require long time page loads.
 
 ## Add More Methods/Commands/Event Listener To Your Ace Editor
 
@@ -574,9 +574,8 @@ Let say you want to add MORE commands that you already refer to [Ace Editor HOW 
 
 Inside `CustomCodeEditor.vue` :
 ```vue
-// In modules/custom-code-editor-a3/ui/apos/components/CustomCodeEditor.vue
-
 <script>
+// In modules/custom-code-editor-a3/ui/apos/components/CustomCodeEditor.vue
 import customCodeEditor from 'custom-code-editor-a3/components/CustomCodeEditor.vue';
 
 export default {
@@ -627,22 +626,39 @@ module.exports = {
     webpack: {
         extensionOptions: {
             aceBuildsFileLoader: {
-                esModule: true
+                esModule: true // Default: false
             }
         }
     }
 }
 ```
 
-### Disable Clean Release Build for Custom-Code-Editor-A3
-If you wish to disable cleaning release modules for custom-code-editor-a3, simply set `clean` to `false` inside `extensionOptions` called `aceBuildsFileLoader` like below example:
+### Disable Cleaning Build Files for Custom-Code-Editor-A3
+If you wish to disable all cleaning release modules for custom-code-editor-a3, simply set `clean` to `false` inside `extensionOptions` called `aceBuildsFileLoader` like below example:
 ```javascript
 // In modules/custom-code-editor-a3/index.js
 module.exports = {
     webpack: {
         extensionOptions: {
             aceBuildsFileLoader: {
-                clean: false
+                clean: false // Default: true
+            }
+        }
+    }
+}
+```
+
+> This is because there is some errors on Ace-Builds that generates for Production from Development & from Development from Production that I already tested it. To prevent it happen
+
+### Disable Clean Release Build for Custom-Code-Editor-A3
+If you wish to disable cleaning release modules for custom-code-editor-a3, simply set `cleanRelease` to `false` inside `extensionOptions` called `aceBuildsFileLoader` like below example:
+```javascript
+// In modules/custom-code-editor-a3/index.js
+module.exports = {
+    webpack: {
+        extensionOptions: {
+            aceBuildsFileLoader: {
+                cleanRelease: false // Default: true
             }
         }
     }
@@ -664,12 +680,20 @@ module.exports = {
 }
 ```
 
+> // Default: `**` - That will run cleaning to any APOS_RELEASE_ID that already created to production
+
 #### Access all options available in `ace : {}` object
 Simple , you can access it via `this.ace` in `CustomCodeEditor.vue` extends file in your project level module ui component. You may refer methods available down here:
 
 [Custom Code Editor Methods](https://ammein.github.io/custom-code-editor-a3/)
 
 # Changelog
+### 1.1.0
+- Fix `aceBuildsFileLoader` to have better & proper cleaning builds folder options from project level module to override.
+- Fix lint codes on Vue files
+- Fix `checkOptionsCustomizer` to have better override config merge value
+- Add lint rules & extends into `.eslintrc` file
+
 ### 1.0.1
 - Fix clean-webpack-plugin onto dependencies and remove it from devDependencies
 - Fix README.md on `Custom-Code-Editor` to `Custom-Code-Editor-A3`

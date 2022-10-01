@@ -1,7 +1,6 @@
 const path = require('path');
 const fs = require('fs-extra');
 const glob = require('glob');
-const { getPackedSettings } = require('http2');
 const loadUtils = function() {
   const publicFolderPath = path.join(process.cwd(), path.join('tests', 'public'));
 
@@ -37,9 +36,6 @@ const loadUtils = function() {
     let fileExists = {};
 
     for (let i = 0; i < arr.length; i++) {
-
-      let getFileType = arr[i].match(/(?:(?<type>ext|mode|theme|worker|snippets|keybinding|.*)(?:_|-)(?<filename>.*(?<extension>.js|)))*$/i);
-
       let getDir = new RegExp(`([^${path.posix.sep}]*)${path.posix.sep}*$`, 'i');
 
       if (p.match(getDir) === undefined) {

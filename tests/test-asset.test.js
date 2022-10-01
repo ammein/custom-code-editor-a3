@@ -3,23 +3,19 @@ const fs = require('fs-extra');
 const {
   expect
 } = require('expect');
-const request = require('supertest');
-const _ = require('lodash');
 const path = require('path');
 const testUtil = require('apostrophe/test-lib/test');
 const loadUtils = require('./utils.js');
 
 describe('Custom Code Editor : Clear Modes and Push All Assets', function () {
-  let apos, namespace, buildDir, bundleDir;
+  let apos, namespace, bundleDir;
 
   const {
     deleteBuiltFolders,
     publicFolderPath,
     checkFileExists,
     checkFilesExists,
-    getPublicPath,
     removeCache,
-    cacheFolderPath,
     checkOtherFilesExists,
     releasePath
   } = loadUtils();
@@ -54,7 +50,6 @@ describe('Custom Code Editor : Clear Modes and Push All Assets', function () {
               'apostrophe:afterInit': {
                 checkCustomCodeEditor() {
                   namespace = self.apos.asset.getNamespace();
-                  buildDir = path.join(self.apos.rootDir, 'apos-build', namespace);
                   bundleDir = path.join(self.apos.rootDir, 'public', 'apos-frontend', namespace);
                   assert(self.apos.schema);
                   assert(self.apos.modules['custom-code-editor-a3']);
@@ -214,7 +209,6 @@ describe('Custom Code Editor : Clear Modes and Push All Assets', function () {
               'apostrophe:afterInit': {
                 checkCustomCodeEditor() {
                   namespace = self.apos.asset.getNamespace();
-                  buildDir = path.join(self.apos.rootDir, 'apos-build', namespace);
                   bundleDir = path.join(self.apos.rootDir, 'public', 'apos-frontend', namespace);
                   assert(self.apos.schema);
                   assert(self.apos.modules['custom-code-editor-a3']);
