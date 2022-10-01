@@ -242,7 +242,7 @@ ace : {
 > Don't worry about indent in Snippet , it will automatically beautify the codes whenever you enter your new content
 
 # Insert My Own Theme
-By default , `theme : 'ambiance'` . If you wish to change theme (Case Sensitive). You can find all available themes here [All Ace Editor Themes Available](https://github.com/ajaxorg/ace-builds/blob/6526ea4a845a3682789a9224f319271496051873/src/ext-themelist.js#L9) :
+By default , `theme : 'chrome'` . If you wish to change theme (Case Sensitive). You can find all available themes here [All Ace Editor Themes Available](https://github.com/ajaxorg/ace-builds/blob/6526ea4a845a3682789a9224f319271496051873/src/ext-themelist.js#L9) :
 ```javascript
 ace : {
     theme : 'monokai'
@@ -688,6 +688,9 @@ Simple , you can access it via `this.ace` in `CustomCodeEditor.vue` extends file
 [Custom Code Editor Methods](https://ammein.github.io/custom-code-editor-a3/)
 
 # Changelog
+### 1.1.0
+- Fix typos & comments
+
 ### 1.1.0
 - Fix `aceBuildsFileLoader` to have better & proper cleaning builds folder options from project level module to override.
 - Fix lint codes on Vue files

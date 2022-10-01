@@ -7,11 +7,6 @@ const {
   CleanWebpackPlugin
 } = require('clean-webpack-plugin');
 
-/**
- * TODO:
- * - [ ] Override Disable Options Customizer not working!!!
- */
-
 module.exports = {
   options: {
     alias: 'customCodeEditor'
