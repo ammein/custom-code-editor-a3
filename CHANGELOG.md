@@ -1,3 +1,6 @@
+### 1.1.3
+- Update `homepage` to package.json
+
 ### 1.1.2
 - Fix spacings
 - Fix package.json to have Git URL
