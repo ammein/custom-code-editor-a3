@@ -1,8 +1,12 @@
 {
   "name": "custom-code-editor-a3",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "ApostropheCMS version 3 Code Schema Field",
   "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ammein/custom-code-editor-a3"
+  },
   "scripts": {
     "test": "eslint . && node ./tests/build-test-package-json.js && mocha --reporter spec --inspect ./tests/**/test-*.test.js",
     "lint": "eslint .",

@@ -1,8 +1,8 @@
-# Custom-Code-Editor-A3 ApostropheCMS Schema
+# Custom-Code-Editor-A3 ApostropheCMS 3 Schema
 
 [![test-custom-code-editor-a3](https://github.com/ammein/custom-code-editor-a3/actions/workflows/main.yml/badge.svg)](https://github.com/ammein/custom-code-editor-a3/actions/workflows/main.yml)
 
-An ApostropheCMS Custom Schema for your own custom-code-editor-a3 field. 
+An ApostropheCMS Version 3 Custom Schema for your own custom-code-editor-a3 field. 
 
 This schema uses Ace Editor library that you may found here [Ace Editor](https://ace.c9.io/)
 
@@ -513,7 +513,7 @@ apos.customCodeEditor.browser.editor[your-field-name].session.getValue()
 ```
 
 ### Get Multiple Editor Browser in Single Schema
-Oops ! How can I get specific editor browser object if I have two fields in a same schema ? I made a simple for you , let say you have this fields :
+How can I get specific editor browser object if I have two fields in a same schema ? I made a simple for you , let say you have this fields :
 
 ```javascript
 fields: {
@@ -550,7 +550,7 @@ apos.customCodeEditor.browser.editor.secondCode
 # Advanced Configuration (Skip this if you comfortable with current feature)
 
 ## Why I cannot switch other themes or other modes by scripting ?
-As I already mentioned in Push Asset section , by default we only push asset that are ONLY defined modes. It detect by your modes name and push. The rest of the modes will not be available in your browser. This is due to performance where Ace Editor contains more than 10 js files for all modes. If you really want to do by scripting that can switch themes or maybe other modes via scripting , you have to push ALL ACE's JS files in order to do that. Here is the code :
+By default we only push asset that are ONLY defined modes. It detect by your modes name and push. The rest of the modes will not be available in your browser. This is due to performance where Ace Editor contains more than 10 js files for all modes. If you really want to do by scripting that can switch themes or maybe other modes via scripting , you have to push ALL ACE's JS files in order to do that. Here is the code :
 
 ```javascript
 // In modules/custom-code-editor-a3/index.js
@@ -688,7 +688,12 @@ Simple , you can access it via `this.ace` in `CustomCodeEditor.vue` extends file
 [Custom Code Editor Methods](https://ammein.github.io/custom-code-editor-a3/)
 
 # Changelog
-### 1.1.0
+### 1.1.2
+- Fix spacings
+- Fix package.json to have Git URL
+- Fix README
+
+### 1.1.1
 - Fix typos & comments
 
 ### 1.1.0
