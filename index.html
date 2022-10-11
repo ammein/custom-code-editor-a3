@@ -498,7 +498,7 @@ module.exports = {
 <pre class="prettyprint source lang-javascript"><code>apos.customCodeEditor.browser.editor[your-field-name].session.getValue()
 </code></pre>
 <h3>Get Multiple Editor Browser in Single Schema</h3>
-<p>Oops ! How can I get specific editor browser object if I have two fields in a same schema ? I made a simple for you , let say you have this fields :</p>
+<p>How can I get specific editor browser object if I have two fields in a same schema ? I made a simple for you , let say you have this fields :</p>
 <pre class="prettyprint source lang-javascript"><code>fields: {
     add: {
         code: {
@@ -530,7 +530,7 @@ apos.customCodeEditor.browser.editor.secondCode
 </blockquote>
 <h1>Advanced Configuration (Skip this if you comfortable with current feature)</h1>
 <h2>Why I cannot switch other themes or other modes by scripting ?</h2>
-<p>As I already mentioned in Push Asset section , by default we only push asset that are ONLY defined modes. It detect by your modes name and push. The rest of the modes will not be available in your browser. This is due to performance where Ace Editor contains more than 10 js files for all modes. If you really want to do by scripting that can switch themes or maybe other modes via scripting , you have to push ALL ACE's JS files in order to do that. Here is the code :</p>
+<p>By default we only push asset that are ONLY defined modes. It detect by your modes name and push. The rest of the modes will not be available in your browser. This is due to performance where Ace Editor contains more than 10 js files for all modes. If you really want to do by scripting that can switch themes or maybe other modes via scripting , you have to push ALL ACE's JS files in order to do that. Here is the code :</p>
 <pre class="prettyprint source lang-javascript"><code>// In modules/custom-code-editor-a3/index.js
 module.exports = {
     options: {
@@ -664,7 +664,12 @@ module.exports = {
 <p>Simple , you can access it via <code>this.ace</code> in <code>CustomCodeEditor.vue</code> extends file in your project level module ui component. You may refer methods available down here:</p>
 <p><a href="https://ammein.github.io/custom-code-editor-a3/">Custom Code Editor Methods</a></p>
 <h1>Changelog</h1>
-<h3>1.1.0</h3>
+<h3>1.1.2</h3>
+<ul>
+<li>Fix spacings</li>
+<li>Fix package.json to have Git URL</li>
+</ul>
+<h3>1.1.1</h3>
 <ul>
 <li>Fix typos &amp; comments</li>
 </ul>
