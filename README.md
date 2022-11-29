@@ -134,7 +134,7 @@ module.exports = {
 - Javascript
 
 # Name Of The Modes References
-### [List of all Modes](https://github.com/ajaxorg/ace/tree/master/src/mode)
+### [List of all Modes](https://github.com/ajaxorg/ace-builds/blob/6526ea4a845a3682789a9224f319271496051873/src/ext-modelist.js#L33)
 
 # How to Override Existing Mode ?
 Simple , make sure the name of the mode is similar to default modes provided. 
@@ -260,7 +260,7 @@ ace : {
 > Don't worry about the indent in your Snippet , Ace will automatically beautify the code whenever you enter your new content.
 
 # Insert My Own Theme
-By default , `theme : 'chrome'` . If you wish to change the theme (Case Sensitive), you can find all available themes here [All Ace Editor Themes Available](https://github.com/ajaxorg/ace/tree/master/src/theme) :
+By default , `theme : 'chrome'` . If you wish to change the theme (Case Sensitive), you can find all available themes here [All Ace Editor Themes Available](https://github.com/ajaxorg/ace-builds/blob/6526ea4a845a3682789a9224f319271496051873/src/ext-themelist.js#L9) :
 ```javascript
 ace : {
     theme : 'monokai'
