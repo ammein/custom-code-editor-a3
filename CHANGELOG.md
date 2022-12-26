@@ -1,4 +1,11 @@
-### 1.1.0
+### 1.1.3
+- Update `homepage` to package.json
+
+### 1.1.2
+- Fix spacings
+- Fix package.json to have Git URL
+
+### 1.1.1
 - Fix typos & comments
 
 ### 1.1.0

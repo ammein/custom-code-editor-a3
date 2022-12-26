@@ -1,4 +1,4 @@
-# Custom-Code-Editor-A3 ApostropheCMS Schema
+# Custom-Code-Editor-A3 ApostropheCMS 3 Schema
 
 [![test-custom-code-editor-a3](https://github.com/ammein/custom-code-editor-a3/actions/workflows/main.yml/badge.svg)](https://github.com/ammein/custom-code-editor-a3/actions/workflows/main.yml)
 
@@ -568,7 +568,7 @@ apos.customCodeEditor.browser.editor.secondCode
 # Advanced Configuration (Skip this if you comfortable with current features)
 
 ## Why can't I switch to other themes or other modes by scripting ?
-As I already mentioned in the Push Asset section, by default we only push asset that are defined modes. It detect by your modes name and push. The rest of the modes will not be available in your browser. This is due to performance where the Ace Editor contains more than 10 js files for all modes. If you really want scripting that can switch themes or maybe other modes via scripting, you have to push ALL ACE's JS files in order to do that. Here is the code :
+By default we only push asset that are defined modes. It detect by your modes name and push. The rest of the modes will not be available in your browser. This is due to performance where the Ace Editor contains more than 10 js files for all modes. If you really want scripting that can switch themes or maybe other modes via scripting, you have to push ALL ACE's JS files in order to do that. Here is the code :
 
 ```javascript
 // In modules/custom-code-editor-a3/index.js
@@ -705,7 +705,15 @@ Simple , you can access it via `this.ace` in `CustomCodeEditor.vue` extends file
 [Custom Code Editor Methods](https://ammein.github.io/custom-code-editor-a3/)
 
 # Changelog
-### 1.1.0
+### 1.1.3
+- Update `homepage` to package.json
+
+### 1.1.2
+- Fix spacings
+- Fix package.json to have Git URL
+- Fix README
+
+### 1.1.1
 - Fix typos & comments
 
 ### 1.1.0
