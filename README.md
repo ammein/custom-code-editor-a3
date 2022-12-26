@@ -705,6 +705,9 @@ Simple , you can access it via `this.ace` in `CustomCodeEditor.vue` extends file
 [Custom Code Editor Methods](https://ammein.github.io/custom-code-editor-a3/)
 
 # Changelog
+### 1.2.0
+- Update packages & README.md
+
 ### 1.1.3
 - Update `homepage` to package.json
 

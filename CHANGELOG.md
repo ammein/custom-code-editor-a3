@@ -1,3 +1,6 @@
+### 1.2.0
+- Update packages & README.md
+
 ### 1.1.3
 - Update `homepage` to package.json
 
