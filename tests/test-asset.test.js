@@ -231,9 +231,21 @@ describe('Custom Code Editor : Clear Modes and Push All Assets', function () {
       });
     } catch (error) {
       // Do nothing
+      console.log('Error on generate all production modes assets', error);
     }
     let releaseId = await releasePath();
     let checkProdBuild = await fs.pathExists(path.resolve(bundleDir, '..', releaseId));
+    if (!checkProdBuild) {
+      let checkReleaseDir = fs.readdirSync(path.resolve(bundleDir, '..', releaseId));
+      let checkProdDir = fs.readdirSync(path.resolve(bundleDir, '..', releaseId, '..'));
+      checkReleaseDir.forEach((val, i) => {
+        console.log('Lists of directory in releases', i + '- ' + val);
+      });
+
+      checkProdDir.forEach((val, i) => {
+        console.log('Lists of directory in prod assets folder', i + '- ' + val);
+      });
+    }
     expect(checkProdBuild).toBe(true);
   });
 });
