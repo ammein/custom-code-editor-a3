@@ -30,6 +30,9 @@ jobs:
         with:
           mongodb-version: ${{ matrix.mongodb-version }}
 
+            # Exit status must be succesful in the end
+      - run:  ( ( node --version | grep v14 ) && npm install -g npm@8 ) || echo "npm OK"
+
       - name: Start Test
         run: npm test
 
@@ -57,6 +60,9 @@ jobs:
         uses: ankane/setup-mongodb@v1
         with:
           mongodb-version: ${{ matrix.mongodb-version }}
+
+        # Exit status must be succesful in the end
+      - run:  ( ( node --version | grep v14 ) && npm install -g npm@8 ) || echo "npm OK"
 
       - name: Start Test
         run: npm test
