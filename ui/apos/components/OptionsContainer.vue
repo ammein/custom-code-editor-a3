@@ -1162,8 +1162,8 @@
     };
 </script>
 
-<style lang="scss" scoped>
-    @import "custom-code-editor-a3/style/index.scss";
+<style scoped lang="scss">
+    @import 'Style/index.scss';
 
     .label-text {
         color: $dim-gray;

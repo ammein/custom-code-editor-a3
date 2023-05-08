@@ -20,19 +20,23 @@ describe('Custom Code Editor : Clear Modes and Push All Assets', function () {
     releasePath
   } = loadUtils();
 
-  this.timeout(5 * 60 * 5000);
-
   after(async function () {
     await deleteBuiltFolders(publicFolderPath, true);
     await removeCache();
     return testUtil.destroy(apos);
   });
 
+  afterEach(function() {
+    // Prevent hang forever if particular tests fail while testing prod.
+    process.env.NODE_ENV = 'development';
+  });
+
+  this.timeout(5 * 60 * 1000);
+
   it('should be a property of the apos object', async function () {
     apos = await testUtil.create({
       // Make it `module` to be enabled because we have pushAssets method called
       root: module,
-      testModule: true,
       baseUrl: 'http://localhost:7990',
       modules: {
         'apostrophe-express': {
@@ -63,13 +67,9 @@ describe('Custom Code Editor : Clear Modes and Push All Assets', function () {
   });
 
   it('should build assets folder', async function () {
-    process.env.NODE_ENV = 'development';
-    try {
-      await apos.asset.tasks.build.task();
-    } catch (error) {
-      // Let it pass because the test runner will always failed to load webpack
-      // due to unable to call certain webpack based on browser request
-    }
+
+    await apos.asset.tasks.build.task();
+
     // Read All the Files that shows available mode
     let aceBuildsExists = await checkFileExists(path.join(namespace, 'ace-builds'));
     expect(aceBuildsExists).toBe(true);

@@ -15,11 +15,13 @@ module.exports = {
     extensionOptions: {
       aceBuildsFileLoader(options) {
         const clean = _.has(options, 'clean') ? options.clean : true;
+        const testsClean = !!process.env['npm_command'].match(/test/g);
         const cleanRelease = _.has(options, 'cleanRelease') ? options.cleanRelease : true;
         const esModule = _.has(options, 'esModule') ? options.esModule : undefined;
         const releaseId = _.has(options, 'releaseId') ? options.releaseId : undefined;
 
         let optionsResult = _.omitBy({
+          test: testsClean,
           clean: clean,
           cleanRelease: cleanRelease,
           esModule: esModule,
@@ -34,9 +36,9 @@ module.exports = {
         return {
           resolve: {
             alias: {
-              'custom-code-editor-a3/components': path.resolve(__dirname, 'ui/apos/components'),
-              'custom-code-editor-a3/mixins': path.resolve(__dirname, 'ui/apos/mixins'),
-              'custom-code-editor-a3/style': path.resolve(__dirname, 'ui/src')
+              Components: path.resolve(__dirname, 'ui/apos/components'),
+              Mixins: path.resolve(__dirname, 'ui/apos/mixins'),
+              Style: path.resolve(__dirname, 'ui/src')
             }
           }
         };
@@ -55,8 +57,8 @@ module.exports = {
             // Due to webpack cache issue & different path related to production/development, we need to clean some build assets to let apostrophe rebuild the files...
             process.env.NODE_ENV === 'production' ? options.clean && new CleanWebpackPlugin({
               cleanOnceBeforeBuildPatterns: [
-                path.join(process.cwd(), 'public/apos-frontend/default/ace-builds/**'),
-                path.join(process.cwd(), 'public/apos-frontend/default/modules/**'),
+                path.join(path.join(process.cwd(), (options.test ? 'tests' : '')), 'public/apos-frontend/default/ace-builds/**'),
+                path.join(path.join(process.cwd(), (options.test ? 'tests' : '')), 'public/apos-frontend/default/modules/**'),
                 '!apos-*',
                 '!src-*',
                 '!public-*'
@@ -68,12 +70,12 @@ module.exports = {
               ]
             }) : options.clean && new CleanWebpackPlugin({
               cleanOnceBeforeBuildPatterns: [
-                path.join(process.cwd(), 'public/apos-frontend/default/apos-*'),
-                path.join(process.cwd(), 'public/apos-frontend/default/src-*'),
-                path.join(process.cwd(), 'public/apos-frontend/default/public-*')
+                path.join(path.join(process.cwd(), (options.test ? 'tests' : '')), 'public/apos-frontend/default/apos-*'),
+                path.join(path.join(process.cwd(), (options.test ? 'tests' : '')), 'public/apos-frontend/default/src-*'),
+                path.join(path.join(process.cwd(), (options.test ? 'tests' : '')), 'public/apos-frontend/default/public-*')
               ],
               cleanAfterEveryBuildPatterns: [
-                options.cleanRelease && path.join(process.cwd(), 'public/apos-frontend/releases/' + (options.releaseId || process.env.APOS_RELEASE_ID || '**') + '/default/modules/**'),
+                options.cleanRelease && path.join(path.join(process.cwd(), (options.test ? 'tests' : '')), 'public/apos-frontend/releases/' + (options.releaseId || process.env.APOS_RELEASE_ID || '**') + '/default/modules/**'),
                 '!apos-*',
                 '!src-*',
                 '!public-*'

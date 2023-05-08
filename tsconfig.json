@@ -13,13 +13,15 @@
     "exclude": [
         "node_modules",
         "public",
+        ".vscode",
+        "./tests/node_modules",
         "./apostrophe/test-lib/test.js",
         ".stylelintrc"
     ],
     "include": [
         "./tests/**/*.js",
-        "./ui/apos/**/*.js",
-        "./ui/apos/**/*.vue",
+        // "./ui/apos/**/*.js",
+        // "./ui/apos/**/*.vue",
         "./lib/**/*.js",
         "index.js"
     ]

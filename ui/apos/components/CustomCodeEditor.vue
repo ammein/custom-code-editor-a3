@@ -91,8 +91,8 @@
     import ChevronDeleteIcon from 'vue-material-design-icons/Delete.vue';
     import ChevronDropdownIcon from 'vue-material-design-icons/ChevronDown.vue';
     import ChevronDropupIcon from 'vue-material-design-icons/ChevronUp.vue';
-    import OptionsContainerComponent from 'custom-code-editor-a3/components/OptionsContainer.vue';
-    import CustomCodeEditorMixinVue from 'custom-code-editor-a3/mixins/CustomCodeEditorMixin.js';
+    import OptionsContainerComponent from 'Components/OptionsContainer.vue';
+    import CustomCodeEditorMixinVue from 'Mixins/CustomCodeEditorMixin.js';
     // Import lodash
     import _ from 'lodash';
 
@@ -414,7 +414,7 @@
              * @param {Event} e
              */
             optionsEvents(e) {
-							this.$refs.optionsContainer.buttonOptionsClick(e);
+				this.$refs.optionsContainer.buttonOptionsClick(e);
             },
 
             /**
@@ -496,6 +496,6 @@
     };
 </script>
 
-<style lang="scss" scoped>
-    @import "custom-code-editor-a3/style/editor.scss";
+<style scoped lang="scss">
+    @import 'Style/editor.scss';
 </style>
