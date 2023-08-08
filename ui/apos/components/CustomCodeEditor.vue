@@ -106,66 +106,75 @@
     let browserOptions = apos.customCodeEditor.browser;
 
     // Just use dynamic imports from webpack resolver. Let apostrophe compile acejs builds into its own folder by using webpack-merge
-    if (browserOptions.mode === 'development' || process.env.NODE_ENV === 'development') {
-        import(
-            /* webpackChunkName: "ace-builds/developments/ace" */
-            /* webpackMode: "lazy-once" */
-            'ace-builds/esm-resolver');
-    } else {
-        // Push All Ace files if true
-        if (_.has(browserOptions.ace, 'scripts.pushAllAce')) {
-            // Import All Modes
-            for (let allModes = 0; allModes < browserOptions.ace._allModes.length; allModes++) {
-                let modes = browserOptions.ace._allModes[allModes];
-                import(
-                    /* webpackChunkName: "ace-builds/production/modes/mode-[request]" */
-                    /* webpackMode: "lazy" */
-                    `ace-builds/src-noconflict/mode-${modes}.js`);
-                import(
-                    /* webpackChunkName: "ace-builds/production/snippets/snippet-[request]" */
-                    /* webpackMode: "lazy" */
-                    `ace-builds/src-noconflict/snippets/${modes}.js`);
-            }
-            // Import All Themes
-            for (let allThemes = 0; allThemes < browserOptions.ace._allThemes.length; allThemes++) {
-                let themes = browserOptions.ace._allThemes[allThemes];
-                import(
-                    /* webpackChunkName: "ace-builds/production/themes/theme-[request]" */
-                    /* webpackMode: "lazy" */
-                    `ace-builds/src-noconflict/theme-${themes}.js`);
-            }
-        } else {
-            // Dynamic Import Modes, Themes, and Snippets that are defined by your module
-            for (let i = 0; i < browserOptions.ace.modes.length; i++) {
-                let modes = browserOptions.ace.modes[i].name;
-                import(
-                    /* webpackChunkName: "ace-builds/production/modes/mode-[request]" */
-                    /* webpackMode: "lazy" */
-                    `ace-builds/src-noconflict/mode-${modes}`)
-                    .catch((e) => console.warn(`Unable to use mode for: '${modes}''. Please make sure you use the correct mode names defined by 'Ace' Module`));
-                import(
-                    /* webpackChunkName: "ace-builds/production/snippets/snippet-[request]" */
-                    /* webpackMode: "lazy" */
-                    `ace-builds/src-noconflict/snippets/${modes}`).catch((e) => null);
-            }
-            let theme = browserOptions.ace.theme;
-            // Import just One Theme
+    if (process.env.NODE_ENV === 'production') {
+        for (let i = 0; i < browserOptions.ace.modes.length; i++) {
+            let modes = browserOptions.ace.modes[i].name;
             import(
-                /* webpackChunkName: "ace-builds/production/themes/theme-[request]" */
+                /* webpackChunkName: "ace-builds/production/modes/[request]" */
                 /* webpackMode: "lazy" */
-                `ace-builds/src-noconflict/theme-${theme}.js`);
+                /* webpackPrefetch: true */
+                /* webpackPreload: true */
+                `ace-builds/src-noconflict/mode-${modes}`)
+                .catch((e) => console.warn(`Unable to use mode for: '${modes}''. Please make sure you use the correct mode names defined by 'Ace' Module`));
+            import(
+                /* webpackChunkName: "ace-builds/production/snippets/[request]" */
+                /* webpackMode: "lazy" */
+                /* webpackPrefetch: true */
+                /* webpackPreload: true */
+                `ace-builds/src-noconflict/snippets/${modes}`).catch((e) => null);
         }
-    }
-
-    // Solve beautify problem
-    for (let i = 0; i < apos.customCodeEditor.browser.ace._otherFiles.length; i++) {
-        let otherFiles = apos.customCodeEditor.browser.ace._otherFiles[i];
+        let theme = browserOptions.ace.theme;
+        // Import just One Theme
         import(
-            /* webpackChunkName: "ace-builds/production/others/other-[request]" */
+            /* webpackChunkName: "ace-builds/production/themes/[request]" */
             /* webpackMode: "lazy" */
-            `ace-builds/src-noconflict/${otherFiles}`).catch((e) => {
-            // Do nothing
-        });
+            /* webpackPrefetch: true */
+            /* webpackPreload: true */
+            `ace-builds/src-noconflict/theme-${theme}.js`);
+
+        // Solve beautify problem
+        for (let i = 0; i < apos.customCodeEditor.browser.ace._otherFiles.length; i++) {
+            let otherFiles = apos.customCodeEditor.browser.ace._otherFiles[i];
+            import(
+                /* webpackChunkName: "ace-builds/production/others/[request]" */
+                /* webpackMode: "lazy" */
+                /* webpackPrefetch: true */
+                /* webpackPreload: true */
+                `ace-builds/src-noconflict/${otherFiles}`).catch((e) => {
+                // Do nothing
+            });
+        }
+    } else if (process.env.NODE_ENV === 'development') {
+        // Dynamic Import Modes, Themes, and Snippets that are defined by your module
+        for (let i = 0; i < browserOptions.ace.modes.length; i++) {
+            let modes = browserOptions.ace.modes[i].name;
+            import(
+                /* webpackChunkName: "ace-builds/development/modes/[request]" */
+                /* webpackMode: "lazy" */
+                `ace-builds/src-noconflict/mode-${modes}`)
+                .catch((e) => console.warn(`Unable to use mode for: '${modes}''. Please make sure you use the correct mode names defined by 'Ace' Module`));
+            import(
+                /* webpackChunkName: "ace-builds/development/snippets/[request]" */
+                /* webpackMode: "lazy" */
+                `ace-builds/src-noconflict/snippets/${modes}`).catch((e) => null);
+        }
+        let theme = browserOptions.ace.theme;
+        // Import just One Theme
+        import(
+            /* webpackChunkName: "ace-builds/development/themes/[request]" */
+            /* webpackMode: "lazy" */
+            `ace-builds/src-noconflict/theme-${theme}.js`);
+
+        // Solve beautify problem
+        for (let i = 0; i < apos.customCodeEditor.browser.ace._otherFiles.length; i++) {
+            let otherFiles = apos.customCodeEditor.browser.ace._otherFiles[i];
+            import(
+                /* webpackChunkName: "ace-builds/development/others/[request]" */
+                /* webpackMode: "lazy" */
+                `ace-builds/src-noconflict/${otherFiles}`).catch((e) => {
+                // Do nothing
+            });
+        }
     }
 
     /**

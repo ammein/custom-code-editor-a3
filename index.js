@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const getAceFiles = require('./getAceBuilds');
 const aceFiles = getAceFiles(process.env.NODE_ENV === 'production' ? 'src-min-noconflict' : 'src-noconflict');
-// const webpack = require('webpack');
+const webpack = require('webpack');
 const path = require('path');
 const {
   CleanWebpackPlugin
@@ -30,42 +30,26 @@ module.exports = {
       }
     },
     extensions: {
-      customFilename(options) {
-        return {
-          output: {
-            assetModuleFilename: 'custom-code-editor-a3/[hash][ext][query]'
-          }
-        };
-      },
       aceBuildsFileLoader(options) {
         return {
           plugins: [
-            // DEPRECATED (Useful for later use if webpack has backward compability)
-            // Issue solve for ace-builds replace webpack loader options: https://stackoverflow.com/questions/69406829/how-to-set-outputpath-for-inline-file-loader-imports/69407756#69407756
-            // Inline Loader Syntax for RegExp: https://github.com/webpack-contrib/file-loader/issues/31
-
-            // new webpack.NormalModuleReplacementPlugin(/^file-loader\?esModule=false!(.*)/, (res) => {
-            //   const replace = './src-noconflict/&regExp=(?:(?:.*src-min-noconflict|src-noconflict)(?:-|.*)(snippets|ext(?=-)|mode(?=-)|theme(?=-)|worker(?=-)|keybinding(?=-))(?:.*.js))&outputPath=ace-builds&name=[1]/[name].[ext]!';
-            //   const out = res.request.replace(/^file-loader\?esModule=false!/, replace);
-            //   console.log(`Original: ${res.request}, Replace: ${out}`);
-            //   res.request = out;
-            // }),
+            new webpack.EnvironmentPlugin({
+              NODE_ENV: process.env.NODE_ENV || 'development'
+            }),
             // Due to webpack cache issue & different path related to production/development, we need to clean some build assets to let apostrophe rebuild the files...
             process.env.NODE_ENV === 'production' ? options.clean && new CleanWebpackPlugin({
-              cleanOnceBeforeBuildPatterns: [
+              cleanAfterEveryBuildPatterns: [
                 path.join(path.join(process.cwd(), 'public/apos-frontend/default/ace-builds/**')),
-                path.join(path.join(process.cwd(), 'public/apos-frontend/default/modules/**')),
                 '!apos-*',
                 '!src-*',
                 '!public-*'
               ],
-              cleanAfterEveryBuildPatterns: [
-                '!apos-*',
-                '!src-*',
-                '!public-*'
+              cleanOnceBeforeBuildPatterns: [
+                path.join(path.join(process.cwd(), 'public/apos-frontend/default/*.apos-*'))
               ]
             }) : options.clean && new CleanWebpackPlugin({
               cleanOnceBeforeBuildPatterns: [
+                path.join(path.join(process.cwd(), 'public/apos-frontend/default/*.apos-*')),
                 path.join(path.join(process.cwd(), 'public/apos-frontend/default/apos-*')),
                 path.join(path.join(process.cwd(), 'public/apos-frontend/default/src-*')),
                 path.join(path.join(process.cwd(), 'public/apos-frontend/default/public-*'))
