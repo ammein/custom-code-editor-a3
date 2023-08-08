@@ -9,15 +9,6 @@ export default {
   methods: {
 
     /**
-     * @method beforeInit
-     * @desc Easy extend using this function
-     * @param {HTMLElement} element
-     */
-    beforeInit(element) {
-      // For extendMethods
-    },
-
-    /**
      * @method init
      * @desc Init Custom Code Editor
      * @param {HTMLElement} element
@@ -81,15 +72,6 @@ export default {
       this.afterInit(element);
 
       return editor;
-    },
-
-    /**
-     * @method afterInit
-     * @desc Easy extend after init
-     * @param {HTMLElement} element
-     */
-    afterInit(element) {
-      // For extends methods
     },
 
     /**

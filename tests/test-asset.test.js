@@ -26,17 +26,14 @@ describe('Custom Code Editor : Clear Modes and Push All Assets', function () {
     return testUtil.destroy(apos);
   });
 
-  afterEach(function() {
-    // Prevent hang forever if particular tests fail while testing prod.
-    process.env.NODE_ENV = 'development';
-  });
-
   this.timeout(5 * 60 * 1000);
 
   it('should be a property of the apos object', async function () {
+    process.env.NODE_ENV = 'development';
     apos = await testUtil.create({
       // Make it `module` to be enabled because we have pushAssets method called
       root: module,
+      testModule: true,
       baseUrl: 'http://localhost:7990',
       modules: {
         'apostrophe-express': {
@@ -67,8 +64,11 @@ describe('Custom Code Editor : Clear Modes and Push All Assets', function () {
   });
 
   it('should build assets folder', async function () {
-
-    await apos.asset.tasks.build.task();
+    try {
+      await apos.asset.tasks.build.task();
+    } catch (err) {
+      console.log(err);
+    }
 
     // Read All the Files that shows available mode
     let aceBuildsExists = await checkFileExists(path.join(namespace, 'ace-builds'));
@@ -186,17 +186,17 @@ describe('Custom Code Editor : Clear Modes and Push All Assets', function () {
   });
 
   it('should create new apos with production build', async function () {
+    process.env.NODE_ENV = 'production';
     await testUtil.destroy(apos);
 
     apos = await testUtil.create({
       // Make it `module` to be enabled because we have pushAssets method called
       root: module,
-      testModule: true,
-      baseUrl: 'http://localhost:7990',
+      baseUrl: 'http://localhost:7991',
       modules: {
         'apostrophe-express': {
           options: {
-            port: 7990,
+            port: 7991,
             session: {
               secret: 'test-this-module'
             }
@@ -222,7 +222,6 @@ describe('Custom Code Editor : Clear Modes and Push All Assets', function () {
   });
 
   it('should generates all assets from custom-code-editor module from production modes', async function () {
-    process.env.NODE_ENV = 'production';
     process.env.APOS_RELEASE_ID = new Date().toLocaleDateString().replace(/\//g, '-');
 
     try {

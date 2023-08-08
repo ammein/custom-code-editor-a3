@@ -1163,7 +1163,7 @@
 </script>
 
 <style scoped lang="scss">
-    @import 'Style/index.scss';
+    @import '../scss/index.scss';
 
     .label-text {
         color: $dim-gray;

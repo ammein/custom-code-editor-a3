@@ -16,12 +16,13 @@
         ".vscode",
         "./tests/node_modules",
         "./apostrophe/test-lib/test.js",
-        ".stylelintrc"
+        ".stylelintrc",
+        "./*.js"
     ],
     "include": [
         "./tests/**/*.js",
-        // "./ui/apos/**/*.js",
-        // "./ui/apos/**/*.vue",
+        "./ui/apos/**/*.js",
+        "./ui/apos/**/*.vue",
         "./lib/**/*.js",
         "index.js"
     ]

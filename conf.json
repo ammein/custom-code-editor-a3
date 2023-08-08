@@ -18,6 +18,6 @@
         "recurse": true,
         "verbose": true,
         "readme": "./README.md",
-        "template": "./node_modules/vue-x-docs"
+        "template": "node_modules/vue-x-docs"
     }
 }
