@@ -1,5 +1,8 @@
-### 1.2.0
+### 2.0.0
 - Update packages & README.md
+- Able to extend APOS UI on `afterInit` & `beforeInit` methods by overriding the file names inside 'apos-build' directories
+- Move production files that were generated for Ace-Builds sourcemap files using handlers method on event `apostrophe:ready`. Only works if the user is running `build` || `release` script. (Temporary Solution until Apostrophe fix/update the issue).
+- Using `magic comments` on renaming chunk files on development modes.
 
 ### 1.1.3
 - Update `homepage` to package.json

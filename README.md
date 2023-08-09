@@ -568,58 +568,51 @@ apos.customCodeEditor.browser.editor.secondCode
 # Advanced Configuration (Skip this if you comfortable with current features)
 
 ## Why can't I switch to other themes or other modes by scripting ?
-By default we only push asset that are defined modes. It detect by your modes name and push. The rest of the modes will not be available in your browser. This is due to performance where the Ace Editor contains more than 10 js files for all modes. If you really want scripting that can switch themes or maybe other modes via scripting, you have to push ALL ACE's JS files in order to do that. Here is the code :
+By default we only push asset that are defined modes. It detect by your modes name and push. The rest of the modes will not be available in your browser. This is due to performance where the Ace Editor contains more than 10 js files for all modes. 
 
-```javascript
-// In modules/custom-code-editor-a3/index.js
-module.exports = {
-    options: {
-        ace : {
-            // all other ace options...
-            scripts : {
-                pushAllAce : true
-            }
-        }
-    }
-}
-```
-
-> NOTE: Beware that this push ALL ACE JS files including your own mode. Enable this only when you want to configure ace more from on your own script. This might decrease performance and may require long time page loads.
+> MIGRATION NOTE: In Apostrophe 2, you can push all ace files with minor issue. Due to major webpack 5 issue on Apostrophe 3, I decided to remove this option entirely on `pushAllAce` property because webpack has no control to manage the chunks from Apostrophe 3 Apos UI. I'm so sorry 😢
 
 ## Add More Methods/Commands/Event Listener To Your Ace Editor
 
 Let say you want to add MORE commands that are already refered to [Ace Editor HOW TO](https://ace.c9.io/#nav=howto) or maybe add new events by yourself. First, let's create new js file to any name you like and push like this:
 
-Inside `CustomCodeEditor.vue` :
-```vue
-<script>
-// In modules/custom-code-editor-a3/ui/apos/components/CustomCodeEditor.vue
-import customCodeEditor from 'custom-code-editor-a3/components/CustomCodeEditor.vue';
-
+Inside `AfterInit.js` :
+```js
+// In modules/custom-code-editor-a3/ui/apos/mixins/AfterInit.js
 export default {
-    extends: customCodeEditor,
-    mixins: [customCodeEditor],
-    methods: {
-        afterInit(element) {
-            const editor = this.getEditor();
-            const self = this;
-            // Add my own custom command
-            editor.commands.addCommand({
-                name: 'myCommand',
-                bindKey: {win: 'Ctrl-Shift-M',  mac: 'Command-Shift-M'},
-                exec: function(editor) {
-                    // Your commands code in here...
-                    return apos.notify('"' + self.field.name + '" field: ' + 'Ctrl + M/ Command + M is pressed!', {
-                        type: 'success',
-                        dismiss: true
-                    });
-                },
-                readOnly: true // false if this command should not apply in readOnly mode
-            });
+  methods: {
+    afterInit(element) {
+      const self = this;
+      const editor = self.getEditor();
+      // Add my own custom command
+      editor.commands.addCommand({
+        name: 'myCommand',
+        bindKey: {
+          win: 'Ctrl-M',
+          mac: 'Command-M'
+        },
+        exec: function(editor) {
+          // Your commands code in here...
+          return apos.notify('"' + self.field.name + '" field: ' + 'Ctrl + M/ Command + M is pressed!', {
+            type: 'success',
+            dismiss: true
+          });
         }
+      });
     }
-}
-</script>
+  }
+};
+```
+
+Inside `BeforeInit.js`:
+```js
+export default {
+  methods: {
+    beforeInit(element) {
+      // Your custom code here that runs before acejs initialized
+    }
+  }
+};
 ```
 
 ## Extend Methods available
@@ -635,15 +628,15 @@ You can refer methods available for you to use in here:
 [Custom Code Editor Methods](https://ammein.github.io/custom-code-editor-a3/)
 
 ## Webpack Extension Options
-### ES Module
-If you wish to use ES Module in your project, simply set `esModule` to `true` inside `extensionOptions` called `aceBuildsFileLoader` like below example:
+### Project Namespace
+If you have different namespace for your production, set this value in your project folder
 ```javascript
 // In modules/custom-code-editor-a3/index.js
 module.exports = {
     webpack: {
         extensionOptions: {
             aceBuildsFileLoader: {
-                esModule: true // Default: false
+                namespace: 'my-default' // Default: process.env.APOS_DEBUG_NAMESPACE || 'default'
             }
         }
     }
@@ -651,7 +644,7 @@ module.exports = {
 ```
 
 ### Disable Cleaning Build Files for Custom-Code-Editor-A3
-If you wish to disable all cleaning release modules for custom-code-editor-a3, simply set `clean` to `false` inside `extensionOptions` called `aceBuildsFileLoader` like below example:
+If you wish to disable all cleaning build modules for custom-code-editor-a3, simply set `clean` to `false` inside `extensionOptions` called `aceBuildsFileLoader` like below example:
 ```javascript
 // In modules/custom-code-editor-a3/index.js
 module.exports = {
@@ -665,10 +658,8 @@ module.exports = {
 }
 ```
 
-> This is because there are some errors on Ace-Builds that generates for Production from Development & from Development from Production that I already tested it, to prevent it from happening.
-
-### Disable Clean Release Build for Custom-Code-Editor-A3
-If you wish to disable cleaning release modules for custom-code-editor-a3, simply set `cleanRelease` to `false` inside `extensionOptions` called `aceBuildsFileLoader` like below example:
+### Disable Cleaning ONLY Production Build Files for Custom-Code-Editor-A3
+If you wish to disable only release modules for custom-code-editor-a3, simply set `cleanRelease` to `false` inside `extensionOptions` called `aceBuildsFileLoader` like below example:
 ```javascript
 // In modules/custom-code-editor-a3/index.js
 module.exports = {
@@ -682,29 +673,20 @@ module.exports = {
 }
 ```
 
-### Clean Specific Release Build for Custom-Code-Editor-A3
-If you wish to clean specific release modules instead for custom-code-editor-a3, simply set `releaseId` to any releaseID that you initialized in production like below example:
-```javascript
-// In modules/custom-code-editor-a3/index.js
-module.exports = {
-    webpack: {
-        extensionOptions: {
-            aceBuildsFileLoader: {
-                releaseId: 'my-release-id'
-            }
-        }
-    }
-}
-```
-
-> // Default: `**` - That will run cleaning to any APOS_RELEASE_ID that was already created for production
+> This is because there are some errors on Ace-Builds that generates for Production from Development & from Development from Production that I already tested it, to prevent it from happening.
 
 #### Access all options available in `ace : {}` object
-Simple , you can access it via `this.ace` in `CustomCodeEditor.vue` extends file in your project level module ui component. You may refer methods available down here:
+Simple , you can access it via `this.ace` in `AfterInit.js` that you had override the file in your project level module ui component. You may refer methods available down here:
 
 [Custom Code Editor Methods](https://ammein.github.io/custom-code-editor-a3/)
 
 # Changelog
+### 2.0.0
+- Update packages & README.md
+- Able to extend APOS UI on `afterInit` & `beforeInit` methods by overriding the file names inside 'apos-build' directories
+- Move production files that were generated for Ace-Builds sourcemap files using handlers method on event `apostrophe:ready`. Only works if the user is running `build` || `release` script. (Temporary Solution until Apostrophe fix/update the issue).
+- Using `magic comments` on renaming chunk files on development modes.
+
 ### 1.2.0
 - Update packages & README.md
 
