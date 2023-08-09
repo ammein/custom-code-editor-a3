@@ -78,8 +78,9 @@
     <section>
         <article><h1>Custom-Code-Editor-A3 ApostropheCMS 3 Schema</h1>
 <p><a href="https://github.com/ammein/custom-code-editor-a3/actions/workflows/main.yml"><img src="https://github.com/ammein/custom-code-editor-a3/actions/workflows/main.yml/badge.svg" alt="test-custom-code-editor-a3"></a></p>
-<p>An ApostropheCMS Version 3 Custom Schema for your own custom-code-editor-a3 field.</p>
-<p>This schema uses Ace Editor library that you may found here <a href="https://ace.c9.io/">Ace Editor</a></p>
+<p>An ApostropheCMS Custom Schema for your own custom-code-editor-a3 field.</p>
+<p>This extension adds a full-featured code editor that is perfect for coding tutorials, documentation containing code examples, or any other type of page that needs to display code.</p>
+<p>This schema uses the open-source Ace Editor library that you may found here <a href="https://ace.c9.io/">Ace Editor</a></p>
 <p><img src="https://thumbs.gfycat.com/DecisiveThickGilamonster-size_restricted.gif" alt="Ace Editor Example"></p>
 <p>Falling in love with custom-code-editor-a3 module ? Send love ❤️ through Paypal here : <br>
 <a href="https://paypal.me/AminShazrin?locale.x=en_US">Paypal.me/AminShazrin</a></p>
@@ -96,28 +97,38 @@
 <p>Simple :</p>
 <pre class="prettyprint source lang-javascript"><code>fields: {
     add: {
-        code: {
+        myCode: {
             type: 'custom-code-editor-a3',
             label: 'First Code'
         }
     }
 }
 </code></pre>
-<h3>Widget.html Get <code>custom-code-editor-a3</code> Value</h3>
-<p>This custom-code-editor-a3 schema returns an object.</p>
+<h3>Getting the <code>custom-code-editor-a3</code> values</h3>
+<p>This custom-code-editor schema returns an object composed of a <code>code</code> string containing the formatted code along with a <code>type</code> string that is derived from the type of editor used to input the code.</p>
 <pre class="prettyprint source lang-javascript"><code>{
     code : '&lt;string code value>',
     type : '&lt;modes>'
 }
 </code></pre>
-<p>If you did an example above , in <code>widget.html</code> you can simply get an object like this :</p>
-<pre class="prettyprint source lang-twig"><code>{{ data.widget.mycode.code }}
-{{ data.widget.mycode.type }}
+<p>Following the example above, in your template HTML file you can simply get an object like this :</p>
+<pre class="prettyprint source lang-twig"><code>{{ data.page.myCode.code }}
+{{ data.page.myCode.type }}
 </code></pre>
 <p>or you can simply use <code>apos.log()</code> to see what's available on <code>custom-code-editor-a3</code> objects :</p>
-<pre class="prettyprint source lang-twig"><code>{{ apos.log(data.widget.mycode) }}
+<pre class="prettyprint source lang-twig"><code>{{ apos.log(data.page.myCode) }}
+</code></pre>
+<h3>Displaying the custom code</h3>
+<p>It is up to the developer to format the code string supplied to the template by the <code>custom-code-editor</code>. We recommend using a package like <a href="https://highlightjs.org/"><code>highlight.js</code></a>, but there are a number of other similar packages out there.</p>
+<p>For the <code>highlight.js</code> package you will need to add the package script and styling, plus a small additional script to activate it on the page. It is typically sufficient to surround the editor code string with <code>&lt;pre&gt;</code> and <code>&lt;code&gt;</code> tags, but you can also supply the <code>type</code> if needed.</p>
+<pre class="prettyprint source lang-twig"><code>&lt;pre>
+  &lt;code class=&quot;language-{{ data.page.myCode.type}}&quot;>
+    {{ data.page.myCode.code }}
+  &lt;/code>
+&lt;/pre>
 </code></pre>
 <h1>Custom-Code-Editor-A3 Options Available</h1>
+<p>The custom-code-editor has a number of options available. You can customize your editor experience by creating your own <code>index.js</code> file in the <code>modules/custom-code-editor</code> folder of your project to extend the existing options.</p>
 <pre class="prettyprint source lang-javascript"><code>// in modules/custom-code-editor-a3/index.js
 module.exports = {
     options: {
@@ -173,16 +184,16 @@ module.exports = {
 <h1>How to Override Existing Mode ?</h1>
 <p>Simple , make sure the name of the mode is similar to default modes provided.</p>
 <h3>Default Mode</h3>
-<p>By default , <code>defaultMode : 'javascript'</code> enable. But you can choose a default mode by yourself ! Name any mode available for you. Let say you want 'css' to be in default mode.</p>
+<p>By default , <code>defaultMode : 'javascript'</code> is enable. But you can choose a default mode by yourself! Just add the name of any mode available to you. Lets say you want 'css' to be the default mode.</p>
 <pre class="prettyprint source lang-javascript"><code>ace : {
     defaultMode : 'css' // Same as `name : 'css' in mode : []`
 }
 </code></pre>
 <blockquote>
-<p>This will open a starting mode , then you can choose other mode by choosing modes on your dropdown</p>
+<p>This will select <code>css</code> a the starting mode, then you can choose a different mode by choosing from the dropdown if needed.</p>
 </blockquote>
 <h3>Enable Snippet</h3>
-<p>To enable your snippet added automatically when this schema is open , you have to enable dropdown</p>
+<p>To enable your snippet to be added automatically when this schema is open, you have to enable the dropdown</p>
 <pre class="prettyprint source lang-javascript"><code>ace : {
     config : {
         dropdown : {
@@ -192,7 +203,7 @@ module.exports = {
 }
 </code></pre>
 <p>WARNING !
-Once enable your dropdown , you will frustated with the position of dropdown is on top left corner. It is because the dropdown do not have customized position. Let's position the dropdown on bottom left corner with some offset of 30px from the container</p>
+Once enabled, your dropdown will be in the upper left corner. This will block your code input so we recommend that at the same time you enable the dropdown you add a custom position. For example, to position the dropdown on bottom left corner with an offset of 30px from the container edge use:</p>
 <pre class="prettyprint source lang-javascript"><code>ace : {
     config : {
         dropdown : {
@@ -206,7 +217,7 @@ Once enable your dropdown , you will frustated with the position of dropdown is 
 }
 </code></pre>
 <h3>Disable Snippet</h3>
-<p>If you want it to disable snippet for specific mode. Write the <code>name</code> of the modes and insert your <code>disableSnippet</code> :</p>
+<p>If you want to disable snippet addition for a specific mode, write the <code>name</code> of the mode and set the <code>disableSnippet</code> property to <code>true</code>:</p>
 <pre class="prettyprint source lang-javascript"><code>ace : {
     modes : [
         {
@@ -217,7 +228,7 @@ Once enable your dropdown , you will frustated with the position of dropdown is 
 }
 </code></pre>
 <h3>Override Snippet</h3>
-<p>Also , if you wanted to override default snippet for specific mode. Write the <code>name</code> of the modes and insert your <code>snippet</code> :</p>
+<p>Also , if you want to override the default snippet for specific mode, write the <code>name</code> of the mode and insert your <code>snippet</code> :</p>
 <pre class="prettyprint source lang-javascript"><code>ace : {
     modes : [
         {
@@ -229,8 +240,8 @@ Once enable your dropdown , you will frustated with the position of dropdown is 
     ]
 }
 </code></pre>
-<h3><code>@code-here</code> On Snippet</h3>
-<p>What is that syntax for ? Well , whenever you change your mode on dropdown , existing codes on schema will replace automatically on new snippet on <code>@code-here</code>. Amazing right ? If you did not provide that syntax , your existing value on editor schema will be lost. Let's make a new override snippet and has our own <code>@code-here</code> on it :</p>
+<h3><code>@code-here</code> in a Snippet</h3>
+<p>What is this syntax for? Well, whenever you change your mode on dropdown, the existing codes in the schema will be replaced automatically into the new snippet in place of <code>@code-here</code>. Amazing right? If you did not provide this, your existing value in the editor schema will be lost. Let's make a new override snippet that has our own <code>@code-here</code> in it:</p>
 <pre class="prettyprint source lang-javascript"><code>ace: {
     modes : [
         {
@@ -241,7 +252,7 @@ Once enable your dropdown , you will frustated with the position of dropdown is 
 }
 </code></pre>
 <h3>Title of Dropdown</h3>
-<p>By default , the name of a dropdown will be on <code>name</code> property. But some of the name does not make sense ! Can I change it ? Yes you can , simply add <code>title</code> property like existing mode called <strong>bash</strong> :</p>
+<p>By default, the name of a dropdown will be in the <code>name</code> property. But some of the names don't make sense! Can I change it? Yes you can! Simply add the <code>title</code> property with your prefered name For example, rename the existing <code>sh</code> mode to be called <strong><code>Bash</code></strong> :</p>
 <pre class="prettyprint source lang-javascript"><code>ace : {
     modes : [
         {
@@ -252,12 +263,12 @@ Once enable your dropdown , you will frustated with the position of dropdown is 
 }
 </code></pre>
 <h3>Clear Default Modes</h3>
-<p>What if I want to clear all default modes and define them myself ? Easy , add an option to <code>clearModes : true</code> :</p>
+<p>What if I want to clear all default modes and define them myself? Easy, add the <code>clearModes : true</code> setting:</p>
 <pre class="prettyprint source lang-javascript"><code>ace : {
     clearModes : true
 }
 </code></pre>
-<p>Once you clear your mode , you can define your own modes without considering any overrides mode. Isn't this makes your life easier ?</p>
+<p>Once you clear your modes, you can define your own modes without considering any overrides mode. Doesn't this makes your life easier?</p>
 <pre class="prettyprint source lang-javascript"><code>ace : {
     modes : [
         {
@@ -270,10 +281,10 @@ Once enable your dropdown , you will frustated with the position of dropdown is 
 }
 </code></pre>
 <blockquote>
-<p>Don't worry about indent in Snippet , it will automatically beautify the codes whenever you enter your new content</p>
+<p>Don't worry about the indent in your Snippet , Ace will automatically beautify the code whenever you enter your new content.</p>
 </blockquote>
 <h1>Insert My Own Theme</h1>
-<p>By default , <code>theme : 'chrome'</code> . If you wish to change theme (Case Sensitive). You can find all available themes here <a href="https://github.com/ajaxorg/ace-builds/blob/6526ea4a845a3682789a9224f319271496051873/src/ext-themelist.js#L9">All Ace Editor Themes Available</a> :</p>
+<p>By default , <code>theme : 'chrome'</code> . If you wish to change the theme (Case Sensitive), you can find all available themes here <a href="https://github.com/ajaxorg/ace-builds/blob/6526ea4a845a3682789a9224f319271496051873/src/ext-themelist.js#L9">All Ace Editor Themes Available</a> :</p>
 <pre class="prettyprint source lang-javascript"><code>ace : {
     theme : 'monokai'
 }
@@ -290,7 +301,7 @@ Once enable your dropdown , you will frustated with the position of dropdown is 
 }
 </code></pre>
 <h2>Enable Emmet Option</h2>
-<p>By default , emmet is not enable and you need to configure it yourself. But Ace Editor provides a simple options to enable emmet. However, you need a library to load it to Ace Editor. You can find any emmet libraries available online but I provide some sample to you below that works :</p>
+<p>By default, emmet is not enable and you need to configure it yourself. But Ace Editor provides a simple options to enable emmet. However, you need a library to load it to Ace Editor. You can find any emmet libraries available online but I provide some sample to you below that works :</p>
 <pre class="prettyprint source lang-javascript"><code>ace : {
     options : {
         enableEmmet : true
@@ -302,7 +313,7 @@ Once enable your dropdown , you will frustated with the position of dropdown is 
 &lt;script src=&quot;https://cloud9ide.github.io/emmet-core/emmet.js&quot;>&lt;/script>
 </code></pre>
 <h1>Custom-Code-Editor-A3 &amp; Dropdown Configurations</h1>
-<p>Well , you also can customize your own dropdown/ace editor css styles. All dropdown configuratins available for you are :</p>
+<p>You also can customize your own dropdown/ace editor css styles. All the dropdown configurations available for you are listed in this example:</p>
 <pre class="prettyprint source lang-javascript"><code>module.exports = {
     options: {
         ace : {
@@ -330,7 +341,7 @@ Once enable your dropdown , you will frustated with the position of dropdown is 
     }
 }
 </code></pre>
-<p>You must be thinking , why <code>fontSize</code> and <code>editorHeight</code> is available for editor options ? While we can do it in :</p>
+<p>You must be thinking , why are <code>fontSize</code> and <code>editorHeight</code> available for editor options ? While we could do it at the <code>options</code> level:</p>
 <pre class="prettyprint source lang-javascript"><code>ace : {
     options : {
         // all editor options
@@ -338,10 +349,10 @@ Once enable your dropdown , you will frustated with the position of dropdown is 
 }
 </code></pre>
 <blockquote>
-<p>Because we have a css issue on <code>!important</code> to override apostrophe css default normalize. So I did it for you to easily override it on <code>config</code> options. Or maybe you can push your own file to override it. Either way , both are possible override options :)</p>
+<p>Because we have a css issue with <code>!important</code> to override apostrophe css default normalize. So, I made it for you to easily override in the <code>config</code> settings. Or maybe you can push your own file to override it. Either way, both are possible override options :)</p>
 </blockquote>
 <h1>Specific Field Customization</h1>
-<p>Well, I know some of you don't want some specific editor to be in the same options to all custom-code-editor-a3 field type, right ? To make it backward compatibility, only some of the options can be overridden on your schema fields. Here is an example :</p>
+<p>Well, I know some of you don't want some specific editor to have the same options in all custom-code-editor-a3 field instances, right? To make it backward compatibility, only some of the options can be overridden on your schema fields. Here is an example :</p>
 <pre class="prettyprint source lang-javascript"><code>fields: {
     add: {
         code: {
@@ -362,7 +373,7 @@ Once enable your dropdown , you will frustated with the position of dropdown is 
 }
 </code></pre>
 <blockquote>
-<p>Why <code>modes</code> and <code>theme</code> are not available to override ? This will against the rule optimizing webpack feature that only project level options module by your own defined modes and theme get setup in the browser. All <code>options</code> values must be configure in project level module <code>index.js</code> or directly on <code>app.js</code> in <code>modules: {}</code></p>
+<p>Why are <code>modes</code> and <code>theme</code> not available to override? This will go against the rule optimizing webpack feature that only project level options module by your own defined modes and theme get setup in the browser. All <code>options</code> values must be configure in project level module <code>index.js</code> or directly on <code>app.js</code> in <code>modules: {}</code></p>
 </blockquote>
 <h3>If you wish to disable some options, just set it to <code>null</code> on that property option. It will removed from your specific field option. For example :</h3>
 <pre class="prettyprint source lang-javascript"><code>fields: {
@@ -384,10 +395,10 @@ Once enable your dropdown , you will frustated with the position of dropdown is 
 </blockquote>
 <h1>How To</h1>
 <h3>Search Bar</h3>
-<p>Ace got it owns search bar. Simply hit <code>Ctrl + F</code> !</p>
+<p>Ace got its own search bar. Simply hit <code>Ctrl + F</code> !</p>
 <p><img src="https://thumbs.gfycat.com/HandsomeHopefulFallowdeer-size_restricted.gif" alt="Search Function"></p>
 <h3>Save Selection</h3>
-<p>Now this one is a new function ONLY for ApostropheCMS . If you hit <code>Ctrl + Shift + S</code> while selecting new code, it will replace an existing highlighted text previously when you change your mode. Don't believe me ? Check it out !</p>
+<p>Now this one is a new function ONLY for ApostropheCMS . If you hit <code>Ctrl + Shift + S</code> while selecting new code, it will replace an existing highlighted text previously when you change your mode. Don't believe me? Check it out!</p>
 <p><img src="https://thumbs.gfycat.com/ReliableHastyGrouper-size_restricted.gif" alt="Save Feature"></p>
 <p>Wait ! Can I change save command ? Yup , you can. Add options like this :</p>
 <pre class="prettyprint source lang-javascript"><code>ace : {
@@ -401,10 +412,10 @@ Once enable your dropdown , you will frustated with the position of dropdown is 
 }
 </code></pre>
 <h1>Options Customizer</h1>
-<p>Have you ever wonder that you are tired of testing options by restarting the app and adjust your options all over again ? Here is Options Customizer that helps your editor options configuration better.</p>
+<p>Have you ever lamented that you are tired of testing options by restarting the app and adjusting your options all over again? Now we have the Options Customizer that helps you more easily tweak your editor options configuration.</p>
 <p><img src="https://thumbs.gfycat.com/GrossShoddyIbisbill-size_restricted.gif" alt="Options Customizer"></p>
 <h3>What does it do ?</h3>
-<p>It brings you more features that you can't live without ! All options available for you to modify are now can be save to each logged in user or even you could copy all the desired options and paste it to your project level module ! Here are four core features for Options Customizer :</p>
+<p>It brings you more features that you can't live without! All options available for you to modify can now be saved for each logged in user or even you could copy all the desired options and paste it to your project level module! Here are four core features for Options Customizer :</p>
 <ul>
 <li>Copy Options</li>
 <li>Undo Options</li>
@@ -415,36 +426,36 @@ Once enable your dropdown , you will frustated with the position of dropdown is 
 <p>These options will make your editor change live upon options modified.</p>
 </blockquote>
 <h2>Copy Options</h2>
-<p>You can copy your modified options and paste it on your project level module that will apply to all ! The copy features uses <a href="https://clipboardjs.com/">Clipboard JS</a> to make it work. Below are the demonstration on how to use it :</p>
+<p>You can copy your modified options and paste it on your project level module that will apply to all! The copy features uses <a href="https://clipboardjs.com/">Clipboard JS</a> to make it work. Below are the demonstration on how to use it :</p>
 <p><img src="https://thumbs.gfycat.com/WarmheartedGlossyCow-size_restricted.gif" alt="Copy Options"></p>
 <blockquote>
-<p>NOTE : It only copies from modified changes, not on its entire options. If your module options are already configured, it will not copy your module options. Instead, it will copy all your changes options that you did on On/Off Toggle(s), Select Input(s) and Range Input(s).</p>
+<p>NOTE : It only copies from modified changes, not the entirty of the options. If your module options are already configured, it will not copy your module options. Instead, it will copy all your changes options that you did through On/Off Toggle(s), Select Input(s) and Range Input(s).</p>
 </blockquote>
 <h2>Undo Options</h2>
-<p>You can undo your modified options to default settings. This will help you reset your changes to default options.</p>
+<p>You can undo your modified options to the default settings. This will help you reset your changes to default options.</p>
 <p><img src="https://thumbs.gfycat.com/ElementaryGeneralCentipede-size_restricted.gif" alt="Undo Options"></p>
 <blockquote>
-<p>NOTE : This will not undo saved options to default setting. If you wish to reset from saved options, refer to section &quot;Reset Options&quot; below.</p>
+<p>NOTE : This will not undo saved options to the default setting. If you wish to reset from saved options, refer to section &quot;Reset Options&quot; below.</p>
 </blockquote>
 <h2>Save Options</h2>
 <p>You can also saves all your modified options. This will keep all your modified options apply to all custom-code-editor-a3 types !</p>
 <p><img src="https://thumbs.gfycat.com/KlutzyAridCavy-size_restricted.gif" alt="Save Options"></p>
-<p>In MongoDB, you will see this data directly on <code>type : apostrophe-user</code> :</p>
+<p>In MongoDB, you will see this data directly in <code>type : apostrophe-user</code>:</p>
 <pre class="prettyprint source lang-json"><code>&quot;customCodeEditor&quot; : {
     &quot;highlightActiveLine&quot; : false
 }
 </code></pre>
 <blockquote>
-<p>NOTE : Save options will not apply to all users. It will load current users saves options and apply it to all editors. This will brings each types of users to their own desired options.</p>
+<p>NOTE : Save options will not apply to all users. It will load current users saved options and apply it to all editors. This will allow each users to their own desired options.</p>
 </blockquote>
 <h2>Reset Options</h2>
-<p>You can also reset all options. This will remove current saves options and change it to default module options settings. Let say you have follows save options demonstration above, you simply click <code>Reset</code> like example below :</p>
+<p>You can also reset all options. This will remove current saves options and change it to the default module options settings. Let say you have follows save options demonstration above, you simply click <code>Reset</code> like example below :</p>
 <p><img src="https://thumbs.gfycat.com/BlandWelloffAngwantibo-size_restricted.gif" alt="Reset Options"></p>
 <blockquote>
-<p>NOTE : This will only affect to current logged in user only. It will not removes any other users options.</p>
+<p>NOTE : This will affect the currently logged in user only. It will not remove any other user's options.</p>
 </blockquote>
 <h2>Modify Options</h2>
-<p>What if you want to add your own help text, you could simply done it in project level module like this :</p>
+<p>What if you want to add your own help text? You could simply done it in project level module like this :</p>
 <pre class="prettyprint source lang-javascript"><code>// In custom-code-editor-a3/index.js :
 module.exports = {
     options: {
@@ -460,10 +471,10 @@ module.exports = {
 }
 </code></pre>
 <blockquote>
-<p>NOTE : If you wish to add more options, take a look at <code>aceTypes.js</code> in <code>node_modules/custom-code-editor-a3/aceTypes.js</code> to see how it is done. And MAKE SURE you do it in an ARRAY like above example.</p>
+<p>NOTE : If you wish to add more options, take a look at <code>aceTypes.js</code> in <code>node_modules/custom-code-editor-a3/aceTypes.js</code> to see how it is done. And MAKE SURE you do it in an ARRAY like the example above.</p>
 </blockquote>
 <h2>Disable Options Customizer</h2>
-<p>You wish to remove options customizer ? You don't like it ? Don't worry, just set it to <code>enable : false</code> like this :</p>
+<p>You wish to remove the options customizer? You don't like it? Don't worry, just set it to <code>enable : false</code> like this :</p>
 <pre class="prettyprint source lang-javascript"><code>// In custom-code-editor-a3/index.js :
 module.exports = {
     options: {
@@ -478,11 +489,11 @@ module.exports = {
     }
 }
 </code></pre>
-<h3>Why some other options are missing ?</h3>
-<p>Well, some other options will break apostrophe's UI and also against the rule of pushing assets. For instance, we cannot set other themes via Options Customizer because we will only push desired theme configuration from your project level module. This is because Ace contains more than 10 js files for each modes and themes available.</p>
+<h3>Why are some other options missing ?</h3>
+<p>Well, some other options will break apostrophe's UI and are also against the rule of pushing assets. For instance, we cannot set other themes via the Options Customizer because we will only push desired theme configuration from your project level module. This is because Ace contains more than 10 js files for each modes and themes available.</p>
 <h1>Browser</h1>
 <h3>Browser Object</h3>
-<p>How can I get this schema browser object for my <code>custom-code-editor-a3</code> ?</p>
+<p>How can I get the schema browser object for <code>custom-code-editor-a3</code> ?</p>
 <p>Simply you can find it on :</p>
 <pre class="prettyprint source lang-javascript"><code>apos.customCodeEditor
 </code></pre>
@@ -498,7 +509,7 @@ module.exports = {
 <pre class="prettyprint source lang-javascript"><code>apos.customCodeEditor.browser.editor[your-field-name].session.getValue()
 </code></pre>
 <h3>Get Multiple Editor Browser in Single Schema</h3>
-<p>How can I get specific editor browser object if I have two fields in a same schema ? I made a simple for you , let say you have this fields :</p>
+<p>Oops! How can I get specific editor browser object if I have two fields in a same schema? I made it simple for you, let say you have these fields:</p>
 <pre class="prettyprint source lang-javascript"><code>fields: {
     add: {
         code: {
@@ -526,57 +537,50 @@ apos.customCodeEditor.browser.editor.code
 apos.customCodeEditor.browser.editor.secondCode
 </code></pre>
 <blockquote>
-<p>Easy right ? Hell yeah it is ! :D</p>
+<p>Easy right? Hell yeah it is! :D</p>
 </blockquote>
-<h1>Advanced Configuration (Skip this if you comfortable with current feature)</h1>
-<h2>Why I cannot switch other themes or other modes by scripting ?</h2>
-<p>By default we only push asset that are ONLY defined modes. It detect by your modes name and push. The rest of the modes will not be available in your browser. This is due to performance where Ace Editor contains more than 10 js files for all modes. If you really want to do by scripting that can switch themes or maybe other modes via scripting , you have to push ALL ACE's JS files in order to do that. Here is the code :</p>
-<pre class="prettyprint source lang-javascript"><code>// In modules/custom-code-editor-a3/index.js
-module.exports = {
-    options: {
-        ace : {
-            // all other ace options...
-            scripts : {
-                pushAllAce : true
-            }
-        }
-    }
-}
-</code></pre>
+<h1>Advanced Configuration (Skip this if you comfortable with current features)</h1>
+<h2>Why can't I switch to other themes or other modes by scripting ?</h2>
+<p>By default we only push asset that are defined modes. It detect by your modes name and push. The rest of the modes will not be available in your browser. This is due to performance where the Ace Editor contains more than 10 js files for all modes.</p>
 <blockquote>
-<p>NOTE: Beware that this push ALL ACE JS files including your own mode. Enable this only when you wanted to configure more ace on your own script. This might decrease performance and may require long time page loads.</p>
+<p>MIGRATION NOTE: In Apostrophe 2, you can push all ace files with minor issue. Due to major webpack 5 issue on Apostrophe 3, I decided to remove this option entirely on <code>pushAllAce</code> property because webpack has no control to manage the chunks from Apostrophe 3 Apos UI. I'm so sorry 😢</p>
 </blockquote>
 <h2>Add More Methods/Commands/Event Listener To Your Ace Editor</h2>
-<p>Let say you want to add MORE commands that you already refer to <a href="https://ace.c9.io/#nav=howto">Ace Editor HOW TO</a> or maybe add new events by yourself. First , let's create new js file to any name you like and push like this :</p>
-<p>Inside <code>CustomCodeEditor.vue</code> :</p>
-<pre class="prettyprint source lang-vue"><code>&lt;script>
-// In modules/custom-code-editor-a3/ui/apos/components/CustomCodeEditor.vue
-import customCodeEditor from 'custom-code-editor-a3/components/CustomCodeEditor.vue';
-
+<p>Let say you want to add MORE commands that are already refered to <a href="https://ace.c9.io/#nav=howto">Ace Editor HOW TO</a> or maybe add new events by yourself. First, let's create new js file to any name you like and push like this:</p>
+<p>Inside <code>AfterInit.js</code> :</p>
+<pre class="prettyprint source lang-js"><code>// In modules/custom-code-editor-a3/ui/apos/mixins/AfterInit.js
 export default {
-    extends: customCodeEditor,
-    mixins: [customCodeEditor],
-    methods: {
-        afterInit(element) {
-            const editor = this.getEditor();
-            const self = this;
-            // Add my own custom command
-            editor.commands.addCommand({
-                name: 'myCommand',
-                bindKey: {win: 'Ctrl-Shift-M',  mac: 'Command-Shift-M'},
-                exec: function(editor) {
-                    // Your commands code in here...
-                    return apos.notify('&quot;' + self.field.name + '&quot; field: ' + 'Ctrl + M/ Command + M is pressed!', {
-                        type: 'success',
-                        dismiss: true
-                    });
-                },
-                readOnly: true // false if this command should not apply in readOnly mode
-            });
+  methods: {
+    afterInit(element) {
+      const self = this;
+      const editor = self.getEditor();
+      // Add my own custom command
+      editor.commands.addCommand({
+        name: 'myCommand',
+        bindKey: {
+          win: 'Ctrl-M',
+          mac: 'Command-M'
+        },
+        exec: function(editor) {
+          // Your commands code in here...
+          return apos.notify('&quot;' + self.field.name + '&quot; field: ' + 'Ctrl + M/ Command + M is pressed!', {
+            type: 'success',
+            dismiss: true
+          });
         }
+      });
     }
-}
-&lt;/script>
+  }
+};
+</code></pre>
+<p>Inside <code>BeforeInit.js</code>:</p>
+<pre class="prettyprint source lang-js"><code>export default {
+  methods: {
+    beforeInit(element) {
+      // Your custom code here that runs before acejs initialized
+    }
+  }
+};
 </code></pre>
 <h2>Extend Methods available</h2>
 <p>These methods are available for you to use :</p>
@@ -602,21 +606,21 @@ export default {
 <p>You can refer methods available for you to use in here:
 <a href="https://ammein.github.io/custom-code-editor-a3/">Custom Code Editor Methods</a></p>
 <h2>Webpack Extension Options</h2>
-<h3>ES Module</h3>
-<p>If you wish to use ES Module in your project, simply set <code>esModule</code> to <code>true</code> inside <code>extensionOptions</code> called <code>aceBuildsFileLoader</code> like below example:</p>
+<h3>Project Namespace</h3>
+<p>If you have different namespace for your production, set this value in your project folder</p>
 <pre class="prettyprint source lang-javascript"><code>// In modules/custom-code-editor-a3/index.js
 module.exports = {
     webpack: {
         extensionOptions: {
             aceBuildsFileLoader: {
-                esModule: true // Default: false
+                namespace: 'my-default' // Default: process.env.APOS_DEBUG_NAMESPACE || 'default'
             }
         }
     }
 }
 </code></pre>
 <h3>Disable Cleaning Build Files for Custom-Code-Editor-A3</h3>
-<p>If you wish to disable all cleaning release modules for custom-code-editor-a3, simply set <code>clean</code> to <code>false</code> inside <code>extensionOptions</code> called <code>aceBuildsFileLoader</code> like below example:</p>
+<p>If you wish to disable all cleaning build modules for custom-code-editor-a3, simply set <code>clean</code> to <code>false</code> inside <code>extensionOptions</code> called <code>aceBuildsFileLoader</code> like below example:</p>
 <pre class="prettyprint source lang-javascript"><code>// In modules/custom-code-editor-a3/index.js
 module.exports = {
     webpack: {
@@ -628,11 +632,8 @@ module.exports = {
     }
 }
 </code></pre>
-<blockquote>
-<p>This is because there is some errors on Ace-Builds that generates for Production from Development &amp; from Development from Production that I already tested it. To prevent it happen</p>
-</blockquote>
-<h3>Disable Clean Release Build for Custom-Code-Editor-A3</h3>
-<p>If you wish to disable cleaning release modules for custom-code-editor-a3, simply set <code>cleanRelease</code> to <code>false</code> inside <code>extensionOptions</code> called <code>aceBuildsFileLoader</code> like below example:</p>
+<h3>Disable Cleaning ONLY Production Build Files for Custom-Code-Editor-A3</h3>
+<p>If you wish to disable only release modules for custom-code-editor-a3, simply set <code>cleanRelease</code> to <code>false</code> inside <code>extensionOptions</code> called <code>aceBuildsFileLoader</code> like below example:</p>
 <pre class="prettyprint source lang-javascript"><code>// In modules/custom-code-editor-a3/index.js
 module.exports = {
     webpack: {
@@ -644,26 +645,24 @@ module.exports = {
     }
 }
 </code></pre>
-<h3>Clean Specific Release Build for Custom-Code-Editor-A3</h3>
-<p>If you wish to clean specific release modules instead for custom-code-editor-a3, simply set <code>releaseId</code> to any releaseID that you initialized in production like below example:</p>
-<pre class="prettyprint source lang-javascript"><code>// In modules/custom-code-editor-a3/index.js
-module.exports = {
-    webpack: {
-        extensionOptions: {
-            aceBuildsFileLoader: {
-                releaseId: 'my-release-id'
-            }
-        }
-    }
-}
-</code></pre>
 <blockquote>
-<p>// Default: <code>**</code> - That will run cleaning to any APOS_RELEASE_ID that already created to production</p>
+<p>This is because there are some errors on Ace-Builds that generates for Production from Development &amp; from Development from Production that I already tested it, to prevent it from happening.</p>
 </blockquote>
 <h4>Access all options available in <code>ace : {}</code> object</h4>
-<p>Simple , you can access it via <code>this.ace</code> in <code>CustomCodeEditor.vue</code> extends file in your project level module ui component. You may refer methods available down here:</p>
+<p>Simple , you can access it via <code>this.ace</code> in <code>AfterInit.js</code> that you had override the file in your project level module ui component. You may refer methods available down here:</p>
 <p><a href="https://ammein.github.io/custom-code-editor-a3/">Custom Code Editor Methods</a></p>
 <h1>Changelog</h1>
+<h3>2.0.0</h3>
+<ul>
+<li>Update packages &amp; README.md</li>
+<li>Able to extend APOS UI on <code>afterInit</code> &amp; <code>beforeInit</code> methods by overriding the file names inside 'apos-build' directories</li>
+<li>Move production files that were generated for Ace-Builds sourcemap files using handlers method on event <code>apostrophe:ready</code>. Only works if the user is running <code>build</code> || <code>release</code> script. (Temporary Solution until Apostrophe fix/update the issue).</li>
+<li>Using <code>magic comments</code> on renaming chunk files on development modes.</li>
+</ul>
+<h3>1.2.0</h3>
+<ul>
+<li>Update packages &amp; README.md</li>
+</ul>
 <h3>1.1.3</h3>
 <ul>
 <li>Update <code>homepage</code> to package.json</li>
