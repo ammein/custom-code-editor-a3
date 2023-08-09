@@ -1,11 +1,11 @@
 const _ = require('lodash');
 const getAceFiles = require('./getAceBuilds');
-const aceFiles = getAceFiles(process.env.NODE_ENV === 'production' ? 'src-min-noconflict' : 'src-noconflict');
-const webpack = require('webpack');
+const aceFiles = getAceFiles('src-noconflict');
 const path = require('path');
 const {
   CleanWebpackPlugin
 } = require('clean-webpack-plugin');
+const move = require('glob-move');
 
 module.exports = {
   options: {
@@ -16,64 +16,47 @@ module.exports = {
       aceBuildsFileLoader(options) {
         const clean = _.has(options, 'clean') ? options.clean : true;
         const cleanRelease = _.has(options, 'cleanRelease') ? options.cleanRelease : true;
-        const esModule = _.has(options, 'esModule') ? options.esModule : undefined;
-        const releaseId = _.has(options, 'releaseId') ? options.releaseId : undefined;
-
+        const namespace = _.has(options, 'namespace') ? options.namespace : process.env.APOS_DEBUG_NAMESPACE || 'default';
         let optionsResult = _.omitBy({
           clean: clean,
           cleanRelease: cleanRelease,
-          esModule: esModule,
-          releaseId: releaseId
+          namespace: namespace
         }, _.isNil);
 
         return optionsResult;
       }
     },
     extensions: {
-      aliasModules(options) {
-        return {
-          resolve: {
-            alias: {
-              'custom-code-editor-a3/components': path.resolve(__dirname, 'ui/apos/components'),
-              'custom-code-editor-a3/mixins': path.resolve(__dirname, 'ui/apos/mixins'),
-              'custom-code-editor-a3/style': path.resolve(__dirname, 'ui/src')
-            }
-          }
-        };
-      },
       aceBuildsFileLoader(options) {
         return {
-          // Issue solve for ace-builds replace webpack loader options: https://stackoverflow.com/questions/69406829/how-to-set-outputpath-for-inline-file-loader-imports/69407756#69407756
-          // Inline Loader Syntax for RegExp: https://github.com/webpack-contrib/file-loader/issues/31
           plugins: [
-            new webpack.NormalModuleReplacementPlugin(/^file-loader\?esModule=false!(.*)/, (res) => {
-              const replace = 'file-loader?esModule=' + (options.esModule || 'false') + '&regExp=(?:(?:.*src-min-noconflict|src-noconflict)(?:-|.*)(snippets|ext(?=-)|mode(?=-)|theme(?=-)|worker(?=-)|keybinding(?=-))(?:.*.js))&outputPath=ace-builds&name=[1]/[name].[ext]!';
-              const out = res.request.replace(/^file-loader\?esModule=false!/, replace);
-              res.request = out;
-            }),
-
             // Due to webpack cache issue & different path related to production/development, we need to clean some build assets to let apostrophe rebuild the files...
-            process.env.NODE_ENV === 'production' ? options.clean && new CleanWebpackPlugin({
-              cleanOnceBeforeBuildPatterns: [
-                path.join(process.cwd(), 'public/apos-frontend/default/ace-builds/**'),
-                path.join(process.cwd(), 'public/apos-frontend/default/modules/**'),
+            process.env.NODE_ENV === 'production' ? options.clean &&
+            new CleanWebpackPlugin({
+              cleanAfterEveryBuildPatterns: [
+                path.join(path.join(process.cwd(), 'public/apos-frontend/' + options.namespace + '/ace-builds/**')),
+                path.join(path.join(process.cwd(), 'public/apos-frontend/' + options.namespace + '/*.apos-*')),
                 '!apos-*',
                 '!src-*',
                 '!public-*'
               ],
-              cleanAfterEveryBuildPatterns: [
+              cleanOnceBeforeBuildPatterns: [
+                options.cleanRelease && path.join(path.join(process.cwd(), 'public/apos-frontend/releases/**/**/*.apos-*')),
+                path.join(path.join(process.cwd(), 'public/apos-frontend/**/*.apos-*')),
                 '!apos-*',
                 '!src-*',
                 '!public-*'
               ]
-            }) : options.clean && new CleanWebpackPlugin({
+            })
+            : options.clean &&
+            new CleanWebpackPlugin({
               cleanOnceBeforeBuildPatterns: [
-                path.join(process.cwd(), 'public/apos-frontend/default/apos-*'),
-                path.join(process.cwd(), 'public/apos-frontend/default/src-*'),
-                path.join(process.cwd(), 'public/apos-frontend/default/public-*')
+                path.join(path.join(process.cwd(), 'public/apos-frontend/**/*.apos-*')),
+                path.join(path.join(process.cwd(), 'public/apos-frontend/**/apos-*')),
+                path.join(path.join(process.cwd(), 'public/apos-frontend/**/src-*')),
+                path.join(path.join(process.cwd(), 'public/apos-frontend/**/public-*'))
               ],
               cleanAfterEveryBuildPatterns: [
-                options.cleanRelease && path.join(process.cwd(), 'public/apos-frontend/releases/' + (options.releaseId || process.env.APOS_RELEASE_ID || '**') + '/default/modules/**'),
                 '!apos-*',
                 '!src-*',
                 '!public-*'
@@ -81,19 +64,26 @@ module.exports = {
             })
           ].filter(Boolean)
         };
-      },
-      outputChunkFiles(options) {
-        return process.env.NODE_ENV === 'production' ? {
-          output: {
-            chunkFilename: 'modules/custom-code-editor-a3/[chunkhash].js'
-          }
-        } : {
-          output: {
-            chunkFormat: 'module'
-          }
-        };
       }
     }
+  },
+  handlers(self, options) {
+    return {
+      'apostrophe:ready': {
+        async moveAce() {
+          if (options.apos.isTask() && (process.env.npm_lifecycle_event === 'release' || process.env.npm_lifecycle_event === 'build')) {
+            // A hacky solution to move chunk files from Ace Builds to Production directory.
+            // Something wrong on apostrophe that does not move ace-builds onto release directory.
+            // Use copy plugin until Apostrophe came up with solution or fixes.
+            try {
+              await move(path.join(path.join(process.cwd(), 'public/apos-frontend/**/[0-9]*.apos-*')), path.join(path.join(process.cwd(), 'public/apos-frontend/releases/' + self.apos.asset.getReleaseId() + '/' + self.apos.asset.getNamespace() + '/')));
+            } catch (e) {
+              console.log('Unable to move Ace files to production folder', e);
+            }
+          }
+        }
+      }
+    };
   },
   beforeSuperClass(self) {
 

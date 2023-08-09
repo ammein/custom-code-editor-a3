@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 const path = require('path');
 const fs = require('fs');
 const _ = require('lodash');
@@ -11,10 +12,14 @@ module.exports = (aceDirectory) => {
   if (!files) {
     throw new Error('Did you install `ace-builds` npm package yet?');
   } else if (files) {
+    let modes = new RegExp('(mode)-((?!snippets)[\\w]+)(.js)');
+    let others = new RegExp(`(?!.*${path.posix.sep})(?!.*${path.posix.sep})(.*)`, 'i');
+    let themes = new RegExp('(theme)-([\\w]+)(.js)');
+
     // Get All Modes
     allModes
       .push(...files
-        .filter((file) => file.match(/(mode)-((?!snippets)[\w]+)(.js)/))
+        .filter((file) => file.match(modes))
         .map((filteredFile) => {
           const found = filteredFile.match(/(?<mode>[mode]+)-(?<filename>[\w]+)(?<extension>.js)/);
 
@@ -28,7 +33,7 @@ module.exports = (aceDirectory) => {
 
     otherFiles
       .push(...files
-        .filter((file) => file.match(new RegExp(`(?!.*${path.posix.sep})(?!.*${path.posix.sep})(.*)`, 'i')))
+        .filter((file) => file.match(others))
         .map((filteredFile) => {
           const found = filteredFile.match(/(?!.*\/)(?:(?!mode-|theme-|ace.js|snippets)(.*))*/i);
 
@@ -44,7 +49,7 @@ module.exports = (aceDirectory) => {
     // Get All Themes
     allThemes
       .push(...files
-        .filter((file) => file.match(/(theme)-([\w]+)(.js)/))
+        .filter((file) => file.match(themes))
         .map((filteredFile) => {
           const found = filteredFile.match(/(?<theme>[theme]+)-(?<filename>[\w]+)(?<extension>.js)/);
 

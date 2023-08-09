@@ -13,8 +13,11 @@
     "exclude": [
         "node_modules",
         "public",
+        ".vscode",
+        "./tests/node_modules",
         "./apostrophe/test-lib/test.js",
-        ".stylelintrc"
+        ".stylelintrc",
+        "./*.js"
     ],
     "include": [
         "./tests/**/*.js",
