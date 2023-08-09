@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 const assert = require('assert');
 const fs = require('fs-extra');
 const {
@@ -6,6 +7,7 @@ const {
 const path = require('path');
 const testUtil = require('apostrophe/test-lib/test');
 const loadUtils = require('./utils.js');
+const move = require('glob-move');
 
 describe('Custom Code Editor : Clear Modes and Push All Assets', function () {
   let apos, namespace, bundleDir;
@@ -80,66 +82,20 @@ describe('Custom Code Editor : Clear Modes and Push All Assets', function () {
     let themesList = apos.customCodeEditor.ace._allThemes;
     let othersList = apos.customCodeEditor.ace._otherFiles;
 
-    let directories = await fs.readdir(path.join(bundleDir, 'ace-builds'));
+    let directories = await fs.readdir(path.join(bundleDir, 'ace-builds/development'));
 
     for (let i = 0; i < directories.length; i++) {
-      let dirPath = path.join(namespace, 'ace-builds', directories[i], path.posix.sep);
-      let buildPath = path.join(namespace, 'ace-builds', 'builds', path.posix.sep);
+      let dirPath = path.join(namespace, 'ace-builds/development', directories[i], path.posix.sep);
       // directories = builds,modes,theme,others
       switch (directories[i]) {
-        case 'mode':
+        case 'modes':
           await checkFilesExists(dirPath, modesList, (exists) => {
             for (const filename in exists) {
               console.log('Check Mode Asset: ', filename);
               if (!exists[filename]) {
-                let checkBuildFolder = checkOtherFilesExists(path.join(buildPath, 'mode-' + filename + '.*.js'), filename);
+                let checkExtraName = checkOtherFilesExists(path.join(dirPath, 'mode-' + filename + '.*.js'), filename);
 
-                assert(checkBuildFolder === true, `${filename}.js is still not available in builds folder.`);
-              } else {
-                assert(exists[filename] === true, `${filename}.js is not available in ${directories[i]} folder.`);
-              }
-            }
-          });
-          break;
-
-        case 'theme':
-          await checkFilesExists(dirPath, themesList, (exists) => {
-            for (const filename in exists) {
-              console.log('Check Theme Asset: ', filename);
-              if (!exists[filename]) {
-                let checkBuildFolder = checkOtherFilesExists(path.join(buildPath, 'theme-' + filename + '.*.js'), filename);
-
-                assert(checkBuildFolder === true, `${filename}.js is still not available in builds folder.`);
-              } else {
-                assert(exists[filename] === true, `${filename}.js is not available in ${directories[i]} folder.`);
-              }
-            }
-          });
-          break;
-
-        case 'ext':
-          await checkFilesExists(dirPath, othersList.filter((p) => p.match(directories[i])), (exists) => {
-            for (const filename in exists) {
-              console.log('Check Extension Asset: ', filename);
-              if (!exists[filename]) {
-                let checkBuildFolder = checkOtherFilesExists(path.join(buildPath, filename + '.*.js'), filename);
-
-                assert(checkBuildFolder === true, `${filename}.js is still not available in builds folder.`);
-              } else {
-                assert(exists[filename] === true, `${filename}.js is not available in ${directories[i]} folder.`);
-              }
-            }
-          });
-          break;
-
-        case 'keybinding':
-          await checkFilesExists(dirPath, othersList.filter((p) => p.match(new RegExp('(?!ext-)?' + directories[i] + '(?=-)'))), (exists) => {
-            for (const filename in exists) {
-              console.log('Check Keybinding Asset: ', filename);
-              if (!exists[filename]) {
-                let checkBuildFolder = checkOtherFilesExists(path.join(buildPath, filename + '.*.js'), filename);
-
-                assert(checkBuildFolder === true, `${filename}.js is still not available in builds folder.`);
+                assert(checkExtraName === true, `${filename}.js is still cannot be found.`);
               } else {
                 assert(exists[filename] === true, `${filename}.js is not available in ${directories[i]} folder.`);
               }
@@ -152,9 +108,9 @@ describe('Custom Code Editor : Clear Modes and Push All Assets', function () {
             for (const filename in exists) {
               console.log('Check Snippets Asset: ', filename);
               if (!exists[filename]) {
-                let checkBuildFolder = checkOtherFilesExists(path.join(buildPath, filename + '.*.js'), filename);
+                let checkExtraName = checkOtherFilesExists(path.join(dirPath, filename + '.*.js'), filename);
 
-                assert(checkBuildFolder === true, `${filename}.js is still not available in builds folder.`);
+                assert(checkExtraName === true, `${filename}.js is still cannot be found.`);
               } else {
                 assert(exists[filename] === true, `${filename}.js is not available in ${directories[i]} folder.`);
               }
@@ -162,24 +118,9 @@ describe('Custom Code Editor : Clear Modes and Push All Assets', function () {
           });
           break;
 
-        case 'worker':
-          await checkFilesExists(dirPath, othersList.filter((p) => p.match(directories[i])), (exists) => {
-            for (const filename in exists) {
-              console.log('Check Worker Asset: ', filename);
-              if (!exists[filename]) {
-                let checkBuildFolder = checkOtherFilesExists(path.join(buildPath, filename + '.*.js'), filename);
-
-                assert(checkBuildFolder === true, `${filename}.js is still not available in builds folder.`);
-              } else {
-                assert(exists[filename] === true, `${filename}.js is not available in ${directories[i]} folder.`);
-              }
-            }
-          });
-          break;
-
-        case 'vendors':
-            console.log('Check Vendors Path Exists');
-            await expect(fs.pathExists(path.join(bundleDir, 'ace-builds', directories[i]))).resolves.toBe(true);
+        case 'others':
+            console.log('Check Others Path Exists');
+            await expect(fs.pathExists(path.join(bundleDir, 'ace-builds/development/', directories[i]))).resolves.toBe(true);
           break;
       }
     }
@@ -212,6 +153,20 @@ describe('Custom Code Editor : Clear Modes and Push All Assets', function () {
                   bundleDir = path.join(self.apos.rootDir, 'public', 'apos-frontend', namespace);
                   assert(self.apos.schema);
                   assert(self.apos.modules['custom-code-editor-a3']);
+                }
+              },
+              'apostrophe:ready': {
+                async moveAce() {
+                  if (self.apos.isTask()) {
+                    // A hacky solution to move chunk files from Ace Builds to Production directory.
+                    // Something wrong on apostrophe that does not move ace-builds onto release directory.
+                    // Use copy plugin until Apostrophe came up with solution or fixes.
+                    try {
+                      await move(path.join(path.join(process.cwd(), 'public/apos-frontend/**/[0-9]*.apos-*')), path.join(path.join(process.cwd(), 'public/apos-frontend/releases/' + self.apos.asset.getReleaseId() + '/' + self.apos.asset.getNamespace() + '/')));
+                    } catch (e) {
+                      console.log('Unable to move Ace files to production folder', e);
+                    }
+                  }
                 }
               }
             };

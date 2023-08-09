@@ -25,7 +25,7 @@ const loadUtils = function() {
 
   const checkOtherFilesExists = (p, filename) => {
     let regex = new RegExp(filename, 'i');
-    let files = glob.sync(path.join(publicFolderPath, 'apos-frontend', p), null);
+    let files = glob.sync(path.join(publicFolderPath, 'apos-frontend', p));
     if (files.some(e => regex.test(e))) {
       return true;
     }
