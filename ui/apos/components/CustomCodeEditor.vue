@@ -91,47 +91,47 @@
     import ChevronDeleteIcon from 'vue-material-design-icons/Delete.vue';
     import ChevronDropdownIcon from 'vue-material-design-icons/ChevronDown.vue';
     import ChevronDropupIcon from 'vue-material-design-icons/ChevronUp.vue';
-    import OptionsContainerComponent from 'custom-code-editor-a3/components/OptionsContainer.vue';
-    import CustomCodeEditorMixinVue from 'custom-code-editor-a3/mixins/CustomCodeEditorMixin.js';
+    import OptionsContainerComponent from './OptionsContainer.vue';
+    import CustomCodeEditorMixinVue from '../mixins/CustomCodeEditorMixin.js';
+    import AfterInit from 'Modules/custom-code-editor-a3/mixins/AfterInit.js';
+    import BeforeInit from 'Modules/custom-code-editor-a3/mixins/BeforeInit.js';
     // Import lodash
     import _ from 'lodash';
 
     // Import Ace NPM
-    import 'ace-builds';
+    // eslint-disable-next-line no-unused-vars
+    import * as ace from 'ace-builds';
 
     // Get Browser Options
     let browserOptions = apos.customCodeEditor.browser;
 
-    // Just use dynamic imports from webpack resolver. Let apostrophe compile acejs builds into its own folder by using webpack-merge
-    if (browserOptions.mode === 'development') {
-        import('ace-builds/webpack-resolver');
-    } else {
-        // Push All Ace files if true
-        if (_.has(browserOptions.ace, 'scripts.pushAllAce')) {
-            // Import All Modes
-            for (let allModes = 0; allModes < browserOptions.ace._allModes.length; allModes++) {
-                import(`ace-builds/src-noconflict/mode-${browserOptions.ace._allModes[allModes]}.js`);
-                import(`ace-builds/src-noconflict/snippets/${browserOptions.ace._allModes[allModes]}.js`);
-            }
-            // Import All Themes
-            for (let allThemes = 0; allThemes < browserOptions.ace._allThemes.length; allThemes++) {
-                import(`ace-builds/src-noconflict/theme-${browserOptions.ace._allThemes[allThemes]}.js`);
-            }
-        } else {
-            // Dynamic Import Modes, Themes, and Snippets that are defined by your module
-            for (let i = 0; i < browserOptions.ace.modes.length; i++) {
-                import(`ace-builds/src-noconflict/mode-${browserOptions.ace.modes[i].name}`)
-                    .catch((e) => console.warn(`Unable to use mode for: '${browserOptions.ace.modes[i].name}''. Please make sure you use the correct mode names defined by 'Ace' Module`));
-                import(`ace-builds/src-noconflict/snippets/${browserOptions.ace.modes[i].name}`).catch((e) => null);
-            }
-            // Import just One Theme
-            import(`ace-builds/src-noconflict/theme-${browserOptions.ace.theme}.js`);
-        }
+    // Dynamic Import Modes, Themes, and Snippets that are defined by your module
+    for (let i = 0; i < browserOptions.ace.modes.length; i++) {
+        let modes = browserOptions.ace.modes[i].name;
+        import(
+            /* webpackChunkName: "ace-builds/development/modes/[request]" */
+            /* webpackMode: "lazy" */
+            `ace-builds/src-noconflict/mode-${modes}`)
+            .catch((e) => console.warn(`Unable to use mode for: '${modes}''. Please make sure you use the correct mode names defined by 'Ace' Module`));
+        import(
+            /* webpackChunkName: "ace-builds/development/snippets/[request]" */
+            /* webpackMode: "lazy" */
+            `ace-builds/src-noconflict/snippets/${modes}`).catch((e) => null);
     }
+    let theme = browserOptions.ace.theme;
+    // Import just One Theme
+    import(
+        /* webpackChunkName: "ace-builds/development/themes/[request]" */
+        /* webpackMode: "lazy" */
+        `ace-builds/src-noconflict/theme-${theme}.js`);
 
     // Solve beautify problem
     for (let i = 0; i < apos.customCodeEditor.browser.ace._otherFiles.length; i++) {
-        import('ace-builds/src-noconflict/' + apos.customCodeEditor.browser.ace._otherFiles[i]).catch((e) => {
+        let otherFiles = apos.customCodeEditor.browser.ace._otherFiles[i];
+        import(
+            /* webpackChunkName: "ace-builds/development/others/[request]" */
+            /* webpackMode: "lazy" */
+            `ace-builds/src-noconflict/${otherFiles}`).catch((e) => {
             // Do nothing
         });
     }
@@ -146,7 +146,7 @@
     export default {
         name: 'CustomCodeEditor',
 
-		components: {
+        components: {
             ChevronCopyIcon,
             ChevronUndoIcon,
             ChevronDotVerticalIcon,
@@ -160,8 +160,10 @@
 
         mixins: [
             AposInputMixin,
+            BeforeInit,
+            AfterInit,
             CustomCodeEditorMixinVue
-            ],
+        ],
 
         data() {
             return {
@@ -414,7 +416,7 @@
              * @param {Event} e
              */
             optionsEvents(e) {
-							this.$refs.optionsContainer.buttonOptionsClick(e);
+				this.$refs.optionsContainer.buttonOptionsClick(e);
             },
 
             /**
@@ -492,10 +494,92 @@
                     this.ace.optionsTypes[category][getIndex] = cloneObject;
                 }
             }
-        }
+        },
+
+        template: `
+            <AposInputWrapper
+                :modifiers="modifiers" :field="field" :error="effectiveError"
+                :uid="uid" :display-options="displayOptions">
+                <template #body>
+                    <div class="apos-input-wrapper">
+                        <div class="input-wrapper">
+                            <div class="editor-container">
+                                <div v-if="checkDropdown" class="dropdown">
+                                    <button class="button-dropdown result" @click="dropdownClick = !dropdownClick">
+                                        <component :is="dropdownComponentSwitch" :fill-color="checkDropdownColor" />
+                                        <span class="dropdown-title">{{ getTitle }}</span>
+                                    </button>
+                                    <div v-show="dropdownClick" class="dropdown-content">
+                                        <input type="text" placeholder="Search.." class="my-input" @keyup.stop="filterModesList"/>
+                                        <template v-for="(mode, key) in ace.modes">
+                                            <li
+                                                v-if="mode.title" :key="key + mode.title"
+                                                :data-title="mode.title" :data-name="mode.name.toLowerCase()" @click="changeMode">
+                                                {{ mode.title }}
+                                            </li>
+                                            <li v-else :key="key + mode.name" :data-name="mode.name.toLowerCase()" @click="changeMode">
+                                                {{ getName(mode.name) }}
+                                            </li>
+                                        </template>
+                                    </div>
+                                </div>
+                                <div ref="editor" class="code-snippet-wrapper" data-editor>
+                                    <!-- Where the codes begin -->
+                                </div>
+                                <div v-if="checkOptionsCustomizer"
+                                    class="options-config">
+                                    <button class="button-options"
+                                        title="Adjust Options" :style="optionsClick ? 'background: rgba(248, 248, 248, 1);' : '' " @click="optionsClick = !optionsClick">
+                                        <ChevronGearIcon :size="16" />
+                                    </button>
+                                    <div v-show="optionsClick" class="options-container" @scroll="optionsScroll">
+                                        <div class="search-buttons">
+                                            <div class="first-row">
+                                                <input v-model="searchOptions" type="text" class="search-bar" placeholder="Search"/>
+                                                <button class="more-options-button" @click="moreOptionsClick = !moreOptionsClick">
+                                                    <ChevronDotVerticalIcon :size="16" />
+                                                </button>
+                                                <div v-show="moreOptionsClick" class="more-options">
+                                                    <button class="save-options" @click="optionsEvents">
+                                                        <ChevronSaveIcon :size="16" />Save
+                                                    </button>
+                                                    <button class="delete-options" @click="optionsEvents">
+                                                        <ChevronDeleteIcon :size="16" /> Reset
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="input-wrapper">
+                                                <button class="copy-options" @click="optionsEvents">
+                                                    <ChevronCopyIcon :size="16" />
+                                                </button>
+                                                <button class="undo-options" @click="optionsEvents">
+                                                    <ChevronUndoIcon :size="16" />
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="divider-buttons">
+                                            <img alt="" class="divider-title" src="https://static.overlay-tech.com/assets/2ea72787-5ae1-42f3-aa97-80b116cc2ab2.svg" />
+                                        </div>
+                                        <!-- This is where all options begins -->
+                                        <OptionsContainerComponent ref="optionsContainer"
+                                            :optionsTypes="ace.optionsTypes" :editor="getEditor()"
+                                            :cache="ace.cache" :search="searchOptions"
+                                            @pushCache="ace.cache.push($event)"
+                                            @updateCache="updateCacheValue"
+                                            @moreOptionsClick="moreOptionsClick = $event"
+                                            @updateOptionsTypes="updateOptionsTypesValue"
+                                            @resetCache="resetCacheValue" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </AposInputWrapper>
+        `
     };
 </script>
 
-<style lang="scss" scoped>
-    @import "custom-code-editor-a3/style/editor.scss";
+<style scoped lang="scss">
+    @import '../scss/editor.scss';
 </style>
