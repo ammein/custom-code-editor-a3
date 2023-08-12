@@ -1,6 +1,10 @@
+### 2.0.1
+- Update tests better according to current webpack solution.
+- Update README for better documentation on how to add more methods.
+
 ### 2.0.0
-- Update packages & README.md
-- Able to extend APOS UI on `afterInit` & `beforeInit` methods by overriding the file names inside 'apos-build' directories
+- Update packages & README.md (Thanks to @BoDonkey - https://github.com/BoDonkey)
+- Able to extend APOS UI on `afterInit` & `beforeInit` methods by overriding the file names inside 'modules/custom-code-editor-a3/ui/apos/mixins' directories
 - Move production files that were generated for Ace-Builds sourcemap files using handlers method on event `apostrophe:ready`. Only works if the user is running `build` || `release` script. (Temporary Solution until Apostrophe fix/update the issue).
 - Using `magic comments` on renaming chunk files on development modes.
 

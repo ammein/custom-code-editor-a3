@@ -28,10 +28,13 @@ describe('Custom Code Editor : Clear Modes and Push All Assets', function () {
     return testUtil.destroy(apos);
   });
 
+  afterEach(async function() {
+    process.env.NODE_ENV = 'development';
+  });
+
   this.timeout(5 * 60 * 1000);
 
   it('should be a property of the apos object', async function () {
-    process.env.NODE_ENV = 'development';
     apos = await testUtil.create({
       // Make it `module` to be enabled because we have pushAssets method called
       root: module,
@@ -66,11 +69,9 @@ describe('Custom Code Editor : Clear Modes and Push All Assets', function () {
   });
 
   it('should build assets folder', async function () {
-    try {
-      await apos.asset.tasks.build.task();
-    } catch (err) {
-      console.log(err);
-    }
+    process.env.NODE_ENV = 'development';
+
+    await apos.asset.tasks.build.task();
 
     // Read All the Files that shows available mode
     let aceBuildsExists = await checkFileExists(path.join(namespace, 'ace-builds'));
@@ -127,9 +128,7 @@ describe('Custom Code Editor : Clear Modes and Push All Assets', function () {
   });
 
   it('should create new apos with production build', async function () {
-    process.env.NODE_ENV = 'production';
     await testUtil.destroy(apos);
-
     apos = await testUtil.create({
       // Make it `module` to be enabled because we have pushAssets method called
       root: module,
@@ -148,25 +147,11 @@ describe('Custom Code Editor : Clear Modes and Push All Assets', function () {
           handlers(self) {
             return {
               'apostrophe:afterInit': {
-                checkCustomCodeEditor() {
+                async checkCustomCodeEditor() {
                   namespace = self.apos.asset.getNamespace();
                   bundleDir = path.join(self.apos.rootDir, 'public', 'apos-frontend', namespace);
                   assert(self.apos.schema);
                   assert(self.apos.modules['custom-code-editor-a3']);
-                }
-              },
-              'apostrophe:ready': {
-                async moveAce() {
-                  if (self.apos.isTask()) {
-                    // A hacky solution to move chunk files from Ace Builds to Production directory.
-                    // Something wrong on apostrophe that does not move ace-builds onto release directory.
-                    // Use copy plugin until Apostrophe came up with solution or fixes.
-                    try {
-                      await move(path.join(path.join(process.cwd(), 'public/apos-frontend/**/[0-9]*.apos-*')), path.join(path.join(process.cwd(), 'public/apos-frontend/releases/' + self.apos.asset.getReleaseId() + '/' + self.apos.asset.getNamespace() + '/')));
-                    } catch (e) {
-                      console.log('Unable to move Ace files to production folder', e);
-                    }
-                  }
                 }
               }
             };
@@ -177,16 +162,19 @@ describe('Custom Code Editor : Clear Modes and Push All Assets', function () {
   });
 
   it('should generates all assets from custom-code-editor module from production modes', async function () {
+    await deleteBuiltFolders(publicFolderPath, true);
     process.env.APOS_RELEASE_ID = new Date().toLocaleDateString().replace(/\//g, '-');
+    process.env.NODE_ENV = 'production';
+    await apos.asset.tasks.build.task();
 
+    // Temporary solution for production releases
     try {
-      await apos.asset.tasks.build.task({
-        'check-apos-build': true
-      });
-    } catch (error) {
-      // Do nothing
-      console.log('Error on generate all production modes assets', error);
+      await move(path.join(path.join(apos.rootDir, 'public/apos-frontend/**/[0-9]*.apos-*')), path.join(path.join(apos.rootDir, 'public/apos-frontend/releases/' + apos.asset.getReleaseId() + '/' + apos.asset.getNamespace() + '/')));
+    } catch (e) {
+      console.log('Unable to move Ace files to production folder', e);
     }
+
+    // Checks
     let releaseId = await releasePath();
     let checkProdBuild = await fs.pathExists(path.resolve(bundleDir, '..', releaseId));
     if (!checkProdBuild) {
@@ -199,6 +187,10 @@ describe('Custom Code Editor : Clear Modes and Push All Assets', function () {
       checkProdDir.forEach((val, i) => {
         console.log('Lists of directory in prod assets folder', i + '- ' + val);
       });
+    } else {
+      // Temporary Tests
+      let checkProdFiles = checkOtherFilesExists(path.join('/releases/', apos.asset.getReleaseId(), apos.asset.getNamespace(), '[0-9]*.apos-*'), '[\\/][0-9]*.apos-.*.[js,map]$');
+      assert(checkProdFiles === true, `Production files not found in '${path.join('/releases/', apos.asset.getReleaseId(), apos.asset.getNamespace())}'`);
     }
     expect(checkProdBuild).toBe(true);
   });

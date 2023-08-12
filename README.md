@@ -576,7 +576,7 @@ By default we only push asset that are defined modes. It detect by your modes na
 
 Let say you want to add MORE commands that are already refered to [Ace Editor HOW TO](https://ace.c9.io/#nav=howto) or maybe add new events by yourself. First, let's create new js file to any name you like and push like this:
 
-Inside `AfterInit.js` :
+Inside **`modules/custom-code-editor-a3/ui/apos/mixins/AfterInit.js`** :
 ```js
 // In modules/custom-code-editor-a3/ui/apos/mixins/AfterInit.js
 export default {
@@ -604,8 +604,9 @@ export default {
 };
 ```
 
-Inside `BeforeInit.js`:
+Inside **`modules/custom-code-editor-a3/ui/apos/mixins/BeforeInit.js`**:
 ```js
+// In modules/custom-code-editor-a3/ui/apos/mixins/BeforeInit.js
 export default {
   methods: {
     beforeInit(element) {
@@ -681,9 +682,13 @@ Simple , you can access it via `this.ace` in `AfterInit.js` that you had overrid
 [Custom Code Editor Methods](https://ammein.github.io/custom-code-editor-a3/)
 
 # Changelog
+### 2.0.1
+- Update tests better according to current webpack solution.
+- Update README for better documentation on how to add more methods.
+
 ### 2.0.0
-- Update packages & README.md
-- Able to extend APOS UI on `afterInit` & `beforeInit` methods by overriding the file names inside 'apos-build' directories
+- Update packages & README.md (Thanks to @BoDonkey - https://github.com/BoDonkey)
+- Able to extend APOS UI on `afterInit` & `beforeInit` methods by overriding the file names inside 'modules/custom-code-editor-a3/ui/apos/mixins' directories
 - Move production files that were generated for Ace-Builds sourcemap files using handlers method on event `apostrophe:ready`. Only works if the user is running `build` || `release` script. (Temporary Solution until Apostrophe fix/update the issue).
 - Using `magic comments` on renaming chunk files on development modes.
 
