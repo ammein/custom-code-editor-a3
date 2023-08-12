@@ -76,7 +76,7 @@ module.exports = {
             // Something wrong on apostrophe that does not move ace-builds onto release directory.
             // Use copy plugin until Apostrophe came up with solution or fixes.
             try {
-              await move(path.join(path.join(self.apos.rootDir, 'public/apos-frontend/**/[0-9]*.apos-*')), path.join(path.join(self.apos.rootDir, 'public/apos-frontend/releases/' + self.apos.asset.getReleaseId() + '/' + self.apos.asset.getNamespace() + '/')));
+              await move(path.join(path.join(process.cwd(), 'public/apos-frontend/**/[0-9]*.apos-*')), path.join(path.join(process.cwd(), 'public/apos-frontend/releases/' + self.apos.asset.getReleaseId() + '/' + self.apos.asset.getNamespace() + '/')));
             } catch (e) {
               console.log('Unable to move Ace files to production folder', e);
             }

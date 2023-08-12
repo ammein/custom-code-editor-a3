@@ -684,7 +684,7 @@ Simple , you can access it via `this.ace` in `AfterInit.js` that you had overrid
 # Changelog
 ### 2.0.1
 - Update tests better according to current webpack solution.
-- Update move ace production directories using `self.apos.rootDir`.
+- Update README for better documentation on how to add more methods.
 
 ### 2.0.0
 - Update packages & README.md (Thanks to @BoDonkey - https://github.com/BoDonkey)
