@@ -38,6 +38,7 @@ describe('Custom Code Editor : Clear Modes and Push All Assets', function () {
     apos = await testUtil.create({
       // Make it `module` to be enabled because we have pushAssets method called
       root: module,
+      testModule: true,
       baseUrl: 'http://localhost:7990',
       modules: {
         'apostrophe-express': {
