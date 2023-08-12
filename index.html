@@ -547,7 +547,7 @@ apos.customCodeEditor.browser.editor.secondCode
 </blockquote>
 <h2>Add More Methods/Commands/Event Listener To Your Ace Editor</h2>
 <p>Let say you want to add MORE commands that are already refered to <a href="https://ace.c9.io/#nav=howto">Ace Editor HOW TO</a> or maybe add new events by yourself. First, let's create new js file to any name you like and push like this:</p>
-<p>Inside <code>AfterInit.js</code> :</p>
+<p>Inside <strong><code>modules/custom-code-editor-a3/ui/apos/mixins/AfterInit.js</code></strong> :</p>
 <pre class="prettyprint source lang-js"><code>// In modules/custom-code-editor-a3/ui/apos/mixins/AfterInit.js
 export default {
   methods: {
@@ -573,8 +573,9 @@ export default {
   }
 };
 </code></pre>
-<p>Inside <code>BeforeInit.js</code>:</p>
-<pre class="prettyprint source lang-js"><code>export default {
+<p>Inside <strong><code>modules/custom-code-editor-a3/ui/apos/mixins/BeforeInit.js</code></strong>:</p>
+<pre class="prettyprint source lang-js"><code>// In modules/custom-code-editor-a3/ui/apos/mixins/BeforeInit.js
+export default {
   methods: {
     beforeInit(element) {
       // Your custom code here that runs before acejs initialized
@@ -652,10 +653,15 @@ module.exports = {
 <p>Simple , you can access it via <code>this.ace</code> in <code>AfterInit.js</code> that you had override the file in your project level module ui component. You may refer methods available down here:</p>
 <p><a href="https://ammein.github.io/custom-code-editor-a3/">Custom Code Editor Methods</a></p>
 <h1>Changelog</h1>
+<h3>2.0.1</h3>
+<ul>
+<li>Update tests better according to current webpack solution.</li>
+<li>Update move ace production directories using <code>self.apos.rootDir</code>.</li>
+</ul>
 <h3>2.0.0</h3>
 <ul>
-<li>Update packages &amp; README.md</li>
-<li>Able to extend APOS UI on <code>afterInit</code> &amp; <code>beforeInit</code> methods by overriding the file names inside 'apos-build' directories</li>
+<li>Update packages &amp; README.md (Thanks to @BoDonkey - https://github.com/BoDonkey)</li>
+<li>Able to extend APOS UI on <code>afterInit</code> &amp; <code>beforeInit</code> methods by overriding the file names inside 'modules/custom-code-editor-a3/ui/apos/mixins' directories</li>
 <li>Move production files that were generated for Ace-Builds sourcemap files using handlers method on event <code>apostrophe:ready</code>. Only works if the user is running <code>build</code> || <code>release</code> script. (Temporary Solution until Apostrophe fix/update the issue).</li>
 <li>Using <code>magic comments</code> on renaming chunk files on development modes.</li>
 </ul>
