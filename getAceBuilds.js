@@ -12,9 +12,9 @@ module.exports = (aceDirectory) => {
   if (!files) {
     throw new Error('Did you install `ace-builds` npm package yet?');
   } else if (files) {
-    let modes = new RegExp('(mode)-((?!snippets)[\\w]+)(.js)');
-    let others = new RegExp(`(?!.*${path.posix.sep})(?!.*${path.posix.sep})(.*)`, 'i');
-    let themes = new RegExp('(theme)-([\\w]+)(.js)');
+    const modes = /(mode)-((?!snippets)\w+)(.js)/;
+    const others = new RegExp(`(?!.*${path.posix.sep})(?!.*${path.posix.sep})(.*)`, 'i');
+    const themes = /(theme)-(\w+)(.js)/;
 
     // Get All Modes
     allModes

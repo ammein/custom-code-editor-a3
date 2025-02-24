@@ -17,7 +17,7 @@ module.exports = {
         const clean = _.has(options, 'clean') ? options.clean : true;
         const cleanRelease = _.has(options, 'cleanRelease') ? options.cleanRelease : true;
         const namespace = _.has(options, 'namespace') ? options.namespace : process.env.APOS_DEBUG_NAMESPACE || 'default';
-        let optionsResult = _.omitBy({
+        const optionsResult = _.omitBy({
           clean: clean,
           cleanRelease: cleanRelease,
           namespace: namespace

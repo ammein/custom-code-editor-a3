@@ -1,5 +1,6 @@
-import _ from 'lodash';
-import ClipboardJS from 'clipboard';
+const _ = require('lodash');
+const ClipboardJS  = require('clipboard');
+const { config } = require('ace-builds')
 
 /**
  * @model CustomCodeEditorMixin
@@ -16,6 +17,9 @@ export default {
      */
     init(element) {
       const self = this;
+
+      config.set('workerPath', 'apos-frontend/default/ace-builds/development/others');
+      config.set('suffix', '.apos-build.js')
 
       // Set Default Submit Value
       this.setDefaultSubmitValue();
@@ -183,7 +187,7 @@ export default {
           this.$el.querySelector('.dropdown-title').innerText = this.next.type.length > 0 ? this.next.type : self.ace.defaultMode;
 
           if (self.ace.modes[i].snippet && !self.ace.modes[i].disableSnippet) {
-            let beautify = ace.require('ace/ext/beautify');
+            const beautify = ace.require('ace/ext/beautify');
             editor.session.setValue(self.ace.modes[i].snippet);
             beautify.beautify(editor.session);
             // Find the template for replace the code area
@@ -253,10 +257,10 @@ export default {
       }, _.isNil));
 
       // Loop & assign dropdown style
-      for (let prop of Object.keys(styles)) {
+      for (const prop of Object.keys(styles)) {
         if (Object.prototype.hasOwnProperty.call(styles, prop)) {
           if (typeof styles[prop.toString()] === 'object' && Object.keys(styles[prop.toString()]).length > 0) {
-            for (let innerProp of Object.keys(styles[prop.toString()])) {
+            for (const innerProp of Object.keys(styles[prop.toString()])) {
               this.$el.querySelector('.dropdown').style[innerProp.toString()] = styles[prop.toString()][innerProp.toString()];
             }
           }
@@ -266,7 +270,7 @@ export default {
       }
 
       // Loop & assign dropdown-title style
-      for (let prop of Object.keys(titleStyles)) {
+      for (const prop of Object.keys(titleStyles)) {
         if (Object.prototype.hasOwnProperty.call(titleStyles, prop)) {
           this.$el.querySelector('.dropdown-title').style[prop.toString()] = titleStyles[prop.toString()];
         }
@@ -288,7 +292,7 @@ export default {
             config: !_.has(this.field, 'ace.config') ? null : _.assign({}, this.ace.config, this.field.ace.config)
           };
 
-          let cloneAce = _.cloneDeep(this.ace);
+          const cloneAce = _.cloneDeep(this.ace);
 
           // Non-Immutable Copies
           this.ace = _.mergeWith(
@@ -304,7 +308,7 @@ export default {
         const cloneOptions = _.cloneDeep(apos.customCodeEditor.browser.ace);
 
         // Remove unnecessary arrays/objects that will affect web performance
-        for (let optionsName of Object.keys(cloneOptions)) {
+        for (const optionsName of Object.keys(cloneOptions)) {
           if (!Object.prototype.hasOwnProperty.call(mergeOptions, optionsName)) {
             delete cloneOptions[optionsName];
           }
@@ -341,7 +345,7 @@ export default {
       }, _.isNil));
 
       // Loop & assign editor style
-      for (let prop of Object.keys(editorStyles)) {
+      for (const prop of Object.keys(editorStyles)) {
         if (Object.prototype.hasOwnProperty.call(editorStyles, prop)) {
           this.$el.querySelector('[data-editor]').style[prop.toString()] = editorStyles[prop.toString()];
         }
@@ -398,7 +402,7 @@ export default {
               return;
             }
 
-            let beautify = ace.require('ace/ext/beautify');
+            const beautify = ace.require('ace/ext/beautify');
             editor.session.setValue(this.ace.modes[i].snippet);
             beautify.beautify(editor.session);
             // If changing mode got existing codes , replace the value

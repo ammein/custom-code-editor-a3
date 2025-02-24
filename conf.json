@@ -9,7 +9,7 @@
     },
     "plugins": [
         "plugins/markdown",
-        "node_modules/jsdoc-vue",
+        "node_modules/jsdoc-vuejs",
         "node_modules/vue-x-docs"
     ],
     "opts": {

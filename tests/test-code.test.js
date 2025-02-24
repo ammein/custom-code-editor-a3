@@ -1,19 +1,17 @@
-let assert = require('assert');
-const testUtil = require('apostrophe/test-lib/test');
-const {
-  expect
-} = require('expect');
+const assert = require('assert');
+const { expect } = require('expect');
+const { destroy, create } = require('apostrophe/test-lib/test')
 
 describe('Custom Code Editor : Basic Schema Test', function () {
   let apos;
   this.timeout(5 * 60 * 5000);
 
   after(async function () {
-    return testUtil.destroy(apos);
+    return destroy(apos);
   });
 
   it('should be a property of the apos object', async function () {
-    apos = await testUtil.create({
+    apos = await create({
       // Make it `module` to be enabled because we have pushAssets method called
       root: module,
       testModule: true,
@@ -45,29 +43,29 @@ describe('Custom Code Editor : Basic Schema Test', function () {
   });
 
   it('should submit the schema with empty object and must not return an error', async function () {
-    let req = apos.task.getReq();
-    let schema = apos.schema.compose({
+    const req = apos.task.getReq();
+    const schema = apos.schema.compose({
       addFields: [{
         type: 'custom-code-editor-a3',
         name: 'mycode',
         label: 'Paste your code here'
       }]
     });
-    let output = {};
+    const output = {};
     await apos.schema.convert(req, schema, {}, output);
     expect(output.mycode).toBe(null);
   });
 
   it('should always return string value even the submitted value is undefined', async function () {
-    let req = apos.task.getReq();
-    let schema = apos.schema.compose({
+    const req = apos.task.getReq();
+    const schema = apos.schema.compose({
       addFields: [{
         type: 'custom-code-editor-a3',
         name: 'mycode',
         label: 'Paste your code here'
       }]
     });
-    let output = {};
+    const output = {};
     await apos.schema.convert(req, schema, {
       mycode: {
         code: apos.launder.string(undefined),
@@ -84,8 +82,8 @@ describe('Custom Code Editor : Basic Schema Test', function () {
   });
 
   it('should trigger an error if the field is required with empty value', async function () {
-    let req = apos.task.getReq();
-    let schema = apos.schema.compose({
+    const req = apos.task.getReq();
+    const schema = apos.schema.compose({
       addFields: [{
         type: 'custom-code-editor-a3',
         name: 'mycode',
@@ -94,13 +92,13 @@ describe('Custom Code Editor : Basic Schema Test', function () {
       }]
     });
 
-    let output = {};
+    const output = {};
     await expect(apos.schema.convert(req, schema, {}, output)).rejects.not.toThrow();
   });
 
   it('should not trigger any error if value present on required field', async function () {
-    let req = apos.task.getReq();
-    let schema = apos.schema.compose({
+    const req = apos.task.getReq();
+    const schema = apos.schema.compose({
       addFields: [{
         type: 'custom-code-editor-a3',
         name: 'mycode',
@@ -109,7 +107,7 @@ describe('Custom Code Editor : Basic Schema Test', function () {
       }]
     });
 
-    let output = {};
+    const output = {};
 
     await apos.schema.convert(req, schema, {
       mycode: {
@@ -127,8 +125,8 @@ describe('Custom Code Editor : Basic Schema Test', function () {
   });
 
   it('should not panicked even the value is absent for code', async function () {
-    let req = apos.task.getReq();
-    let schema = apos.schema.compose({
+    const req = apos.task.getReq();
+    const schema = apos.schema.compose({
       addFields: [{
         type: 'custom-code-editor-a3',
         name: 'mycode',
@@ -137,7 +135,7 @@ describe('Custom Code Editor : Basic Schema Test', function () {
       }]
     });
 
-    let output = {};
+    const output = {};
 
     await apos.schema.convert(req, schema, {
       mycode: {

@@ -16,7 +16,7 @@
         ".vscode",
         "./tests/node_modules",
         "./apostrophe/test-lib/test.js",
-        ".stylelintrc",
+        "stylelint.config.js",
         "./*.js"
     ],
     "include": [

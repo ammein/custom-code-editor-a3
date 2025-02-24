@@ -1,24 +1,22 @@
 const assert = require('assert');
-const testUtil = require('apostrophe/test-lib/test');
-const {
-  expect
-} = require('expect');
-const _ = require('lodash');
+const { expect } = require('expect');
+const { destroy, create } = require('apostrophe/test-lib/test')
+const { values, merge, keyBy, groupBy, assign, cloneDeep } = require('lodash');
 
 describe('Custom Code Editor : Override Options Test', function () {
-  let originalOptionsTypes = require('../aceTypes');
+  const originalOptionsTypes = require('../aceTypes');
   let apos;
 
-  let snippetCSS = '/* This is CSS3 */ \n { box-sizing : border-box; \n font : inherit; } \n \n @code-here';
-  let snippetBatch = '# Welcome to Command Prompt \n # Enter Any Command Here \n @code-here';
+  const snippetCSS = '/* This is CSS3 */ \n { box-sizing : border-box; \n font : inherit; } \n \n @code-here';
+  const snippetBatch = '# Welcome to Command Prompt \n # Enter Any Command Here \n @code-here';
 
-  let originalModes = [{
-      title: 'Bash',
-      name: 'sh',
-      snippet: `#!/bin/bash
+  const originalModes = [{
+    title: 'Bash',
+    name: 'sh',
+    snippet: `#!/bin/bash
                      # GNU bash, version 4.3.46
                      @code-here`
-    },
+  },
     {
       title: 'ActionScript',
       name: 'actionscript'
@@ -97,11 +95,11 @@ describe('Custom Code Editor : Override Options Test', function () {
   this.timeout(5 * 60 * 5000);
 
   after(async function () {
-    return testUtil.destroy(apos);
+    return destroy(apos);
   });
 
   it('should be a property of the apos object', async function () {
-    apos = await testUtil.create({
+    apos = await create({
       // Make it `module` to be enabled because we have pushAssets method called
       root: module,
       testModule: true,
@@ -124,10 +122,10 @@ describe('Custom Code Editor : Override Options Test', function () {
                 'enableBasicAutocompletion': true
               },
               modes: [{
-                  title: 'CSS',
-                  name: 'css',
-                  snippet: snippetCSS
-                },
+                title: 'CSS',
+                name: 'css',
+                snippet: snippetCSS
+              },
                 {
                   title: 'html',
                   name: 'html'
@@ -181,11 +179,11 @@ describe('Custom Code Editor : Override Options Test', function () {
       options: {
         'enableBasicAutocompletion': true
       },
-      modes: _.values(_.merge(_.keyBy(originalModes, 'name'), _.keyBy([{
-          title: 'CSS',
-          name: 'css',
-          snippet: snippetCSS
-        },
+      modes: values(merge(keyBy(originalModes, 'name'), keyBy([{
+        title: 'CSS',
+        name: 'css',
+        snippet: snippetCSS
+      },
         {
           title: 'html',
           name: 'html'
@@ -196,7 +194,7 @@ describe('Custom Code Editor : Override Options Test', function () {
           snippet: snippetBatch
         }
       ], 'name'))),
-      optionsTypes: _.groupBy(originalOptionsTypes, 'category'),
+      optionsTypes: groupBy(originalOptionsTypes, 'category'),
       config: {
         dropdown: {
           enable: true,
@@ -215,7 +213,7 @@ describe('Custom Code Editor : Override Options Test', function () {
   });
 
   it('should not match with hardcoded modes', function () {
-    expect(apos.customCodeEditor.ace.modes).not.toMatchObject(_.assign(_.cloneDeep(originalModes), {
+    expect(apos.customCodeEditor.ace.modes).not.toMatchObject(assign(cloneDeep(originalModes), {
       test: {
         errorObj: 'error'
       }

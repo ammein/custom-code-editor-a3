@@ -24,8 +24,8 @@ const loadUtils = function() {
   const checkFileExists = async (p) => fs.pathExists(getPublicPath(p));
 
   const checkOtherFilesExists = (p, filename) => {
-    let regex = new RegExp(filename, 'i');
-    let files = glob.sync(path.join(publicFolderPath, 'apos-frontend', p));
+    const regex = new RegExp(filename, 'i');
+    const files = glob.sync(path.join(publicFolderPath, 'apos-frontend', p));
     if (files.some(e => regex.test(e))) {
       return true;
     }
@@ -33,10 +33,10 @@ const loadUtils = function() {
   };
 
   const checkFilesExists = async (p, arr, callback) => {
-    let fileExists = {};
+    const fileExists = {};
 
     for (let i = 0; i < arr.length; i++) {
-      let getDir = new RegExp(`([^${path.posix.sep}]*)${path.posix.sep}*$`, 'i');
+      const getDir = new RegExp(`([^${path.posix.sep}]*)${path.posix.sep}*$`, 'i');
 
       if (p.match(getDir) === undefined) {
         return callback(arr[i], false);

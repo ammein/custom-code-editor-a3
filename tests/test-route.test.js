@@ -8,7 +8,7 @@ const _ = require('lodash');
 describe('Custom Code Editor : Routes GET/POST/DELETE Options', function () {
 
   let dummyUser, apos, jar, token;
-  let body = {
+  const body = {
     'customCodeEditor': {
       'enableEmmet': true
     }
@@ -62,7 +62,7 @@ describe('Custom Code Editor : Routes GET/POST/DELETE Options', function () {
 
   it('should be able to insert a new user as admin', async function () {
     assert(apos.user.newInstance);
-    let user = apos.user.newInstance();
+    const user = apos.user.newInstance();
     assert(user);
 
     user.firstName = 'Abu';
@@ -83,7 +83,7 @@ describe('Custom Code Editor : Routes GET/POST/DELETE Options', function () {
   it('should log in as admin user', async function() {
     jar = apos.http.jar();
 
-    let response = await apos.http.post('/api/v1/@apostrophecms/login/login', {
+    const response = await apos.http.post('/api/v1/@apostrophecms/login/login', {
       body: {
         username: dummyUser.username,
         password: '123password'
@@ -110,9 +110,9 @@ describe('Custom Code Editor : Routes GET/POST/DELETE Options', function () {
 
   it('should save user options successfully', async function () {
 
-    let req = apos.task.getReq();
-    let existingUser = _.cloneDeep(req.user);
-    let myUser = _.cloneDeep(dummyUser);
+    const req = apos.task.getReq();
+    const existingUser = _.cloneDeep(req.user);
+    const myUser = _.cloneDeep(dummyUser);
     req.user = _.assign(existingUser, myUser);
     req.body = _.cloneDeep(body);
 
@@ -151,9 +151,9 @@ describe('Custom Code Editor : Routes GET/POST/DELETE Options', function () {
   });
 
   it('should get previous saves options', async function () {
-    let req = apos.task.getReq();
-    let existingUser = _.cloneDeep(req.user);
-    let myUser = _.cloneDeep(dummyUser);
+    const req = apos.task.getReq();
+    const existingUser = _.cloneDeep(req.user);
+    const myUser = _.cloneDeep(dummyUser);
     req.user = _.assign(existingUser, myUser);
 
     // Get Options
@@ -185,9 +185,9 @@ describe('Custom Code Editor : Routes GET/POST/DELETE Options', function () {
   });
 
   it('should reset options successfully using DELETE route', async function () {
-    let req = apos.task.getReq();
-    let existingUser = _.cloneDeep(req.user);
-    let myUser = _.cloneDeep(dummyUser);
+    const req = apos.task.getReq();
+    const existingUser = _.cloneDeep(req.user);
+    const myUser = _.cloneDeep(dummyUser);
     req.user = _.assign(existingUser, myUser);
 
     // Delete Options
@@ -219,9 +219,9 @@ describe('Custom Code Editor : Routes GET/POST/DELETE Options', function () {
   });
 
   it('should get empty saves options after removed all the options', async function () {
-    let req = apos.task.getReq();
-    let existingUser = _.cloneDeep(req.user);
-    let myUser = _.cloneDeep(dummyUser);
+    const req = apos.task.getReq();
+    const existingUser = _.cloneDeep(req.user);
+    const myUser = _.cloneDeep(dummyUser);
     req.user = _.assign(existingUser, myUser);
 
     try {
@@ -243,9 +243,9 @@ describe('Custom Code Editor : Routes GET/POST/DELETE Options', function () {
   });
 
   it('should save user options successfully - second time', async function () {
-    let req = apos.task.getReq();
-    let existingUser = _.cloneDeep(req.user);
-    let myUser = _.cloneDeep(dummyUser);
+    const req = apos.task.getReq();
+    const existingUser = _.cloneDeep(req.user);
+    const myUser = _.cloneDeep(dummyUser);
     req.user = _.assign(existingUser, myUser);
     req.body = _.cloneDeep(body);
 
@@ -284,10 +284,10 @@ describe('Custom Code Editor : Routes GET/POST/DELETE Options', function () {
   });
 
   it('should not submit wrong key value to save and must maintain the saves value', async function () {
-    let req = apos.task.getReq();
-    let existingUser = _.cloneDeep(req.user);
-    let myUser = _.cloneDeep(dummyUser);
-    let cloneBody = _.cloneDeep(body);
+    const req = apos.task.getReq();
+    const existingUser = _.cloneDeep(req.user);
+    const myUser = _.cloneDeep(dummyUser);
+    const cloneBody = _.cloneDeep(body);
     req.user = _.assign(existingUser, myUser);
     req.body = {
       'NotCustomCodeEditor': cloneBody.customCodeEditor
@@ -320,8 +320,8 @@ describe('Custom Code Editor : Routes GET/POST/DELETE Options', function () {
       }).toObject();
 
       expect(checkUser.customCodeEditor).toMatchObject(body.customCodeEditor);
-      expect(checkUser['NotCustomCodeEditor']).not.toBeTruthy();
-      expect(checkUser['NotCustomCodeEditor']).toBeFalsy();
+      expect(checkUser.NotCustomCodeEditor).not.toBeTruthy();
+      expect(checkUser.NotCustomCodeEditor).toBeFalsy();
       expect(checkUser.username).toBe('abuBakar');
     } catch (e) {
       assert(!e);
@@ -329,9 +329,9 @@ describe('Custom Code Editor : Routes GET/POST/DELETE Options', function () {
   });
 
   it('should reset options successfully using DELETE route - second time', async function () {
-    let req = apos.task.getReq();
-    let existingUser = _.cloneDeep(req.user);
-    let myUser = _.cloneDeep(dummyUser);
+    const req = apos.task.getReq();
+    const existingUser = _.cloneDeep(req.user);
+    const myUser = _.cloneDeep(dummyUser);
     req.user = _.assign(existingUser, myUser);
 
    // Delete Options
@@ -364,7 +364,7 @@ describe('Custom Code Editor : Routes GET/POST/DELETE Options', function () {
 
   it('should be able to insert a new user as guest', async function () {
     assert(apos.user.newInstance);
-    let user = apos.user.newInstance();
+    const user = apos.user.newInstance();
     assert(user);
 
     user.firstName = 'Lala';
@@ -405,7 +405,7 @@ describe('Custom Code Editor : Routes GET/POST/DELETE Options', function () {
   it('should log in as guest user', async function() {
     jar = apos.http.jar();
 
-    let response = await apos.http.post('/api/v1/@apostrophecms/login/login', {
+    const response = await apos.http.post('/api/v1/@apostrophecms/login/login', {
       body: {
         username: dummyUser.username,
         password: 'lalapassword123'
@@ -436,8 +436,8 @@ describe('Custom Code Editor : Routes GET/POST/DELETE Options', function () {
   it('should not save user options as guest user', async function () {
 
     let req = apos.task.getReq();
-    let existingUser = _.cloneDeep(req.user);
-    let myUser = _.cloneDeep(dummyUser);
+    const existingUser = _.cloneDeep(req.user);
+    const myUser = _.cloneDeep(dummyUser);
     req.user = _.assign(existingUser, myUser);
     req.body = _.cloneDeep(body);
 
@@ -479,8 +479,8 @@ describe('Custom Code Editor : Routes GET/POST/DELETE Options', function () {
   it('should not able to reset user options as guest user', async function () {
 
     let req = apos.task.getReq();
-    let existingUser = _.cloneDeep(req.user);
-    let myUser = _.cloneDeep(dummyUser);
+    const existingUser = _.cloneDeep(req.user);
+    const myUser = _.cloneDeep(dummyUser);
     req.user = _.assign(existingUser, myUser);
     req.body = _.cloneDeep(body);
 

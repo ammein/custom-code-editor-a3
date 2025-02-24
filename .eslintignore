@@ -1,9 +1,0 @@
-# Index JS and docs
-docs/**
-
-# Tests build folder
-tests/apos-build/**
-tests/data/**
-tests/node_modules/**
-tests/public/**
-tests/package.json

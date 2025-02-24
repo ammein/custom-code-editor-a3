@@ -1,11 +1,9 @@
 /* eslint-disable no-unused-vars */
 const assert = require('assert');
-const fs = require('fs-extra');
-const {
-  expect
-} = require('expect');
-const path = require('path');
-const testUtil = require('apostrophe/test-lib/test');
+const { readdir, pathExists, readdirSync } = require('fs-extra');
+const { expect } = require('expect');
+const { join, posix, resolve } = require('path');
+const { destroy, create } = require('apostrophe/test-lib/test')
 const loadUtils = require('./utils.js');
 const move = require('glob-move');
 
@@ -25,17 +23,17 @@ describe('Custom Code Editor : Clear Modes and Push All Assets', function () {
   after(async function () {
     await deleteBuiltFolders(publicFolderPath, true);
     await removeCache();
-    return testUtil.destroy(apos);
+    return destroy(apos);
   });
 
-  afterEach(async function() {
+  afterEach(async function () {
     process.env.NODE_ENV = 'development';
   });
 
   this.timeout(5 * 60 * 1000);
 
   it('should be a property of the apos object', async function () {
-    apos = await testUtil.create({
+    apos = await create({
       // Make it `module` to be enabled because we have pushAssets method called
       root: module,
       testModule: true,
@@ -56,7 +54,7 @@ describe('Custom Code Editor : Clear Modes and Push All Assets', function () {
               'apostrophe:afterInit': {
                 checkCustomCodeEditor() {
                   namespace = self.apos.asset.getNamespace();
-                  bundleDir = path.join(self.apos.rootDir, 'public', 'apos-frontend', namespace);
+                  bundleDir = join(self.apos.rootDir, 'public', 'apos-frontend', namespace);
                   assert(self.apos.schema);
                   assert(self.apos.modules['custom-code-editor-a3']);
                 }
@@ -74,19 +72,19 @@ describe('Custom Code Editor : Clear Modes and Push All Assets', function () {
     await apos.asset.tasks.build.task();
 
     // Read All the Files that shows available mode
-    let aceBuildsExists = await checkFileExists(path.join(namespace, 'ace-builds'));
+    const aceBuildsExists = await checkFileExists(join(namespace, 'ace-builds'));
     expect(aceBuildsExists).toBe(true);
   });
 
   it('should generates all assets from custom-code-editor module from development modes', async function () {
-    let modesList = apos.customCodeEditor.ace._allModes;
-    let themesList = apos.customCodeEditor.ace._allThemes;
-    let othersList = apos.customCodeEditor.ace._otherFiles;
+    const modesList = apos.customCodeEditor.ace._allModes;
+    const themesList = apos.customCodeEditor.ace._allThemes;
+    const othersList = apos.customCodeEditor.ace._otherFiles;
 
-    let directories = await fs.readdir(path.join(bundleDir, 'ace-builds/development'));
+    const directories = await readdir(join(bundleDir, 'ace-builds/development'));
 
     for (let i = 0; i < directories.length; i++) {
-      let dirPath = path.join(namespace, 'ace-builds/development', directories[i], path.posix.sep);
+      const dirPath = join(namespace, 'ace-builds/development', directories[i], posix.sep);
       // directories = builds,modes,theme,others
       switch (directories[i]) {
         case 'modes':
@@ -94,7 +92,7 @@ describe('Custom Code Editor : Clear Modes and Push All Assets', function () {
             for (const filename in exists) {
               console.log('Check Mode Asset: ', filename);
               if (!exists[filename]) {
-                let checkExtraName = checkOtherFilesExists(path.join(dirPath, 'mode-' + filename + '.*.js'), filename);
+                const checkExtraName = checkOtherFilesExists(join(dirPath, 'mode-' + filename + '.*.js'), filename);
 
                 assert(checkExtraName === true, `${filename}.js is still cannot be found.`);
               } else {
@@ -109,7 +107,7 @@ describe('Custom Code Editor : Clear Modes and Push All Assets', function () {
             for (const filename in exists) {
               console.log('Check Snippets Asset: ', filename);
               if (!exists[filename]) {
-                let checkExtraName = checkOtherFilesExists(path.join(dirPath, filename + '.*.js'), filename);
+                const checkExtraName = checkOtherFilesExists(join(dirPath, filename + '.*.js'), filename);
 
                 assert(checkExtraName === true, `${filename}.js is still cannot be found.`);
               } else {
@@ -120,16 +118,16 @@ describe('Custom Code Editor : Clear Modes and Push All Assets', function () {
           break;
 
         case 'others':
-            console.log('Check Others Path Exists');
-            await expect(fs.pathExists(path.join(bundleDir, 'ace-builds/development/', directories[i]))).resolves.toBe(true);
+          console.log('Check Others Path Exists');
+          await expect(pathExists(join(bundleDir, 'ace-builds/development/', directories[i]))).resolves.toBe(true);
           break;
       }
     }
   });
 
   it('should create new apos with production build', async function () {
-    await testUtil.destroy(apos);
-    apos = await testUtil.create({
+    await destroy(apos);
+    apos = await create({
       // Make it `module` to be enabled because we have pushAssets method called
       root: module,
       baseUrl: 'http://localhost:7991',
@@ -149,7 +147,7 @@ describe('Custom Code Editor : Clear Modes and Push All Assets', function () {
               'apostrophe:afterInit': {
                 async checkCustomCodeEditor() {
                   namespace = self.apos.asset.getNamespace();
-                  bundleDir = path.join(self.apos.rootDir, 'public', 'apos-frontend', namespace);
+                  bundleDir = join(self.apos.rootDir, 'public', 'apos-frontend', namespace);
                   assert(self.apos.schema);
                   assert(self.apos.modules['custom-code-editor-a3']);
                 }
@@ -169,17 +167,17 @@ describe('Custom Code Editor : Clear Modes and Push All Assets', function () {
 
     // Temporary solution for production releases
     try {
-      await move(path.join(path.join(apos.rootDir, 'public/apos-frontend/**/[0-9]*.apos-*')), path.join(path.join(apos.rootDir, 'public/apos-frontend/releases/' + apos.asset.getReleaseId() + '/' + apos.asset.getNamespace() + '/')));
+      await move(join(join(apos.rootDir, 'public/apos-frontend/**/[0-9]*.apos-*')), join(join(apos.rootDir, 'public/apos-frontend/releases/' + apos.asset.getReleaseId() + '/' + apos.asset.getNamespace() + '/')));
     } catch (e) {
       console.log('Unable to move Ace files to production folder', e);
     }
 
     // Checks
-    let releaseId = await releasePath();
-    let checkProdBuild = await fs.pathExists(path.resolve(bundleDir, '..', releaseId));
+    const releaseId = await releasePath();
+    const checkProdBuild = await pathExists(resolve(bundleDir, '..', releaseId));
     if (!checkProdBuild) {
-      let checkReleaseDir = fs.readdirSync(path.resolve(bundleDir, '..', releaseId));
-      let checkProdDir = fs.readdirSync(path.resolve(bundleDir, '..', releaseId, '..'));
+      const checkReleaseDir = readdirSync(resolve(bundleDir, '..', releaseId));
+      const checkProdDir = readdirSync(resolve(bundleDir, '..', releaseId, '..'));
       checkReleaseDir.forEach((val, i) => {
         console.log('Lists of directory in releases', i + '- ' + val);
       });
@@ -189,8 +187,8 @@ describe('Custom Code Editor : Clear Modes and Push All Assets', function () {
       });
     } else {
       // Temporary Tests
-      let checkProdFiles = checkOtherFilesExists(path.join('/releases/', apos.asset.getReleaseId(), apos.asset.getNamespace(), '[0-9]*.apos-*'), '[\\/][0-9]*.apos-.*.[js,map]$');
-      assert(checkProdFiles === true, `Production files not found in '${path.join('/releases/', apos.asset.getReleaseId(), apos.asset.getNamespace())}'`);
+      const checkProdFiles = checkOtherFilesExists(join('/releases/', apos.asset.getReleaseId(), apos.asset.getNamespace(), '[0-9]*.apos-*'), '[\\/][0-9]*.apos-.*.[js,map]$');
+      assert(checkProdFiles === true, `Production files not found in '${join('/releases/', apos.asset.getReleaseId(), apos.asset.getNamespace())}'`);
     }
     expect(checkProdBuild).toBe(true);
   });
