@@ -68,14 +68,15 @@
                   </svg>
                 </div>
                 <!-- This is where all options begins -->
-                <OptionsContainerComponent ref="optionsContainer"
-                                           :optionsTypes="ace.optionsTypes" :editor="getEditor()"
-                                           :cache="ace.cache" :search="searchOptions"
-                                           @pushCache="ace.cache.push($event)"
-                                           @updateCache="updateCacheValue"
-                                           @moreOptionsClick="moreOptionsClick = $event"
-                                           @updateOptionsTypes="updateOptionsTypesValue"
-                                           @resetCache="resetCacheValue"/>
+                <OptionsContainerComponent  v-if="ace.aceEditor !== null"
+                                            ref="optionsContainer"
+                                            :optionsTypes="ace.optionsTypes" :editor="getEditor()"
+                                            :cache="ace.cache" :search="searchOptions"
+                                            @pushCache="ace.cache.push($event)"
+                                            @updateCache="updateCacheValue"
+                                            @moreOptionsClick="moreOptionsClick = $event"
+                                            @updateOptionsTypes="updateOptionsTypesValue"
+                                            @resetCache="resetCacheValue"/>
               </div>
             </div>
           </div>
@@ -365,6 +366,9 @@ export default {
 
   mounted() {
     this.init(this.$refs.editor);
+    if(_.has(apos.customCodeEditor.browser, `editor.${this.field.name}`)) {
+      this.ace.aceEditor = apos.customCodeEditor.browser.editor[this.field.name];
+    }
     this.setEditorValue();
   },
 

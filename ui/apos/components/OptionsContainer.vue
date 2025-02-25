@@ -1,4 +1,4 @@
-<template v-if="editor && optionsTypes">
+<template>
   <ul class="editor-options-container">
     <template v-for="(option, categoryKey) in optionsTypes">
       <li :id="categoryKey" style="margin-bottom:60px;" :data-category="$parent.$parent.getName(categoryKey)"
@@ -10,10 +10,9 @@
                      :data-icon="titleClick[camelCase(categoryKey)] ? 'up' : 'down'"/>
         </h1>
         <template v-for="(value, key) in option">
-          <li :id="value.name" class="lists-inputs" :data-category="$parent.$parent.getName(value.category)">
+          <li v-if="checkOptionType(value, categoryKey) === 'slider'" :id="value.name" class="lists-inputs" :data-category="$parent.$parent.getName(value.category)">
             <label :for="value.name" class="label-text" style="text-transform: capitalize;">{{ $parent.$parent.getName(value.name) }} :</label>
-            <!-- TODO: Debug editor.getOptions() returns empty here -->
-            <input type="range" class="range-slider__range" :value="editor.getOptions()[value.name].value" :name="optionsTypes[categoryKey].name" :max="value.value.max" :min="value.value.min" :step="value.value.steps" @input="onInput($event, 'slider', value)" @change="onChange($event, 'slider', value)" @mouseup="onMouseUp($event, 'slider', value)">
+            <input :value="checkOptionValue(value, 'slider')" type="range" class="range-slider__range" :name="optionsTypes[categoryKey].name" :max="value.value.max" :min="value.value.min" :step="value.value.steps" @input="onInput($event, 'slider', value)" @change="onChange($event, 'slider', value)" @mouseup="onMouseUp($event, 'slider', value)">
           </li>
         </template>
       </li>
@@ -262,6 +261,66 @@ export default {
       if(type === 'slider') {
         e.currentTarget.nextElementSibling.style.display = 'none';
       }
+    },
+
+    /**
+     * @method checkOptionValue
+     * @param {{ name: string, type: string, value: { value: number, min: number, max: number, steps: number } | Object[] | string[] | string | null, category: string }} value value
+     * @param {string} type
+     * @return {number | string}
+     */
+    checkOptionValue(value, type){
+      if(type === 'slider') {
+        return value.value.value ? value.value.value : this.editor.getOption(value.name);
+      }
+    },
+
+    /**
+     * @method checkOptionType
+     * @param {{ name: string, type: string, value: { value: number, min: number, max: number, steps: number } | Object[] | string[] | string | null, category: string }} groupedOptions
+     * @param {string} key
+     */
+    checkOptionType(groupedOptions, key) {
+      let type;
+      switch (true) {
+        case _.isArray(groupedOptions.value) && !_.every(groupedOptions.value, _.isObject):
+          groupedOptions = !_.isUndefined(this.options[key]) ? apos.util.assign(
+              groupedOptions, {
+                saveValue: this.options[key]
+              }) : groupedOptions;
+
+          type = 'dropdownArray';
+          break;
+
+        case _.isArray(groupedOptions.value) && _.every(groupedOptions.value, _.isObject):
+          groupedOptions = !_.isUndefined(this.options[key]) ? apos.util.assign(
+              groupedOptions, {
+                saveValue: this.options[key]
+              }) : groupedOptions;
+
+          type = 'dropdownObject';
+          break;
+
+        case _.isObject(groupedOptions.value):
+          groupedOptions = !_.isUndefined(this.options[key]) ? apos.util.assign(
+              groupedOptions, {
+                saveValue: this.options[key]
+              }) : groupedOptions;
+
+          type = 'slider';
+          break;
+
+        case groupedOptions.type === 'boolean':
+          groupedOptions = !_.isUndefined(this.options[key]) ? apos.util.assign(
+              groupedOptions, {
+                saveValue: this.options[key]
+              }) : groupedOptions;
+
+          type = 'checkbox';
+          break;
+      }
+
+      return type;
     },
 
     /**

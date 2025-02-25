@@ -1,14 +1,12 @@
-/* eslint-disable no-unused-vars */
-
 export default {
   methods: {
     /**
      * @method afterInit
      * @desc Easy extend after init
-     * @param {HTMLElement} element
-     * @param {aceEditor} editor
+     * @param {HTMLElement} _element
+     * @param {aceEditor} _editor
      */
-    afterInit(element, editor) {
+    afterInit(_element, _editor) {
       // For extends methods
     }
   }

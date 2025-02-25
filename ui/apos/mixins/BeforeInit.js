@@ -1,13 +1,11 @@
-/* eslint-disable no-unused-vars */
-
 export default {
   methods: {
     /**
      * @method beforeInit
      * @desc Easy extend using this function
-     * @param {HTMLElement} element
+     * @param {HTMLElement} _element
      */
-    beforeInit(element) {
+    beforeInit(_element) {
       // For extendMethods
     }
   }
