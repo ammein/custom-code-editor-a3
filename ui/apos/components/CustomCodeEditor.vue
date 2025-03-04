@@ -68,15 +68,15 @@
                   </svg>
                 </div>
                 <!-- This is where all options begins -->
-                <OptionsContainerComponent  v-if="ace.aceEditor !== null"
-                                            ref="optionsContainer"
-                                            :optionsTypes="ace.optionsTypes" :editor="getEditor()"
-                                            :cache="ace.cache" :search="searchOptions"
-                                            @pushCache="ace.cache.push($event)"
-                                            @updateCache="updateCacheValue"
-                                            @moreOptionsClick="moreOptionsClick = $event"
-                                            @updateOptionsTypes="updateOptionsTypesValue"
-                                            @resetCache="resetCacheValue"/>
+                <OptionsContainerComponent v-if="getAce.aceEditor"
+                                           ref="optionsContainer"
+                                           :optionsTypes="getAce.optionsTypes" :editor="getAce.aceEditor"
+                                           :cache="getAce.cache" :search="searchOptions"
+                                           @pushCache="getAce.cache.push($event)"
+                                           @updateCache="updateCacheValue"
+                                           @moreOptionsClick="moreOptionsClick = $event"
+                                           @updateOptionsTypes="updateOptionsTypesValue"
+                                           @resetCache="resetCacheValue"/>
               </div>
             </div>
           </div>
@@ -101,6 +101,7 @@ import OptionsContainerComponent from './OptionsContainer.vue';
 import CustomCodeEditorMixinVue from '../mixins/CustomCodeEditorMixin.js';
 import AfterInit from 'Modules/custom-code-editor-a3/mixins/AfterInit.js';
 import BeforeInit from 'Modules/custom-code-editor-a3/mixins/BeforeInit.js';
+
 // Import lodash
 import _ from 'lodash';
 
@@ -224,7 +225,7 @@ export default {
          */
         optionsTypes: browserOptions.ace.optionsTypes,
         /**
-         * @member {aceEditor} [aceEditor=null] - Ace Editor JS store
+         * @member {aceEditor | null} [aceEditor=null] - Ace Editor JS store
          * ```js
          * ace.aceEditor: ace.edit(element) || null
          * ```
@@ -279,15 +280,20 @@ export default {
       /**
        * @member {String} [searchOptions=''] - For input search value
        */
-      searchOptions: '',
-      /**
-       * @member {console.log} log - For logging template value
-       */
-      log: console.log
+      searchOptions: ''
     };
   },
 
   computed: {
+
+    /**
+     * @computed {Object} Return ace objects to be used in OptionsContainer component
+     * @return {Object}
+     */
+    getAce() {
+      return this.ace;
+    },
+
     /**
      * @computed {String} Check config optionsCustomizer object is enable or not
      * @return {Boolean}
@@ -366,7 +372,7 @@ export default {
 
   mounted() {
     this.init(this.$refs.editor);
-    if(_.has(apos.customCodeEditor.browser, `editor.${this.field.name}`)) {
+    if (_.has(apos.customCodeEditor.browser, `editor.${this.field.name}`)) {
       this.ace.aceEditor = apos.customCodeEditor.browser.editor[this.field.name];
     }
     this.setEditorValue();
@@ -480,112 +486,31 @@ export default {
       });
 
       if (getIndex !== -1) {
-        const cloneObject = _.cloneDeep(this.ace.optionsTypes[category][getIndex]);
-
         switch (true) {
-          case _.isUndefined(saveValue) && !_.isUndefined(cloneObject.saveValue):
-            delete cloneObject.saveValue;
+          case _.isUndefined(saveValue) && !_.isUndefined(this.ace.optionsTypes[category][getIndex].saveValue):
+            delete this.ace.optionsTypes[category][getIndex].saveValue
             break;
 
-          case cloneObject.saveValue && !_.isUndefined(saveValue):
-            cloneObject.saveValue = saveValue;
+          case this.ace.optionsTypes[category][getIndex].saveValue && !_.isUndefined(saveValue):
+            Object.assign(this.ace.optionsTypes[category][getIndex], {
+              ...this.ace.optionsTypes[category][getIndex],
+              saveValue
+            })
             break;
 
           default:
             if (value) {
-              cloneObject.value = value;
+              Object.assign(this.ace.optionsTypes[category][getIndex], {
+                ...this.ace.optionsTypes[category][getIndex],
+                value
+              })
             }
             break;
         }
-
-        this.ace.optionsTypes[category][getIndex] = cloneObject;
       }
     }
-  },
-
-  template: `
-    <AposInputWrapper
-        :modifiers="modifiers" :field="field" :error="effectiveError"
-        :uid="uid" :display-options="displayOptions">
-      <template #body>
-        <div class="apos-input-wrapper">
-          <div class="input-wrapper">
-            <div class="editor-container">
-              <div v-if="checkDropdown" class="dropdown">
-                <button class="button-dropdown result" @click="dropdownClick = !dropdownClick">
-                  <component :is="dropdownComponentSwitch" :fill-color="checkDropdownColor"/>
-                  <span class="dropdown-title">{{ getTitle }}</span>
-                </button>
-                <div v-show="dropdownClick" class="dropdown-content">
-                  <input type="text" placeholder="Search.." class="my-input" @keyup.stop="filterModesList"/>
-                  <template v-for="(mode, key) in ace.modes">
-                    <li
-                        v-if="mode.title" :key="key + mode.title"
-                        :data-title="mode.title" :data-name="mode.name.toLowerCase()" @click="changeMode">
-                      {{ mode.title }}
-                    </li>
-                    <li v-else :key="key + mode.name" :data-name="mode.name.toLowerCase()" @click="changeMode">
-                      {{ getName(mode.name) }}
-                    </li>
-                  </template>
-                </div>
-              </div>
-              <div ref="editor" class="code-snippet-wrapper" data-editor>
-              <!-- Where the codes begin -->
-            </div>
-            <div v-if="checkOptionsCustomizer"
-              class="options-config">
-              <button class="button-options"
-                  title="Adjust Options" :style="optionsClick ? 'background: rgba(248, 248, 248, 1);' : '' " @click="optionsClick = !optionsClick">
-                  <ChevronGearIcon :size="16" />
-              </button>
-              <div v-show="optionsClick" class="options-container" @scroll='optionsScroll'>
-                  <div class='search-buttons'>
-                      <div class='first-row'>
-                          <input v-model='searchOptions' type='text' class='search-bar' placeholder='Search'/>
-                          <button class='more-options-button' @click='moreOptionsClick = !moreOptionsClick'>
-                              <ChevronDotVerticalIcon :size='16' />
-                          </button>
-                          <div v-show="moreOptionsClick" class="more-options">
-                              <button class="save-options" @click="optionsEvents">
-                                  <ChevronSaveIcon :size="16" />Save
-                              </button>
-                              <button class="delete-options" @click='optionsEvents'>
-                                  <ChevronDeleteIcon :size='16' /> Reset
-                              </button>
-                          </div>
-                      </div>
-                      <div class="input-wrapper">
-                          <button class="copy-options" @click="optionsEvents">
-                              <ChevronCopyIcon :size="16" />
-                          </button>
-                          <button class="undo-options" @click='optionsEvents'>
-                              <ChevronUndoIcon :size='16' />
-                          </button>
-                      </div>
-                  </div>
-                  <div class="divider-buttons">
-                      <img alt="" class="divider-title" src="https://static.overlay-tech.com/assets/2ea72787-5ae1-42f3-aa97-80b116cc2ab2.svg" />
-                  </div>
-                  <!-- This is where all options begins -->
-                  <OptionsContainerComponent ref="optionsContainer"
-                      :optionsTypes='ace.optionsTypes' :editor='getEditor()'
-                      :cache='ace.cache' :search='searchOptions'
-                      @pushCache='ace.cache.push($event)'
-                      @updateCache='updateCacheValue'
-                      @moreOptionsClick='moreOptionsClick = $event'
-                      @updateOptionsTypes='updateOptionsTypesValue'
-                      @resetCache='resetCacheValue' />
-                </div>
-               </div>
-              </div>
-            </div>
-          </div>
-        </template>
-      </AposInputWrapper>
-            `
-
-    };
+  }
+};
 </script>
 
 <style scoped lang="scss">

@@ -445,7 +445,7 @@ export default {
     /**
      * @method getEditor
      * @desc Get Editor
-     * @return {aceEditor} Get Editor or Null
+     * @return {aceEditor | null} Get Editor or Null
      */
     getEditor() {
       if (_.has(apos.customCodeEditor.browser, `editor.${this.field.name}`)) {

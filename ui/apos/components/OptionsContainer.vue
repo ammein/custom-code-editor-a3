@@ -10,9 +10,45 @@
                      :data-icon="titleClick[camelCase(categoryKey)] ? 'up' : 'down'"/>
         </h1>
         <template v-for="(value, key) in option">
-          <li v-if="checkOptionType(value, categoryKey) === 'slider'" :id="value.name" class="lists-inputs" :data-category="$parent.$parent.getName(value.category)">
-            <label :for="value.name" class="label-text" style="text-transform: capitalize;">{{ $parent.$parent.getName(value.name) }} :</label>
-            <input :value="checkOptionValue(value, 'slider')" type="range" class="range-slider__range" :name="optionsTypes[categoryKey].name" :max="value.value.max" :min="value.value.min" :step="value.value.steps" @input="onInput($event, 'slider', value)" @change="onChange($event, 'slider', value)" @mouseup="onMouseUp($event, 'slider', value)">
+          <li v-if="checkOptionType(value, categoryKey) === 'slider'" :id="value.name" ref="listItems" class="lists-inputs" :data-category="$parent.$parent.getName(value.category)">
+            <label :for="value.name" class="label-text" style="text-transform: capitalize;">{{ $parent.$parent.getName(value.name) }} :<Help v-if="value.help" class="tooltip" style="color: blue !important;" :size="14"><span class="tooltiptext">{{ value.help }}</span></Help></label>
+            <input  :value="checkOptionValue(value, 'slider')"
+                    type="range"
+                    class="range-slider__range"
+                    :name="value.name"
+                    :max="value.value.max"
+                    :min="value.value.min"
+                    :step="value.value.steps"
+                    @input="onInput($event, 'slider', value)"
+                    @change="onChange($event, 'slider', value)"
+                    @mouseup="onMouseUp($event, 'slider', value)">
+            <span class="range-slider__value" style="display:none;"></span>
+          </li>
+          <li v-if="checkOptionType(value, categoryKey) === 'dropdownArray'" :id="value.name" ref="listItems" class="lists-inputs" :data-category="$parent.$parent.getName(value.category)">
+            <label :for="value.name" class="label-text" style="text-transform: capitalize;">{{ $parent.$parent.getName(value.name) }} :<Help v-if="value.help" class="tooltip" style="color: blue !important;" :size="14"><span class="tooltiptext">{{ value.help }}</span></Help></label>
+            <select :name="value.name"
+                    @change="onChange($event, 'dropdownArray', value)">
+              <template v-for="(valueOption, index) in value.value">
+                <option :value="checkOptionValue(value, 'dropdownArray', valueOption)" :selected="value.saveValue === valueOption ? true : editor.getOption(value.name) === valueOption ? true : null">{{ valueOption }}</option>
+              </template>
+            </select>
+          </li>
+          <li v-if="checkOptionType(value, categoryKey) === 'dropdownObject'" :id="value.name" ref="listItems" class="lists-inputs" :data-category="$parent.$parent.getName(value.category)">
+            <label :for="value.name" class="label-text" style="text-transform: capitalize;">{{ $parent.$parent.getName(value.name) }} :<Help v-if="value.help" class="tooltip" style="color: blue !important;" :size="14"><span class="tooltiptext">{{ value.help }}</span></Help></label>
+            <select :name="value.name"
+                    @change="onChange($event, 'dropdownObject', value)">
+              <template v-for="(valueOption, index) in value.value">
+                <option :value="checkOptionValue(value, 'dropdownObject', valueOption.value)" :selected="value.saveValue === valueOption.value ? true : editor.getOption(value.name) === valueOption.value ? true : null">{{ valueOption.value }}</option>
+              </template>
+            </select>
+          </li>
+          <li v-if="checkOptionType(value, categoryKey) === 'checkbox'" :id="value.name" ref="listItems" class="lists-inputs" :data-category="$parent.$parent.getName(value.category)">
+            <label :for="value.name" class="label-text" style="text-transform: capitalize;">{{ $parent.$parent.getName(value.name) }} :<Help v-if="value.help" class="tooltip" style="color: blue !important;" :size="14"><span class="tooltiptext">{{ value.help }}</span></Help></label>
+            <input  type="checkbox"
+                    class="error"
+                    :name="value.name"
+                    :checked="checkOptionValue(value, 'checkbox')"
+                    @change="onChange($event, 'checkbox', value)">
           </li>
         </template>
       </li>
@@ -90,6 +126,8 @@ export default {
     }
   },
 
+emits: ['updateOptionsTypes', 'resetCache', 'pushCache', 'updateCache'],
+
   data() {
     return {
       /**
@@ -105,39 +143,6 @@ export default {
        */
       titleClick: {}
     };
-  },
-
-  async serverPrefetch() {
-    try {
-      const options = await this.getOptions();
-
-      if (Object.keys(this.originalOptions).length === 0) {
-        this.originalOptions = _.assign({}, _.cloneDeep(this.editor.getOptions()), _.isUndefined(apos.customCodeEditor.browser, `fieldAce.${this.$parent.field.name}`) ? !_.isUndefined(apos.customCodeEditor.browser.ace, 'options') ? apos.customCodeEditor.browser.ace.options : {} : !_.isUndefined(apos.customCodeEditor.browser.fieldAce[this.$parent.field.name], `options`) ? apos.customCodeEditor.browser.fieldAce[this.$parent.field.name].options : {});
-      }
-
-      if (options.status === 'error') {
-        apos.notify(options.message, {
-          dismiss: true,
-          type: 'error'
-        });
-      }
-
-      try {
-        this.options = _.assign({}, this.options, JSON.parse(options.message));
-      } catch (e) {
-        apos.notify(e.message, {
-          dismiss: true,
-          type: 'error'
-        });
-      }
-
-      this.$forceUpdate();
-    } catch (err) {
-      apos.notify(err, {
-        dismiss: true,
-        type: 'error'
-      });
-    }
   },
 
   async mounted() {
@@ -183,7 +188,6 @@ export default {
   beforeUnmount() {
     // Event Removed: https://v3-migration.vuejs.org/breaking-changes/events-api.html#_2-x-syntax
     // this.$root.$off('customCodeEditor:getOptions', this.updateOptions);
-    // eslint-disable-next-line vue/require-explicit-emits
     this.$emit('resetCache');
   },
 
@@ -221,58 +225,127 @@ export default {
 
     /**
      * @method onInput
-     * @param {Event} e - HTMl Event
-     * @param {string} type - Type of an input either 'dropdownArray', 'dropdownObject', 'slider' or 'checkbox'
+     * @param {Event} e - HTML Event
+     * @param {string} type - Type of input either 'dropdownArray', 'dropdownObject', 'slider' or 'checkbox'
      * @param {Object} object - Options Types object
      */
     onInput(e, type, object) {
-      if(type === 'slider') {
-        const percent = (e.currentTarget.value - object.value.min) / (
-            object.value.max - object.value.min);
-        const newPos = (parseInt(getComputedStyle(e.currentTarget)
-            .width) - e.currentTarget.style.marginLeft) * percent;
-        e.currentTarget.nextElementSibling.style.left = newPos + 'px';
-        e.currentTarget.nextElementSibling.style.display = null;
-        e.currentTarget.nextElementSibling.innerHTML = e.currentTarget
-            .value;
+      switch (type) {
+        case 'slider':
+          const percent = (e.currentTarget.value - object.value.min) / (
+              object.value.max - object.value.min);
+          const newPos = (parseInt(getComputedStyle(e.currentTarget)
+              .width) - e.currentTarget.style.marginLeft) * percent;
+          e.currentTarget.nextElementSibling.style.left = newPos + 'px';
+          e.currentTarget.nextElementSibling.style.display = null;
+          e.currentTarget.nextElementSibling.innerHTML = e.currentTarget
+              .value;
+          break;
       }
     },
 
     /**
      * @method onChange
-     * @param {Event} e - HTMl Event
-     * @param {string} type - Type of an input either 'dropdownArray', 'dropdownObject', 'slider' or 'checkbox'
+     * @param {Event} e - HTML Event
+     * @param {string} type - Type of input either 'dropdownArray', 'dropdownObject', 'slider' or 'checkbox'
      * @param {Object} object - Options Types object
      */
     onChange(e, type, object) {
-      if(type === 'slider') {
-        e.target.setAttribute('value', e.currentTarget.value);
-        this.editor.setOption(object.name, e.currentTarget.value);
+      switch (type) {
+        case 'slider':
+          e.target.setAttribute('value', e.currentTarget.value);
+          this.editor.setOption(object.name, e.currentTarget.value);
+          break;
+
+        case 'dropdownArray':
+          this.editor.setOption(object.name, e.currentTarget.value);
+          break;
+
+        case 'dropdownObject':
+          const value = (e.currentTarget.value === 'true' || e.currentTarget
+              .value === 'false') ? JSON.parse(e.currentTarget
+              .value) : e.currentTarget.value;
+          this.editor.setOption(object.name, value);
+          break;
+
+        case 'checkbox':
+          if(e.currentTarget.checked) {
+            this.editor.setOption(object.name, true);
+          } else {
+            this.editor.setOption(object.name, false);
+          }
+          break;
       }
     },
 
     /**
      * @method onMouseUp
-     * @param {Event} e - HTMl Event
-     * @param {string} type - Type of an input either 'dropdownArray', 'dropdownObject', 'slider' or 'checkbox'
+     * @param {Event} e - HTML Event
+     * @param {string} type - Type of input either 'dropdownArray', 'dropdownObject', 'slider' or 'checkbox'
      * @param {Object} object - Options Types object
      */
     onMouseUp(e, type, object) {
-      if(type === 'slider') {
-        e.currentTarget.nextElementSibling.style.display = 'none';
+      switch (type) {
+        case 'slider':
+          e.currentTarget.nextElementSibling.style.display = 'none';
+          break;
       }
     },
 
     /**
      * @method checkOptionValue
-     * @param {{ name: string, type: string, value: { value: number, min: number, max: number, steps: number } | Object[] | string[] | string | null, category: string }} value value
+     * @param {Object} value value
      * @param {string} type
+     * @param {any | undefined} val
      * @return {number | string}
      */
-    checkOptionValue(value, type){
-      if(type === 'slider') {
-        return value.value.value ? value.value.value : this.editor.getOption(value.name);
+    checkOptionValue(value, type, val){
+      let setValue;
+
+      switch (type) {
+        case 'slider':
+          if(!_.isUndefined(value.saveValue)){
+            setValue = value.saveValue;
+            this.editor.setOption(value.name, value.saveValue);
+          } else {
+            setValue = this.editor.getOptions()[value.name] ? this.editor.getOption(value.name) : 0;
+          }
+          break;
+
+        case 'dropdownArray':
+          if(!_.isUndefined(value.saveValue) && value.saveValue === val) {
+            this.editor.setOption(value.name, value.saveValue);
+          }
+          setValue = val;
+          break;
+
+        case 'dropdownObject':
+          if(!_.isUndefined(value.saveValue) && value.saveValue === val) {
+            this.editor.setOption(value.name, value.saveValue);
+          }
+          setValue = val.value;
+          break;
+
+        case 'checkbox':
+          if(!_.isUndefined(value.saveValue)){
+            setValue = value.saveValue;
+            this.editor.setOption(value.name, value.saveValue);
+          } else {
+            setValue = this.editor.getOptions()[value.name] ? this.editor.getOption(value.name) : null;
+          }
+          break;
       }
+
+      const cache = {
+        [value.name]: (!_.isUndefined(value.saveValue)) ? value.saveValue : this.editor
+            .getOptions()[value.name]
+      }
+
+      if (!this.cache.some(eachCache => Object.prototype.hasOwnProperty.call(eachCache, value.name))) {
+        this.$emit('pushCache', cache);
+      }
+
+      return setValue
     },
 
     /**
@@ -320,72 +393,15 @@ export default {
           break;
       }
 
+      // Update Options Types Value
+      this.$emit('updateOptionsTypes', {
+        category: key,
+        name: groupedOptions.name,
+        saveValue: !_.isUndefined(this.options[key]) ? this.options[key] : undefined,
+        value: groupedOptions.value
+      });
+
       return type;
-    },
-
-    /**
-     * @method groupOptions
-     * @param {string} category
-     */
-    groupOptions(category) {
-      const key = Object.keys(this.editor.getOptions()).find((val) => val === category)
-      if (Object.prototype.hasOwnProperty.call(this.editor.getOptions(), category)) {
-        let groupedOptions = this.optionsTypes[category].find((val) => val.name === category);
-
-        // Assign child of listHeader
-        if (groupedOptions && groupedOptions.name === key && category === groupedOptions
-            .category) {
-          switch (true) {
-            case _.isArray(groupedOptions.value) && !_.every(groupedOptions.value, _.isObject):
-              groupedOptions = !_.isUndefined(this.options[key]) ? apos.util.assign(
-                  groupedOptions, {
-                    saveValue: this.options[key]
-                  }) : groupedOptions;
-
-              listHeader.children.push(this.optionsInputs(groupedOptions, 'dropdownArray',
-                  editor, h));
-              break;
-
-            case _.isArray(groupedOptions.value) && _.every(groupedOptions.value, _.isObject):
-              groupedOptions = !_.isUndefined(this.options[key]) ? apos.util.assign(
-                  groupedOptions, {
-                    saveValue: this.options[key]
-                  }) : groupedOptions;
-
-              listHeader.children.push(this.optionsInputs(groupedOptions, 'dropdownObject',
-                  editor, h));
-              break;
-
-            case _.isObject(groupedOptions.value):
-              groupedOptions = !_.isUndefined(this.options[key]) ? apos.util.assign(
-                  groupedOptions, {
-                    saveValue: this.options[key]
-                  }) : groupedOptions;
-
-              listHeader.children.push(this.optionsInputs(groupedOptions, 'slider', editor,
-                  h));
-              break;
-
-            case groupedOptions.type === 'boolean':
-              groupedOptions = !_.isUndefined(this.options[key]) ? apos.util.assign(
-                  groupedOptions, {
-                    saveValue: this.options[key]
-                  }) : groupedOptions;
-
-              listHeader.children.push(this.optionsInputs(groupedOptions, 'checkbox', editor,
-                  h));
-              break;
-          }
-
-          // Update Options Types Value
-          self.$emit('updateOptionsTypes', {
-            category: category,
-            name: groupedOptions.name,
-            saveValue: !_.isUndefined(this.options[key]) ? this.options[key] : undefined,
-            value: groupedOptions.value
-          });
-        }
-      }
     },
 
     /**
@@ -465,14 +481,14 @@ export default {
     /**
      * @method buttonOptionsClick
      * @desc Trigger emits
-     * @param {HTMLEvent} e - HTML Event Listener
+     * @param {EventListener} e - HTML Event Listener
      */
     buttonOptionsClick(e) {
       const button = e.currentTarget;
       let allCopy = {};
       const inputEmits = {};
       const self = this;
-      this.$el.querySelectorAll('li:not([data-header])').forEach(function (value, i) {
+      this.$refs.listItems.forEach(function (value, i) {
         const key = Object.keys(self.cache[i])[0];
         const cacheValue = self.cache[i];
         const input = value.querySelector('[name=\'' + value.id + '\']');
@@ -526,10 +542,10 @@ export default {
               }
 
               inputEmits[input.name] = {
-                input: input,
+                input,
                 value: passValue,
-                button: button,
-                allCopy: allCopy
+                button,
+                allCopy
               };
             }
             break;
@@ -592,10 +608,10 @@ export default {
               }
 
               inputEmits[input.name] = {
-                input: input,
+                input,
                 value: passValue,
-                button: button,
-                allCopy: allCopy
+                button,
+                allCopy
               };
             }
             break;
@@ -631,10 +647,10 @@ export default {
               }
 
               inputEmits[input.name] = {
-                input: input,
+                input,
                 value: input.checked,
-                button: button,
-                allCopy: allCopy
+                button,
+                allCopy
               };
             }
             break;
@@ -647,7 +663,7 @@ export default {
           allCopy = Object.assign(self.options, allCopy);
 
           // Loop and find if existing default saved options detected matches module options
-          for (let key of Object.keys(self.originalOptions)) {
+          for (const key of Object.keys(self.originalOptions)) {
             if (Object.prototype.hasOwnProperty.call(self.originalOptions, key)) {
 
               // Only allow non-module options to be copy
@@ -697,9 +713,9 @@ export default {
             self.options = {};
 
             // Loop the optionsTypes, if there is `saveValue` assigned to it, delete it
-            for (let categoryKey of Object.keys(self.optionsTypes)) {
+            for (const categoryKey of Object.keys(self.optionsTypes)) {
               if (Object.prototype.hasOwnProperty.call(self.optionsTypes, categoryKey)) {
-                for (let key of Object.keys(self.optionsTypes[categoryKey])) {
+                for (const key of Object.keys(self.optionsTypes[categoryKey])) {
                   if (!_.isUndefined(self.optionsTypes[categoryKey][key].saveValue)) {
                     self.$emit('updateOptionsTypes', {
                       category: categoryKey,
@@ -738,529 +754,15 @@ export default {
       }
     },
 
-    /**
-     * @method optionsInputs
-     * @desc Init Options Lists and append to List Header
-     * @param {Object} object - Object of optionsTypes merge with saveValue
-     * @param {String} type - Either `slider`, `dropdownArray`, `dropdownObject` or `checkbox`
-     * @param {aceEditor} editor - Ace JS Editor
-     * @param {createApp.VNode} h - Vue render function
-     * @return {createApp.VNode} Returns Lists of options in a category
-     */
-    optionsInputs(object, type, editor, h) {
-      let display = '';
-
-      // Only override display when keyword search happens
-      if (this.search.length > 0) {
-        const findKeyword = this.$parent.$parent.getName(object.name).indexOf(this.search);
-
-        // Only allow matched input, make display none for the rest of the list
-        if (findKeyword === -1) {
-          display = 'none';
-        }
-      }
-
-      // Hide when titleClick for the category is true
-      if (this.titleClick[_.camelCase(object.category)]) {
-        display = 'none';
-      }
-
-      let lists = h('li', {
-        class: 'lists-inputs',
-        attrs: {
-          'data-category': this.$parent.$parent.getName(object.category),
-          id: object.name
-        },
-        style: {
-          display
-        }
-      }, []);
-      switch (type) {
-        case 'slider':
-          (function (self) {
-            // Create <label> element
-            let label = h('label', {
-              class: 'label-text',
-              style: {
-                textTransform: 'capitalize'
-              },
-              domProps: {
-                for: object.name
-              }
-            }, self.$parent.$parent.getName(object.name) + ': ');
-
-            // Create <span> for slider output
-            let output = h('span', {
-              class: 'range-slider__value',
-              style: {
-                display: 'none'
-              }
-            }, '');
-
-            // Create <input> element
-            let input = h('input', {
-              class: 'range-slider__range',
-              domProps: {
-                value: editor.getOptions()[object.name].value,
-                name: object.name,
-                type: 'range',
-                max: object.value.max,
-                min: object.value.min,
-                step: object.value.steps
-              },
-              on: {
-                input: (e) => {
-                  let percent = (e.currentTarget.value - object.value.min) / (
-                      object.value.max - object.value.min);
-                  let newPos = (parseInt(getComputedStyle(e.currentTarget)
-                      .width) - e.currentTarget.style.marginLeft) * percent;
-                  e.currentTarget.nextElementSibling.style.left = newPos + 'px';
-                  e.currentTarget.nextElementSibling.style.display = null;
-                  e.currentTarget.nextElementSibling.innerHTML = e.currentTarget
-                      .value;
-                },
-                change: (e) => {
-                  e.target.setAttribute('value', e.currentTarget.value);
-                  editor.setOption(object.name, e.currentTarget.value);
-                },
-                mouseup: (e) => {
-                  e.currentTarget.nextElementSibling.style.display = 'none';
-                }
-              }
-            }, []);
-
-            // Set selected & editor options
-            if (!_.isUndefined(object.saveValue)) {
-              input.data.domProps.value = object.saveValue;
-              editor.setOption(object.name, object.saveValue);
-            } else if (_.isUndefined(object.saveValue)) {
-              (editor.getOptions()[object.name]) ? input.data.domProps.value = editor
-                  .getOptions()[object.name] : input.data.domProps.value = 0;
-            }
-
-            let cache = {
-              [object.name]: (!_.isUndefined(object.saveValue)) ? object.saveValue : editor
-                  .getOptions()[object.name]
-            };
-
-            if (!self.cache.some(eachCache => Object.prototype.hasOwnProperty.call(eachCache, object.name))) {
-              self.$emit('pushCache', cache);
-            }
-
-            // Help Text
-            if (object.help) {
-              let helpIcon = h(Help, {
-                class: ['tooltip'],
-                attrs: {
-                  'style': 'color: blue !important'
-                },
-                props: {
-                  size: 14
-                }
-              }, []);
-              let helpText = h('span', {
-                class: ['tooltiptext']
-              }, [object.help]);
-              helpIcon.children.push(helpText);
-              label.children.push(helpIcon);
-            }
-
-            lists.children.push(label);
-            lists.children.push(input);
-            lists.children.push(output);
-          })(this);
-          break;
-
-        case 'dropdownArray':
-          (function (self) {
-            // Create <label> element
-            let label = h('label', {
-              class: 'label-text',
-              style: {
-                textTransform: 'capitalize'
-              },
-              attrs: {
-                for: object.name
-              }
-            }, self.$parent.$parent.getName(object.name) + ': ');
-
-            // Create <select> element
-            let select = h('select', {
-              domProps: {
-                name: object.name
-              },
-              on: {
-                change: (e) => {
-                  editor.setOption(object.name, e.currentTarget.value);
-                }
-              }
-            }, object.value.map((val, i) => {
-              // Create <option> element
-              let selected = false;
-
-              // Set selected & editor options
-              if (object.saveValue === val) {
-                selected = true;
-                editor.setOption(object.name, object.saveValue);
-              } else if (_.isUndefined(object.saveValue)) {
-                (editor.getOptions()[object.name] === val) ? selected = true : null;
-              }
-
-              return h('option', {
-                domProps: {
-                  value: val,
-                  selected: selected
-                }
-              }, val);
-            }));
-
-            let cache = {
-              [object.name]: (!_.isUndefined(object.saveValue)) ? object.saveValue : editor
-                  .getOptions()[object.name]
-            };
-
-            if (!self.cache.some(eachCache => Object.prototype.hasOwnProperty.call(eachCache, object.name))) {
-              self.$emit('pushCache', cache);
-            }
-
-            // Help Text
-            if (object.help) {
-              let helpIcon = h(Help, {
-                class: ['tooltip'],
-                attrs: {
-                  'style': 'color: blue !important'
-                },
-                props: {
-                  size: 14
-                }
-              }, []);
-              let helpText = h('span', {
-                class: ['tooltiptext']
-              }, [object.help]);
-              helpIcon.children.push(helpText);
-              label.children.push(helpIcon);
-            }
-
-            lists.children.push(label);
-            lists.children.push(select);
-          })(this);
-          break;
-
-        case 'dropdownObject':
-          (function (self) {
-            // Create <label> element
-            let label = h('label', {
-              class: 'label-text',
-              style: {
-                textTransform: 'capitalize'
-              },
-              domProps: {
-                for: object.name
-              }
-            }, self.$parent.$parent.getName(object.name) + ': ');
-
-            // Create <select> element
-            let select = h('select', {
-              domProps: {
-                name: object.name
-              },
-              on: {
-                change: (e) => {
-                  let value = (e.currentTarget.value === 'true' || e.currentTarget
-                      .value === 'false') ? JSON.parse(e.currentTarget
-                      .value) : e.currentTarget.value;
-                  editor.setOption(object.name, value);
-                }
-              }
-            }, object.value.map((val, i) => {
-              // Create <option> element
-              let selected = false;
-
-              // Set selected & editor options
-              if (object.saveValue === val) {
-                selected = true;
-                editor.setOption(object.name, object.saveValue);
-              } else if (_.isUndefined(object.saveValue)) {
-                (editor.getOptions()[object.name] === val.value) ? selected = true : null;
-              }
-
-              return h('option', {
-                domProps: {
-                  value: val.value,
-                  selected: selected
-                }
-              }, val.value);
-            }));
-
-            let cache = {
-              [object.name]: (!_.isUndefined(object.saveValue)) ? object.saveValue : editor
-                  .getOptions()[object.name]
-            };
-
-            if (!self.cache.some(eachCache => Object.prototype.hasOwnProperty.call(eachCache, object.name))) {
-              self.$emit('pushCache', cache);
-            }
-
-            // Help Text
-            if (object.help) {
-              let helpIcon = h(Help, {
-                class: ['tooltip'],
-                attrs: {
-                  'style': 'color: blue !important'
-                },
-                props: {
-                  size: 14
-                }
-              }, []);
-              let helpText = h('span', {
-                class: ['tooltiptext']
-              }, [object.help]);
-              helpIcon.children.push(helpText);
-              label.children.push(helpIcon);
-            }
-
-            lists.children.push(label);
-            lists.children.push(select);
-          })(this);
-          break;
-
-        case 'checkbox':
-          (function (self) {
-            // Create <label> element
-            let label = h('label', {
-              class: 'label-text',
-              style: {
-                textTransform: 'capitalize'
-              },
-              domProps: {
-                for: object.name
-              }
-            }, self.$parent.$parent.getName(object.name) + ': ');
-
-            let checked = null;
-            if (!_.isUndefined(object.saveValue)) {
-              checked = object.saveValue;
-              editor.setOption(object.name, object.saveValue);
-            } else if (_.isUndefined(object.saveValue)) {
-              editor.getOptions()[object.name] ? checked = editor.getOptions()[object.name] : null;
-            }
-
-            // Create <checkbox> element
-            let input = h('input', {
-              domProps: {
-                type: 'checkbox',
-                name: object.name,
-                checked: checked
-              },
-              class: 'error',
-              on: {
-                change: (e) => {
-                  if (e.currentTarget.checked) {
-                    editor.setOption(object.name, true);
-                  } else {
-                    editor.setOption(object.name, false);
-                  }
-                }
-              }
-            }, []);
-
-            let cache = {
-              [object.name]: (!_.isUndefined(object.saveValue)) ? object.saveValue : !!editor
-                  .getOptions()[object.name]
-            };
-
-            if (!self.cache.some(eachCache => Object.prototype.hasOwnProperty.call(eachCache, object.name))) {
-              self.$emit('pushCache', cache);
-            }
-
-            // Help Text
-            if (object.help) {
-              let helpIcon = h(Help, {
-                class: ['tooltip'],
-                attrs: {
-                  'style': 'color: blue !important'
-                },
-                props: {
-                  size: 14
-                }
-              }, []);
-              let helpText = h('span', {
-                class: ['tooltiptext']
-              }, [object.help]);
-              helpIcon.children.push(helpText);
-              label.children.push(helpIcon);
-            }
-
-            lists.children.push(label);
-            lists.children.push(input);
-          })(this);
-          break;
-
-      }
-
-      return lists;
-    },
-
-    /**
-     * @method loopOptions
-     * @desc Loop function to loop with current save options and init with `optionsInput()` function
-     * @param {Object} myOptions - Object of editor options that either saved from user options or default value
-     * @param {Vue.VNode} h - Vue render function
-     * @return {Vue.VNode} Returns <ul> element that are grouped all the lists in the children
-     */
-    loopOptions(myOptions, h) {
-      let editor = this.editor;
-      let self = this;
-      const component = apos.vueComponents.TheAposBusy;
-      const el = document.querySelector('#apos-busy');
-      if (!el) {
-        return;
-      }
-      // Create new <ul> element to group all lists in its children
-      let unorderedLists = h('ul', {
-        class: 'editor-options-container'
-      }, []);
-      // Create default <li> element as starting Header List element
-      let listHeader = h('li', {
-        style: {
-          marginBottom: '60px'
-        }
-      }, []);
-      // Grab props Options Types
-      let optionsTypes = this.optionsTypes;
-
-      // Loop Group By Options
-      for (let categoryKey in optionsTypes) {
-        let display = '';
-
-        // Only override display when keyword search happens
-        if (this.search.length > 0) {
-          // Filter keyword that has the value
-          let filterKeyword = _.filter(optionsTypes[categoryKey], (val) => self.$parent.$parent.getName(
-              val.name).indexOf(self.search) > -1);
-
-          // Only hide header list if it not match with the filter keyword
-          if (filterKeyword.length === 0) {
-            display = 'none';
-          }
-        }
-
-        // Create new listHeader
-        listHeader = h('li', {
-          style: {
-            marginBottom: '60px',
-            display
-          }
-        }, []);
-        // Assign Attributes to listHeader
-        listHeader.data.attrs = {
-          'data-category': this.$parent.$parent.getName(categoryKey),
-          'data-header': this.$parent.$parent.getName(categoryKey),
-          id: categoryKey
-        };
-
-        // Assign Data Title Click for checking
-        if (_.isUndefined(this.titleClick[_.camelCase(categoryKey)])) {
-          this.titleClick[_.camelCase(categoryKey)] = false;
-        }
-
-        // Create new <h1> title
-        let h1 = h('h1', {
-          class: 'editor-options-title',
-          style: {
-            cursor: 'pointer'
-          },
-          on: {
-            click: this.listHeaderClick.bind(self)
-          }
-        }, [
-          ' ' + this.$parent.$parent.getName(categoryKey) + ' Options' + ' ',
-          h(this.titleClick[_.camelCase(categoryKey)] ? CollapseUp : CollapseDown, {
-            attrs: {
-              'data-category': this.$parent.$parent.getName(categoryKey),
-              'data-icon': this.titleClick[_.camelCase(categoryKey)] ? 'up' : 'down'
-            }
-          }, [])
-        ]);
-        // Push <h1> to new listHeader created
-        listHeader.children.push(h1);
-        // Finally push the listHeader to <ul> parent element
-        unorderedLists.children.push(listHeader);
-
-        // Loop existing Editor Options
-        // Something is wrong in here. Should do filter instead
-        for (let key of Object.keys(this.editor.getOptions())) {
-          if (Object.prototype.hasOwnProperty.call(editor.getOptions(), key)) {
-            let groupedOptions = optionsTypes[categoryKey].find((val) => val.name === key);
-
-            // Assign child of listHeader
-            if (groupedOptions && groupedOptions.name === key && categoryKey === groupedOptions
-                .category) {
-              switch (true) {
-                case _.isArray(groupedOptions.value) && !_.every(groupedOptions.value, _.isObject):
-                  groupedOptions = !_.isUndefined(myOptions[key]) ? apos.util.assign(
-                      groupedOptions, {
-                        saveValue: myOptions[key]
-                      }) : groupedOptions;
-
-                  listHeader.children.push(this.optionsInputs(groupedOptions, 'dropdownArray',
-                      editor, h));
-                  break;
-
-                case _.isArray(groupedOptions.value) && _.every(groupedOptions.value, _.isObject):
-                  groupedOptions = !_.isUndefined(myOptions[key]) ? apos.util.assign(
-                      groupedOptions, {
-                        saveValue: myOptions[key]
-                      }) : groupedOptions;
-
-                  listHeader.children.push(this.optionsInputs(groupedOptions, 'dropdownObject',
-                      editor, h));
-                  break;
-
-                case _.isObject(groupedOptions.value):
-                  groupedOptions = !_.isUndefined(myOptions[key]) ? apos.util.assign(
-                      groupedOptions, {
-                        saveValue: myOptions[key]
-                      }) : groupedOptions;
-
-                  listHeader.children.push(this.optionsInputs(groupedOptions, 'slider', editor,
-                      h));
-                  break;
-
-                case groupedOptions.type === 'boolean':
-                  groupedOptions = !_.isUndefined(myOptions[key]) ? apos.util.assign(
-                      groupedOptions, {
-                        saveValue: myOptions[key]
-                      }) : groupedOptions;
-
-                  listHeader.children.push(this.optionsInputs(groupedOptions, 'checkbox', editor,
-                      h));
-                  break;
-              }
-
-              // Update Options Types Value
-              self.$emit('updateOptionsTypes', {
-                category: categoryKey,
-                name: groupedOptions.name,
-                saveValue: !_.isUndefined(myOptions[key]) ? myOptions[key] : undefined,
-                value: groupedOptions.value
-              });
-            }
-          }
-        }
-      }
-
-      return unorderedLists;
-    },
 
     /**
      * @method
      * @desc When list header is clicked. `this.$forceUpdate()` triggers when done update titleClick[category]
-     * @param {HTMLEvent} e - HTML Event Click
+     * @param {EventListener} e - HTML Event Click
      */
     listHeaderClick(e) {
-      let category = _.camelCase(e.currentTarget.parentElement.dataset.category);
-      let condition = this.titleClick[category];
+      const category = _.camelCase(e.currentTarget.parentElement.dataset.category);
+      const condition = this.titleClick[category];
       this.titleClick[category] = !condition;
       this.$forceUpdate();
     },
@@ -1268,7 +770,10 @@ export default {
     /**
      * @method emitOptions
      * @desc Emit Events to `$root` by check the `input.type`
-     * @param {{ input: HTMLElement, value: String | Boolean, button: HTMLElement, allCopy: Object }} value - Grab Options Value
+     * @param {HTMLElement} input
+     * @param {string | boolean} value - Grab Options Value
+     * @param {HTMLButtonElement} button
+     * @param {Object} allCopy
      */
     emitOptions({ input, value, button, allCopy }) {
       // Emit event to alert other similar components
@@ -1294,12 +799,12 @@ export default {
           this.$root.$emit('customCodeEditor:getOptions', {
             customCodeEditor: {
               field: this.$parent.field.name,
-              input: input,
+              input,
               name: input.name,
               value: value.toString(),
               action: button.className.replace('-options', '').trim(),
               options: allCopy,
-              button: button
+              button
             }
           });
           break;
@@ -1325,12 +830,12 @@ export default {
           this.$root.$emit('customCodeEditor:getOptions', {
             customCodeEditor: {
               field: this.$parent.field.name,
-              input: input,
+              input,
               name: input.name,
               value: parseFloat(input.value),
               action: button.className.replace('-options', '').trim(),
               options: allCopy,
-              button: button
+              button
             }
           });
           break;
@@ -1356,12 +861,12 @@ export default {
           this.$root.$emit('customCodeEditor:getOptions', {
             customCodeEditor: {
               field: this.$parent.field.name,
-              input: input,
+              input,
               name: input.name,
               value: input.checked,
               action: button.className.replace('-options', '').trim(),
               options: allCopy,
-              button: button
+              button
             }
           });
           break;
@@ -1379,7 +884,7 @@ export default {
     updateOptions(e) {
       if (!_.isUndefined(e.customCodeEditor) && !_.isUndefined(e.customCodeEditor.value) && e.customCodeEditor.field !== this.$parent.field.name) {
         // Find input from this current component
-        let input = this.$el.querySelector(`[name="${e.customCodeEditor.input.name}"]`);
+        const input = this.$el.querySelector(`[name="${e.customCodeEditor.input.name}"]`);
 
         switch (e.customCodeEditor.input.type) {
           case 'checkbox':
@@ -1392,7 +897,7 @@ export default {
         }
 
         if (e.customCodeEditor.action) {
-          let copyButton = this.$parent.$el.querySelector('button.copy-options');
+          const copyButton = this.$parent.$el.querySelector('button.copy-options');
           switch (e.customCodeEditor.action) {
             case 'copy':
               copyButton.dataset.clipboardText = JSON.stringify(e.customCodeEditor.options);
@@ -1476,7 +981,6 @@ export default {
   & select {
     padding: 5px 20px;
     width: 80%;
-    font-size: 12px;
     border-radius: 5px;
     background: #f8f8f8;
     border: none;
@@ -1512,17 +1016,11 @@ export default {
     left: 0;
     width: 45%;
     height: 80%;
-    background-color: #fdfdfd;
+    background-color: #fdfdfd !important;
     margin: 4%;
     border-radius: 3px;
     box-shadow: 0 1px 2px rgba(0, 0, 0, .2);
-
     background: rgb(255, 255, 255);
-    background: -moz-linear-gradient(top, rgba(255, 255, 255, 1) 0%, rgba(243, 243, 243, 1) 100%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(255, 255, 255, 1)), color-stop(100%, rgba(243, 243, 243, 1)));
-    background: -webkit-linear-gradient(top, rgba(255, 255, 255, 1) 0%, rgba(243, 243, 243, 1) 100%);
-    background: -o-linear-gradient(top, rgba(255, 255, 255, 1) 0%, rgba(243, 243, 243, 1) 100%);
-    background: -ms-linear-gradient(top, rgba(255, 255, 255, 1) 0%, rgba(243, 243, 243, 1) 100%);
     background: linear-gradient(to bottom, rgba(255, 255, 255, 1) 0%, rgba(243, 243, 243, 1) 100%);
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#f3f3f3', GradientType=0);
 
